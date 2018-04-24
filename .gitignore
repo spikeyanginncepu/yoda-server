@@ -4,3 +4,4 @@ static/ssl
 *.crt
 *.csr
 data
+.idea
