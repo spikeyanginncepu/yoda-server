@@ -1,0 +1,6 @@
+ssl
+static/ssl
+*.key
+*.crt
+*.csr
+data
