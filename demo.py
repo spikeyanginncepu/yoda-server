@@ -38,7 +38,7 @@ class DemoHandler(tornado.web.RequestHandler):
 
 
 
-class MyStaticFileHandler(BaseHandler,tornado.web.StaticFileHandler):
+class MyStaticFileHandler(tornado.web.StaticFileHandler):
    @tornado.web.authenticated
    def _get(self, path, include_body=True):
        return self.get(path,include_body)
