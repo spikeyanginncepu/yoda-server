@@ -1,4 +1,5 @@
 #!/bin/sh
+mkdir -p $(dirname $0)/ssl
 cd $(dirname $0)/ssl
 echo "cd to $(dirname $0)"
 # create self-signed server certificate:
