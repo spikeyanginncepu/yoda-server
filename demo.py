@@ -41,10 +41,10 @@ class DemoHandler(tornado.web.RequestHandler):
 class MyStaticFileHandler(tornado.web.StaticFileHandler):
     def get_current_user(self):
         return self.get_secure_cookie("username")
-    @tornado.web.authenticated
-    def get(self, path, include_body=True):
-        return super.get(path,include_body)
 
+    @tornado.web.authenticated
+    def _get(self,*args,**kwargs):
+        return super().get(*args,**kwargs)
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()
