@@ -38,11 +38,13 @@ class DemoHandler(tornado.web.RequestHandler):
 
 
 
-class MyStaticFileHandler(BaseHandler,tornado.web.StaticFileHandler):
+class AuthStaticFileHandler(BaseHandler,tornado.web.StaticFileHandler):
+    def get_current_user(self):
+        return BaseHandler.get_current_user(self)
 
     @tornado.web.authenticated
     def _get(self,*args,**kwargs):
-        return tornado.web.StaticFileHandler.get(*args,**kwargs)
+        return tornado.web.StaticFileHandler.get(self,*args,**kwargs)
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()
@@ -59,7 +61,8 @@ if __name__ == "__main__":
         (r'/', WelcomeHandler),
         (r'/login', LoginHandler),
         (r'/logout', LogoutHandler),
-        (r'/(.*?)$', MyStaticFileHandler,{'path':os.path.join(curdir,'static'),'default_filename':'index.html'})
+        (r'/data/(.*?)$', AuthStaticFileHandler,{'path':os.path.join(curdir,'data')}),
+        (r'/(.*?)$', tornado.web.StaticFileHandler,{'path':os.path.join(curdir,'static'),'default_filename':'index.html'})
     ], **settings)
 
 
