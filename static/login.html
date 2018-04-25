@@ -9,6 +9,7 @@
     <div id="login">
         <h1>Login</h1>
         <form method="post">
+            {{ xsrf_form_html() }}
             <input type="text" required="required" placeholder="用户名" name="username"></input>
             <input type="password" required="required" placeholder="密码" name="pwd"></input>
             <button class="but" type="submit">登录</button>
