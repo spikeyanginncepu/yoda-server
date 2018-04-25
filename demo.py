@@ -27,8 +27,13 @@ class LogoutHandler(BaseHandler):
             self.clear_cookie("username")
             self.redirect("/")
 
+class MainHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.write("Hello, world")
+
 if __name__ == "__main__":
     tornado.options.parse_command_line()
+
     settings = {
         "template_path": os.path.join(os.path.dirname(__file__), "templates"),
         "cookie_secret": "bZJc2sWbQLKos6GkHn/VB9oXwQt8S0R0kRvJ5/xJ89E=",
@@ -43,26 +48,6 @@ if __name__ == "__main__":
         (r'/logout', LogoutHandler)
     ], **settings)
 
-
-
-class MainHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.write("Hello, world")
-
-application = tornado.web.Application([
-    (r"/", MainHandler),
-    (r"/login", MainHandler),
-    (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": "static","static_path":"static"}),
-])
-
-settings = {
-    "xsrf_cookies": True,
-    "static_path":'static',
-    "login_url": "/login",}
-
-
-
-if __name__ == "__main__":
     server=tornado.httpserver.HTTPServer(application,ssl_options={
         "certfile":os.path.join(curdir,"ssl/auth.crt"),
         "keyfile":os.path.join(curdir,"ssl/auth.key")
