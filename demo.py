@@ -43,7 +43,7 @@ class AuthStaticFileHandler(BaseHandler,tornado.web.StaticFileHandler):
         return BaseHandler.get_current_user(self)
 
     @tornado.web.authenticated
-    def _get(self,*args,**kwargs):
+    def get(self,*args,**kwargs):
         return tornado.web.StaticFileHandler.get(self,*args,**kwargs)
 
 if __name__ == "__main__":
