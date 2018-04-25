@@ -6,11 +6,6 @@
      <ul>
          <li>{{ current_user }}</li>
      </ul>
-    <form method="post">
-            <input type="text" required="required" placeholder="用户名" name="username"></input>
-            <input type="password" required="required" placeholder="密码" name="pwd"></input>
-            {% module xsrf_form_html() %}
-            <button class="but" type="submit">登录</button>
-        </form>
+        <h1><a href="logout?logout=True">Logout</a></h1>
    </body>
  </html>
