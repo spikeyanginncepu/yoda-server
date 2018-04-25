@@ -2,6 +2,7 @@ import tornado.ioloop
 import tornado.web
 import tornado.httpserver
 import os,sys
+import tornado.options
 curdir=os.path.dirname(os.path.abspath(__file__))
 
 class BaseHandler(tornado.web.RequestHandler):
