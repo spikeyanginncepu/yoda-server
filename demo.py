@@ -42,7 +42,8 @@ class MyStaticFileHandler(tornado.web.StaticFileHandler,BaseHandler):
    @tornado.web.authenticated
    def _get(self, path, include_body=True):
        return self.get(path,include_body)
-   get=_get
+   def get(self,path,include_body=True):
+       return self._get(path,include_body)
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()
