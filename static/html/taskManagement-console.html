@@ -1,0 +1,51 @@
+<html>
+<head>
+<title>任务管理</title>
+<meta charset="utf-8" /> 
+<link rel="Stylesheet" type="text/css" href="css/css-all.css" />
+</head>
+<body>
+    <div class="TM_manybtn">
+        <button>刷新</button>
+        <p>当前正在运行任务数：3</p>
+        <button onclick="location.href='./taskCreateEdit-console.html';">新建任务</button>
+        <button>删除任务</button>
+        <div id="TM_search"><button id="TM_searchbtn">搜索</button><input id="TM_searchbox" type="text"/></div>
+    </div>
+    <!-- <div class="dir">
+        <div class="crumb">
+            <span>
+                <a class="dirlink" href="#">全部文件</a> &gt; 
+                <a class="dirlink" id="cell1" href="#">张三</a> &gt; 
+                <a class="dirlink" id="cell2" href="#">2018春季巡检</a> &gt; 
+                <a class="dirlink" id="cell2" href="#">柴拉线</a>
+            </span>
+        </div>
+    </div> -->
+    <!-- <div class="headings">
+        <label id="taskName">任务名称</label>
+        <label id="taskStatus">任务状态</label>
+        <label id="inputDir">输入目录</label>
+        <label id="taskSize">图片/视频数量</label>
+    </div> -->
+
+    <div class="TM_fileList">
+        <table class="TM_tasklisttable" border='1'>
+            <tr class="TM_tasklisttable_tr"><th><input type="checkbox"><label>全选</label></th><th>任务名称</th><th>任务状态</th><th></th><th>输入目录</th><th>图像/视频数量</th><th></th><th></th><th></th></tr>
+            <tr class="TM_tasklisttable_tr"><td><input type="checkbox"></td><td>春季巡检-上嘉一线</td><td>结束</td><td><button>开始</button></td><td>全部文件/张三/春季巡检/上嘉一线/</td><td>255</td><td><button>编辑</button></td><td><button onclick="location.href='./judgementMaking.html';">查看及校验</button></td><td><button>报表生成</button></td></tr>
+            <tr class="TM_tasklisttable_tr"><td><input type="checkbox"></td><td>春季巡检-上嘉一线</td><td>结束</td><td><button>开始</button></td><td>全部文件/张三/春季巡检/上嘉一线/</td><td>255</td><td><button>编辑</button></td><td><button onclick="location.href='./judgementMaking.html';">查看及校验</button></td><td><button>报表生成</button></td></tr>
+            <tr class="TM_tasklisttable_tr"><td><input type="checkbox"></td><td>春季巡检-上嘉一线</td><td>结束</td><td><button>开始</button></td><td>全部文件/张三/春季巡检/上嘉一线/</td><td>255</td><td><button>编辑</button></td><td><button onclick="location.href='./judgementMaking.html';">查看及校验</button></td><td><button>报表生成</button></td></tr>
+            <tr class="TM_tasklisttable_tr"><td><input type="checkbox"></td><td>春季巡检-上嘉一线</td><td>结束</td><td><button>开始</button></td><td>全部文件/张三/春季巡检/上嘉一线/</td><td>255</td><td><button>编辑</button></td><td><button onclick="location.href='./judgementMaking.html';">查看及校验</button></td><td><button>报表生成</button></td></tr>
+            <tr class="TM_tasklisttable_tr"><td><input type="checkbox"></td><td>春季巡检-上嘉一线</td><td>结束</td><td><button>开始</button></td><td>全部文件/张三/春季巡检/上嘉一线/</td><td>255</td><td><button>编辑</button></td><td><button onclick="location.href='./judgementMaking.html';">查看及校验</button></td><td><button>报表生成</button></td></tr>
+            <tr class="TM_tasklisttable_tr"><td><input type="checkbox"></td><td>春季巡检-上嘉一线</td><td>结束</td><td><button>开始</button></td><td>全部文件/张三/春季巡检/上嘉一线/</td><td>255</td><td><button>编辑</button></td><td><button onclick="location.href='./judgementMaking.html';">查看及校验</button></td><td><button>报表生成</button></td></tr>
+            <tr class="TM_tasklisttable_tr"><td><input type="checkbox"></td><td>春季巡检-上嘉一线</td><td>结束</td><td><button>开始</button></td><td>全部文件/张三/春季巡检/上嘉一线/</td><td>255</td><td><button>编辑</button></td><td><button onclick="location.href='./judgementMaking.html';">查看及校验</button></td><td><button>报表生成</button></td></tr>
+            <tr class="TM_tasklisttable_tr"><td><input type="checkbox"></td><td>春季巡检-上嘉一线</td><td>结束</td><td><button>开始</button></td><td>全部文件/张三/春季巡检/上嘉一线/</td><td>255</td><td><button>编辑</button></td><td><button onclick="location.href='./judgementMaking.html';">查看及校验</button></td><td><button>报表生成</button></td></tr>
+            <tr class="TM_tasklisttable_tr"><td><input type="checkbox"></td><td>春季巡检-上嘉一线</td><td>结束</td><td><button>开始</button></td><td>全部文件/张三/春季巡检/上嘉一线/</td><td>255</td><td><button>编辑</button></td><td><button onclick="location.href='./judgementMaking.html';">查看及校验</button></td><td><button>报表生成</button></td></tr>
+            <tr class="TM_tasklisttable_tr"><td><input type="checkbox"></td><td>春季巡检-上嘉一线</td><td>结束</td><td><button>开始</button></td><td>全部文件/张三/春季巡检/上嘉一线/</td><td>255</td><td><button>编辑</button></td><td><button onclick="location.href='./judgementMaking.html';">查看及校验</button></td><td><button>报表生成</button></td></tr>
+            <tr class="TM_tasklisttable_tr"><td><input type="checkbox"></td><td>春季巡检-上嘉一线</td><td>结束</td><td><button>开始</button></td><td>全部文件/张三/春季巡检/上嘉一线/</td><td>255</td><td><button>编辑</button></td><td><button onclick="location.href='./judgementMaking.html';">查看及校验</button></td><td><button>报表生成</button></td></tr>
+            <tr class="TM_tasklisttable_tr"><td><input type="checkbox"></td><td>春季巡检-上嘉一线</td><td>结束</td><td><button>开始</button></td><td>全部文件/张三/春季巡检/上嘉一线/</td><td>255</td><td><button>编辑</button></td><td><button onclick="location.href='./judgementMaking.html';">查看及校验</button></td><td><button>报表生成</button></td></tr>
+        </table>
+    </div>
+    </div>
+</body>
+</html>

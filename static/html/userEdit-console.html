@@ -1,0 +1,43 @@
+<html>
+<head>
+<meta charset="utf-8" /> 
+<title>用户修改</title>
+<link rel="Stylesheet" type="text/css" href="css/css-all.css" />
+</head>
+<body>
+		<div class="UE_config"><p>用户4配置</p></div>
+		<div class="UE_setting_passwd">
+			<form>
+				<div class="UE_changing_passwd"><p>密码修改</p></div>
+				<div class="UE_filling_passwd">
+					<p>新密码：	<input type="text" name="new_passwd"></p>
+					<p>再次输入：<input type="text" name="new_passwd_again"></p>
+					<input type="submit" value="确定" />
+				</div>
+			</form>
+		</div>
+	
+		<div class="UE_authority_setting">
+			<div class="UE_authority_changing"><p>权限设置</p></div>
+			<div class="UE_headings">
+				<label id="UE_data_dir">数据目录</label>
+				<label id="UE_read_authority">读权限</label>
+				<label id="UE_write_authority">写权限</label>
+			</div>
+			<div class="UE_fileList">
+                <table class="UE_permissiontable" border='1'>
+                    <tr class="UE_permissiontable_tr"><th><input type="checkbox"><label>全选</label></th><th>文件名或文件夹名</th><th>文件大小</th><th>修改日期</th></tr>
+                    <tr class="UE_permissiontable_tr"><td><input type="checkbox"></td><td>/全部文件/张三/春季巡检/上嘉一线</td><td>255</td><td>2018年1月13日</td></tr>
+                    <tr class="UE_permissiontable_tr"><td><input type="checkbox"></td><td>/全部文件/张三/春季巡检/上嘉一线</td><td>255</td><td>2018年1月13日</td></tr>
+                    <tr class="UE_permissiontable_tr"><td><input type="checkbox"></td><td>/全部文件/张三/春季巡检/上嘉一线</td><td>255</td><td>2018年1月13日</td></tr>
+                    <tr class="UE_permissiontable_tr"><td><input type="checkbox"></td><td>/全部文件/张三/春季巡检/上嘉一线</td><td>255</td><td>2018年1月13日</td></tr>
+                <table>
+            </div>
+        </div>
+        <div>
+            <input id="UE_coverall" type="checkbox"/><label>覆盖用户组内所有用户的权限</label>
+            <button>保存</button>
+        </div>
+   
+</body>
+</html>
