@@ -55,7 +55,7 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_handler)
     settings = {
         "template_path": os.path.join(os.path.dirname(__file__), "public"),
-        "cookie_secret": "bZJc2sWbQLKos6GkHn/VB9oXwQt8S0R0kRvJ5/xJ89E=",
+        "cookie_secret": "%NMqg8Bo8^he#x@HVBqn&kVfNCBbiuZM2$LQYAQg9I",
         "xsrf_cookies": True,
         "login_url": "/p/login",
         "static_path":"public"
