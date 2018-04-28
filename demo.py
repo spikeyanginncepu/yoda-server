@@ -26,31 +26,21 @@ class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         return self.get_secure_cookie("username")
 
-
 class LoginHandler(BaseHandler):
     def get(self):
         self.render('login.html')
     def post(self):
         self.set_secure_cookie("username", self.get_argument("username"))
-        self.redirect("main.html")
-
-
-class WelcomeHandler(BaseHandler):
-    @tornado.web.authenticated
-    def get(self):
-        self.render('main.html', user=self.current_user)
+        self.redirect(self.get_argument('next','site/main.html'))
 
 class LogoutHandler(BaseHandler):
     def get(self):
-        if (self.get_argument("logout", None)):
-            self.clear_cookie("username")
-            self.redirect("/")
+        self.clear_cookie("username")
+        self.redirect("/")
 
-
-class DemoHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.write("Hello, world")
-
+class DefaultRedirectHandler(BaseHandler):
+    def get(self,*args,**kwargs):
+        self.redirect("/site/main.html")
 
 class AuthStaticFileHandler(BaseHandler,tornado.web.StaticFileHandler):
     def get_current_user(self):
@@ -64,26 +54,28 @@ if __name__ == "__main__":
     tornado.options.parse_command_line() 
     signal.signal(signal.SIGINT, signal_handler)
     settings = {
-        "template_path": os.path.join(os.path.dirname(__file__), "static"),
+        "template_path": os.path.join(os.path.dirname(__file__), "public"),
         "cookie_secret": "bZJc2sWbQLKos6GkHn/VB9oXwQt8S0R0kRvJ5/xJ89E=",
         "xsrf_cookies": True,
-        "login_url": "/login",
-        "static_path": os.path.join(curdir,'static')
+        "login_url": "/p/login",
+        "static_path":"public"
     }
 
     application = tornado.web.Application([
-        #(r'/', WelcomeHandler),
-        (r'/login', LoginHandler),
+        (r'/p/login', LoginHandler),
         (r'/logout', LogoutHandler),
         (r'/data/(.*?)$', AuthStaticFileHandler,{'path':os.path.join(curdir,'data')}),
-        (r'/(.*?)$', tornado.web.StaticFileHandler,{'path':os.path.join(curdir,'static'),'default_filename':'static/main.html'})
+        (r'/site/(.*?)$', AuthStaticFileHandler, {'path': os.path.join(curdir, 'static')}),
+        (r'/p/(.*?)$', tornado.web.StaticFileHandler,{'path':os.path.join(curdir,'public')}),
+        (r'/(.*?)$', DefaultRedirectHandler),
     ], **settings)
-
 
     server=tornado.httpserver.HTTPServer(application,ssl_options={
         "certfile":os.path.join(curdir,"ssl/auth.crt"),
         "keyfile":os.path.join(curdir,"ssl/auth.key")
         })
-    server.listen(8888)
+
+    port=8888 if len(sys.argv)<=1 else int(sys.argv[1])
+    server.listen(port)
     tornado.ioloop.PeriodicCallback(try_exit, 100).start()
     tornado.ioloop.IOLoop.instance().start()
