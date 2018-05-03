@@ -12,3 +12,4 @@ sudo sudo -u postgres psql -f initdb.sql
 echo "CREATE DATABASE yoda OWNER yoda;" | sudo -u postgres psql -f initdb.sql
 echo "GRANT ALL PRIVILEGES ON DATABASE yoda to yoda;" | sudo -u postgres psql -f initdb.sql
 sudo -u postgres psql yoda -f initdb.sql
+sudo -u postgres psql yoda -f models.sql
