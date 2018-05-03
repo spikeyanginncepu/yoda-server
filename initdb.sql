@@ -177,7 +177,7 @@ ALTER SEQUENCE taskauth_id_seq OWNED BY taskauth.id;
 -- Name: user; Type: TABLE; Schema: public; Owner: yoda
 --
 
-CREATE TABLE "user" (
+CREATE TABLE users (
     uid integer NOT NULL,
     name text NOT NULL,
     salt text,
@@ -186,7 +186,7 @@ CREATE TABLE "user" (
 );
 
 
-ALTER TABLE "user" OWNER TO yoda;
+ALTER TABLE users OWNER TO yoda;
 
 --
 -- TOC entry 182 (class 1259 OID 16556)
@@ -209,7 +209,7 @@ ALTER TABLE user_uid_seq OWNER TO yoda;
 -- Name: user_uid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yoda
 --
 
-ALTER SEQUENCE user_uid_seq OWNED BY "user".uid;
+ALTER SEQUENCE user_uid_seq OWNED BY users.uid;
 
 
 --
@@ -241,7 +241,7 @@ ALTER TABLE ONLY taskauth ALTER COLUMN id SET DEFAULT nextval('taskauth_id_seq':
 -- Name: uid; Type: DEFAULT; Schema: public; Owner: yoda
 --
 
-ALTER TABLE ONLY "user" ALTER COLUMN uid SET DEFAULT nextval('user_uid_seq'::regclass);
+ALTER TABLE ONLY users ALTER COLUMN uid SET DEFAULT nextval('user_uid_seq'::regclass);
 
 
 --
@@ -317,7 +317,7 @@ SELECT pg_catalog.setval('taskauth_id_seq', 1, false);
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: yoda
 --
 
-COPY "user" (uid, name, salt, passwd, authority) FROM stdin;
+COPY users (uid, name, salt, passwd, authority) FROM stdin;
 1	admin	4HRZ0GN2BsxuA4WoxHmiVGpqq48=	iMPZ28q9Z8nxFnzbGYGUlqQPZr0A6NpuWcW3tPYuwz2NJ56CtuXyOXHsW67hlm78	7
 \.
 
@@ -345,7 +345,7 @@ ALTER TABLE ONLY dirauth
 -- Name: primary; Type: CONSTRAINT; Schema: public; Owner: yoda
 --
 
-ALTER TABLE ONLY "user"
+ALTER TABLE ONLY users
     ADD CONSTRAINT "primary" PRIMARY KEY (uid);
 
 
@@ -399,7 +399,7 @@ ALTER TABLE ONLY taskauth
 -- Name: uniq username; Type: CONSTRAINT; Schema: public; Owner: yoda
 --
 
-ALTER TABLE ONLY "user"
+ALTER TABLE ONLY users
     ADD CONSTRAINT "uniq username" UNIQUE (name);
 
 
