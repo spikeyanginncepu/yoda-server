@@ -1,0 +1,75 @@
+error模块，定义异常
+	NotLoggedIn
+	expired
+	noAuth
+	...
+
+handler模块，处理所有与前端通信
+	CommonRequestHandler: 提供post方法，调用NormalPost，用于处理请求
+		def post(*args,**kwargs):
+			return NormalPost(*args,**kwargs)
+	LoginHandler: 提供post方法，处理"login","whoami"
+	fileUploadHandler: 处理文件上传请求
+	class NormalPost():
+		def __call__(RequestHandler):
+		  try:
+		    RequestHandler.response={}
+			self._get_current_user
+			self._do_auth
+			self._process_request
+			self._post_response
+		  except:
+		    self._post_error
+	下列类均继承NormalPost
+	class changePassWordPost,changeConfigPost,userFileAuthChangePost,addUserPost,deleteUserPost,
+			mkdirPost,tarPost,renamePost,rmPost,cpPost,mvPost,taskEditPost,changeTaskStatusPost,genResultPost,rmTaskPost,
+			requestValidateStatusPost,setValidateStatusPost,requestUserListPost,requestFileListPost,requestTaskListPost,
+			requestModelListPost
+	
+auth模块，处理用户身份认证、登录相关内容
+	def auth(user,action,field):
+		raise Error
+
+db模块，处理与数据库相关内容，负责与数据库的通信
+	参见alpha-i/python3/utils/conndb
+
+class dataCache:
+	cache={name:{{contentFileds}} or None}
+	config=
+	def rmcache(path,filed)
+	def get(path,sortby,filters)
+	def updatecache
+	def __init__(contentFileds,*args,**kwargs)
+
+file模块，处理与用户数据相关内容，包括操作和查询
+	class userData(dataCache):
+		@override
+		def updatecache
+		@override
+		def __init__(contentFileds=["type","filesContain","size","dateModified","children","authRead","authWrite","usedByTask"],path=)
+
+task模块，处理与识别任务相关内容，包括任务启停与状态查询
+	class taskData(dataCache):
+		@override
+		def updatecache
+		@override
+		def __init__(contentFileds=["taskStatus","input","numLeft","numTotal","modelName","modelType","isOwner","canModify","canValidate"],db=)
+
+user模块
+	class userData(dataCache):
+		@override
+		def updatecache
+		@override
+		def __init__(contentFileds=["children","authAdmin","authFileReadAll","authTaskManageAll","hasUserFolder"],db=)
+
+model模块
+	class modelData(dataCache)
+		@override
+		def updatecache
+		@override
+		def __init__(contentFileds=["objectList"])
+
+杂项
+	loadConfig
+	redisListener
+	cacheupdater

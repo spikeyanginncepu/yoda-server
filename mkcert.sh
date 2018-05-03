@@ -27,3 +27,6 @@ openssl x509 -req -days 3650 -in $DOMAIN.csr -signkey $DOMAIN.key -out $DOMAIN.c
 
 cp $DOMAIN.crt auth.crt
 cp $DOMAIN.key auth.key
+
+head -c 32 /dev/urandom | base64 > password1.txt
+head -c 32 /dev/urandom | base64 > password2.txt
