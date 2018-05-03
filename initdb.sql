@@ -318,7 +318,7 @@ SELECT pg_catalog.setval('taskauth_id_seq', 1, false);
 --
 
 COPY "user" (uid, name, salt, passwd, authority) FROM stdin;
-1	admin	4HRZ0GN2BsxuA4WoxHmiVGpqq48=	iMPZ28q9Z8nxFnzbGYGUlqQPZr0A5NpuWcW3tPYuwz2NJ56CtuXyOXHsW67hlm78	7
+1	admin	4HRZ0GN2BsxuA4WoxHmiVGpqq48=	iMPZ28q9Z8nxFnzbGYGUlqQPZr0A6NpuWcW3tPYuwz2NJ56CtuXyOXHsW67hlm78	7
 \.
 
 
