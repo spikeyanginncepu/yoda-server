@@ -5,7 +5,7 @@
 -- Dumped from database version 9.5.8
 -- Dumped by pg_dump version 9.5.8
 
--- Started on 2018-05-03 14:43:41 CST
+-- Started on 2018-05-04 09:10:53 CST
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -49,7 +49,7 @@ CREATE TABLE dirauth (
     read integer,
     write integer,
     location text,
-    id integer NOT NULL
+    daid integer NOT NULL
 );
 
 
@@ -76,7 +76,7 @@ ALTER TABLE dirauth_id_seq OWNER TO yoda;
 -- Name: dirauth_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yoda
 --
 
-ALTER SEQUENCE dirauth_id_seq OWNED BY dirauth.id;
+ALTER SEQUENCE dirauth_id_seq OWNED BY dirauth.daid;
 
 
 --
@@ -99,7 +99,7 @@ ALTER TABLE model OWNER TO yoda;
 --
 
 CREATE TABLE task (
-    id integer NOT NULL,
+    taskid integer NOT NULL,
     name text,
     input text,
     modelname text,
@@ -130,7 +130,7 @@ ALTER TABLE task_id_seq OWNER TO yoda;
 -- Name: task_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yoda
 --
 
-ALTER SEQUENCE task_id_seq OWNED BY task.id;
+ALTER SEQUENCE task_id_seq OWNED BY task.taskid;
 
 
 --
@@ -139,7 +139,7 @@ ALTER SEQUENCE task_id_seq OWNED BY task.id;
 --
 
 CREATE TABLE taskauth (
-    id integer NOT NULL,
+    taid integer NOT NULL,
     userid integer,
     taskid integer,
     authority integer
@@ -169,7 +169,7 @@ ALTER TABLE taskauth_id_seq OWNER TO yoda;
 -- Name: taskauth_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yoda
 --
 
-ALTER SEQUENCE taskauth_id_seq OWNED BY taskauth.id;
+ALTER SEQUENCE taskauth_id_seq OWNED BY taskauth.taid;
 
 
 --
@@ -177,8 +177,8 @@ ALTER SEQUENCE taskauth_id_seq OWNED BY taskauth.id;
 -- Name: user; Type: TABLE; Schema: public; Owner: yoda
 --
 
-CREATE TABLE users (
-    uid integer NOT NULL,
+CREATE TABLE "user" (
+    userid integer NOT NULL,
     name text NOT NULL,
     salt text,
     passwd text,
@@ -186,7 +186,7 @@ CREATE TABLE users (
 );
 
 
-ALTER TABLE users OWNER TO yoda;
+ALTER TABLE "user" OWNER TO yoda;
 
 --
 -- TOC entry 182 (class 1259 OID 16556)
@@ -209,39 +209,39 @@ ALTER TABLE user_uid_seq OWNER TO yoda;
 -- Name: user_uid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: yoda
 --
 
-ALTER SEQUENCE user_uid_seq OWNED BY users.uid;
+ALTER SEQUENCE user_uid_seq OWNED BY "user".userid;
 
 
 --
 -- TOC entry 2054 (class 2604 OID 16592)
--- Name: id; Type: DEFAULT; Schema: public; Owner: yoda
+-- Name: daid; Type: DEFAULT; Schema: public; Owner: yoda
 --
 
-ALTER TABLE ONLY dirauth ALTER COLUMN id SET DEFAULT nextval('dirauth_id_seq'::regclass);
+ALTER TABLE ONLY dirauth ALTER COLUMN daid SET DEFAULT nextval('dirauth_id_seq'::regclass);
 
 
 --
 -- TOC entry 2055 (class 2604 OID 16605)
--- Name: id; Type: DEFAULT; Schema: public; Owner: yoda
+-- Name: taskid; Type: DEFAULT; Schema: public; Owner: yoda
 --
 
-ALTER TABLE ONLY task ALTER COLUMN id SET DEFAULT nextval('task_id_seq'::regclass);
+ALTER TABLE ONLY task ALTER COLUMN taskid SET DEFAULT nextval('task_id_seq'::regclass);
 
 
 --
 -- TOC entry 2056 (class 2604 OID 16627)
--- Name: id; Type: DEFAULT; Schema: public; Owner: yoda
+-- Name: taid; Type: DEFAULT; Schema: public; Owner: yoda
 --
 
-ALTER TABLE ONLY taskauth ALTER COLUMN id SET DEFAULT nextval('taskauth_id_seq'::regclass);
+ALTER TABLE ONLY taskauth ALTER COLUMN taid SET DEFAULT nextval('taskauth_id_seq'::regclass);
 
 
 --
 -- TOC entry 2053 (class 2604 OID 16561)
--- Name: uid; Type: DEFAULT; Schema: public; Owner: yoda
+-- Name: userid; Type: DEFAULT; Schema: public; Owner: yoda
 --
 
-ALTER TABLE ONLY users ALTER COLUMN uid SET DEFAULT nextval('user_uid_seq'::regclass);
+ALTER TABLE ONLY "user" ALTER COLUMN userid SET DEFAULT nextval('user_uid_seq'::regclass);
 
 
 --
@@ -250,7 +250,7 @@ ALTER TABLE ONLY users ALTER COLUMN uid SET DEFAULT nextval('user_uid_seq'::regc
 -- Data for Name: dirauth; Type: TABLE DATA; Schema: public; Owner: yoda
 --
 
-COPY dirauth (folder, userid, read, write, location, id) FROM stdin;
+COPY dirauth (folder, userid, read, write, location, daid) FROM stdin;
 \.
 
 
@@ -279,7 +279,7 @@ COPY model (modelname, pipe, deft) FROM stdin;
 -- Data for Name: task; Type: TABLE DATA; Schema: public; Owner: yoda
 --
 
-COPY task (id, name, input, modelname, defts) FROM stdin;
+COPY task (taskid, name, input, modelname, defts) FROM stdin;
 \.
 
 
@@ -298,7 +298,7 @@ SELECT pg_catalog.setval('task_id_seq', 1, false);
 -- Data for Name: taskauth; Type: TABLE DATA; Schema: public; Owner: yoda
 --
 
-COPY taskauth (id, userid, taskid, authority) FROM stdin;
+COPY taskauth (taid, userid, taskid, authority) FROM stdin;
 \.
 
 
@@ -317,7 +317,7 @@ SELECT pg_catalog.setval('taskauth_id_seq', 1, false);
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: yoda
 --
 
-COPY users (uid, name, salt, passwd, authority) FROM stdin;
+COPY "user" (userid, name, salt, passwd, authority) FROM stdin;
 1	admin	4HRZ0GN2BsxuA4WoxHmiVGpqq48=	iMPZ28q9Z8nxFnzbGYGUlqQPZr0A6NpuWcW3tPYuwz2NJ56CtuXyOXHsW67hlm78	7
 \.
 
@@ -345,8 +345,8 @@ ALTER TABLE ONLY dirauth
 -- Name: primary; Type: CONSTRAINT; Schema: public; Owner: yoda
 --
 
-ALTER TABLE ONLY users
-    ADD CONSTRAINT "primary" PRIMARY KEY (uid);
+ALTER TABLE ONLY "user"
+    ADD CONSTRAINT "primary" PRIMARY KEY (userid);
 
 
 --
@@ -364,7 +364,7 @@ ALTER TABLE ONLY model
 --
 
 ALTER TABLE ONLY dirauth
-    ADD CONSTRAINT "primary of dirauth" PRIMARY KEY (id);
+    ADD CONSTRAINT "primary of dirauth" PRIMARY KEY (daid);
 
 
 --
@@ -373,7 +373,7 @@ ALTER TABLE ONLY dirauth
 --
 
 ALTER TABLE ONLY task
-    ADD CONSTRAINT task_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT task_pkey PRIMARY KEY (taskid);
 
 
 --
@@ -382,7 +382,7 @@ ALTER TABLE ONLY task
 --
 
 ALTER TABLE ONLY taskauth
-    ADD CONSTRAINT taskauth_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT taskauth_pkey PRIMARY KEY (taid);
 
 
 --
@@ -399,13 +399,13 @@ ALTER TABLE ONLY taskauth
 -- Name: uniq username; Type: CONSTRAINT; Schema: public; Owner: yoda
 --
 
-ALTER TABLE ONLY users
+ALTER TABLE ONLY "user"
     ADD CONSTRAINT "uniq username" UNIQUE (name);
 
 
 --
 -- TOC entry 2202 (class 0 OID 0)
--- Dependencies: 6
+-- Dependencies: 7
 -- Name: public; Type: ACL; Schema: -; Owner: yoda
 --
 
@@ -415,7 +415,7 @@ GRANT ALL ON SCHEMA public TO yoda;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
--- Completed on 2018-05-03 14:43:41 CST
+-- Completed on 2018-05-04 09:10:53 CST
 
 --
 -- PostgreSQL database dump complete
