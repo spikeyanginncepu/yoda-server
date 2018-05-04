@@ -51,11 +51,13 @@ class AuthStaticFileHandler(BaseHandler,tornado.web.StaticFileHandler):
         return tornado.web.StaticFileHandler.get(self,*args,**kwargs)
 
 if __name__ == "__main__":
+    with open(os.path.join(curdir,'ssl/password1.txt')) as f:
+        cookie_secret=f.read().strip()
     tornado.options.parse_command_line() 
     signal.signal(signal.SIGINT, signal_handler)
     settings = {
         "template_path": os.path.join(os.path.dirname(__file__), "public"),
-        "cookie_secret": "%NMqg8Bo8^he#x@HVBqn&kVfNCBbiuZM2$LQYAQg9I",
+        "cookie_secret": cookie_secret,
         "xsrf_cookies": True,
         "login_url": "/p/login",
         "static_path":"public"
