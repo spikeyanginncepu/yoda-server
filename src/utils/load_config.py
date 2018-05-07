@@ -17,10 +17,13 @@ def load_config(path):
         cf=edict(yaml.load(f))
     if 'include' in cf:
         for ipath in cf['include']:
-            newpath=os.path.join(pdir,ipath)
-            if os.path.isfile(newpath):
+            newpath = os.path.join(pdir, ipath)
+            try:
+                assert os.path.isfile(newpath)
                 with open(newpath) as f:
                     update(cf,yaml.load(f))
+            except Exception:
+                print('failed to load config from {}'.format(newpath))
     return cf
 
 def write_config(path,config):
