@@ -36,6 +36,7 @@ class LoginHandler(BaseHandler):
 class LogoutHandler(BaseHandler):
     def get(self):
         self.clear_cookie("username")
+        self.clear_cookie("_xsrf")
         self.redirect("/")
 
 class DefaultRedirectHandler(BaseHandler):
