@@ -103,8 +103,9 @@ function trOnMouseOut(obj) {
 }
 
 /* 	parentClass: 父节点Class. 
-	headings: 表格标题，形式为["全选","状态","路径"]
-	content: 表格内容，HTML DOM的二维数组，形式为[[dom1,dom2,dom3],[dom4,dom5],[dom6,dom7,dom8]]
+	headings: 表格标题，形式为["全选","任务名称","开始结束"]，每一项对应一列。
+	objType: 表格列定义，形式为["checkbox","text","img"],可选值仅限于button\checkbox\text\img\colorboard.
+	keys: 每一列从json取值时所需的key，形式为["", "taskname","taskstatus"]
 	prefix: 相关元素class前缀。table的class为prefix+"table"，标题tr的class为prefix+"table"+"_trh"，内容tr的class为prefix+"table"+"_tr"，
 	td的class为prefix+"table"+"_td".
 */
@@ -112,7 +113,6 @@ class List {
 	constructor(parentClass, headings, objType, keys, prefix) {
 		this.parent = document.getElementsByClassName(parentClass)[0];
 		this.headings = headings;
-		this.content = [];
 		this.objType = objType;
 		this.keys = keys;
 		this.rowTemplate = this.objType2RowTemplate(objType);
@@ -126,7 +126,6 @@ class List {
 		this.parent.appendChild(this.table);
 		this.checkallColNum = null; 
 		this.setHeadings(headings);
-		// this.setContent(this.content);
 	}
 	//设置表格标题，使用方法如List.setHeadings(["全选","name","size","dateModified"])
 	setHeadings(headings) {
@@ -149,7 +148,6 @@ class List {
 				else {
 					boxObj.innerHTML = "<input type='checkbox'/>" + "<label>" + heading + "</label>";
 					boxObj.firstChild.addEventListener("mousedown",this.checkallClick.bind(this), false);
-					// boxObj.childNodes[1].addEventListener("mousedown",this.checkallClick.bind(this), false);
 					this.checkallColNum = i;
 				}
 				rowObj.appendChild(boxObj);
@@ -157,6 +155,7 @@ class List {
 			this.table.addFirstChild(rowObj);
 		}
 	}
+	//This is private.
 	checkallClick() {
 		if (this.checkallColNum != null) {
 			let checkboxes = this.getColObjs(this.checkallColNum);
@@ -183,6 +182,7 @@ class List {
 		this.rowTemplate = rowTemplate;
 		this.objType = this.rowTemplate2ObjType(rowTemplate);
 	}
+	//This is private
 	objType2RowTemplate(objType) {
 		let rowTemplate = [];
 		for(let i = 0; i< objType.length; i++) {
@@ -211,6 +211,7 @@ class List {
 		}
 		return rowTemplate;
 	}
+	//This is private
 	rowTemplate2ObjType(rowTemplate) {
 		let objType = [];
 		rowTemplate.forEach(function(value, index, array){  //当前仅支持以下5类
@@ -261,7 +262,7 @@ class List {
 		}
 		return rowObj;
 	}
-	//Given the json from backend, fill out the table.
+	//后端json字符串转化为json对象后直接传入
 	addRowsByJson(jsonData) {
 		let rowsData = [];
 		for(let j = 0; j < jsonData.data.length; j++){
@@ -279,6 +280,7 @@ class List {
 		}
 		this.addRows(rowsData);
 	}
+	//添加行，rowData为json处理后的数据，形式如["","春季巡检","../images/start.jpg"]
 	addRow(rowData) {
 		if (this.rowTemplate != null) {
 			if (rowData.length != this.rowTemplate.length) {
@@ -295,6 +297,7 @@ class List {
 			throw "You should add row template by using List.setRowTemplate() before adding rows."
 		}
 	}
+	//添加多行
 	addRows(rowsData) {
 		if (this.rowTemplate != null) {
 			let rowData = rowsData[0];
@@ -388,6 +391,7 @@ class List {
 	hide() {
 		this.table.style.display = "none";
 	}
+	// Hide a row
 	hideRow(rowNum) {
 		if(this.table.hasChildNodes) {
 			if(rowNum < this.table.childNodes.length) {
@@ -415,6 +419,7 @@ class List {
 	getHiddenRows() {
 		return this.hiddenRows;
 	}
+	// get all hidden rows number.
 	getHiddenRowNums() {
 		let rowNums = [];
 		this.hiddenRows.forEach(function(value, index, array) {
@@ -425,6 +430,7 @@ class List {
 		});
 		return rowNums;
 	}
+	// unhide a row
 	unhideRow(rowNum) {
 		if(this.table.hasChildNodes) {
 			if(rowNum < this.table.childNodes.length) {
@@ -439,6 +445,7 @@ class List {
 	setTableClass(newClass) {
 		this.table.setAttribute("class", newClass);
 	}
+	//set class for <tr> except the heading <tr>
 	setCntRowClass(newClass) {
 		if(this.table.hasChildNodes) {
 			if(this.table.firstChild.className == this.trhClass) {
@@ -457,6 +464,7 @@ class List {
 			}
 		}
 	}
+	//set class for heading <tr>
 	setHeadRowClass(newClass) {
 		if(this.table.hasChildNodes) {
 			if(this.table.firstChild.className == this.trhClass) {
@@ -465,6 +473,7 @@ class List {
 			}
 		}
 	}
+	//set class for all <td> in a column
 	setColClass(colNum, newClass) {
 		if(this.table.hasChildNodes) {
 			let tableWidth = this.table.childNodes[0].childNodes.length;
@@ -476,6 +485,7 @@ class List {
 			}
 		}
 	}
+	//get the HTML DOMs inside all <td> of this row
 	getRowObjs(rowNum) {
 		let rowObjs = [];
 		if (rowNum < this.table.childNodes.length) {
@@ -490,6 +500,7 @@ class List {
 		}
 		return rowObjs;
 	}
+	//get multiple rows' DOMs
 	getRowsObjs(rowNums) {
 		let rowsObjs = [];
 		for(let i = 0; i < rowNums.length; i++) {
@@ -497,6 +508,7 @@ class List {
 		}
 		return rowsObjs;
 	}
+	//get items inside all <td> of this column
 	getColObjs(colNum) {
 		if(this.table.hasChildNodes) {
 			let tableWidth = this.table.childNodes[0].childNodes.length;
@@ -513,10 +525,12 @@ class List {
 			return colObjs;
 		}
 	}
+	//get the item inside a certain <td>
 	getOneBox(rowNum, colNum) {
 		let box = this.table.rows[rowNum].cells[colNum];
 		return box.childNodes;
 	}
+	// table's html
 	getHtml() {
 		return this.table.outerHTML;
 	}
