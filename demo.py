@@ -49,6 +49,9 @@ class AuthStaticFileHandler(BaseHandler,tornado.web.StaticFileHandler):
     @tornado.web.authenticated
     def get(self,*args,**kwargs):
         return tornado.web.StaticFileHandler.get(self,*args,**kwargs)
+    @tornado.web.authenticated
+    def post(self,*args,**kwargs):
+        return tornado.web.StaticFileHandler.get(self,*args,**kwargs)
 
 if __name__ == "__main__":
     with open(os.path.join(curdir,'ssl/password1.txt')) as f:
