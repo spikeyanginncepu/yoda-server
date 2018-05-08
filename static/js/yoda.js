@@ -604,7 +604,10 @@ function adduser_do(obj){
 	let passwd_2=$("input[name='passwd_2']").val();
 	if(username==""){
 		alert("用户名不能为空");
-	}
+    }
+    else if(passwd_1==""){
+        alert("密码不能为空");
+    }
 	else if(CHK_repeatename_flag==false){
 		alert("用户名已存在");
 	}
@@ -635,7 +638,7 @@ function adduser_do(obj){
 let CHK_repeatename_flag=true;
 function CHK_repeatename(){
 	let username=$("input[name='username']").val();
-	$.ajax({type:"get",url:"testjons/test.json",dataType:"json",data:{},success:function(obj){
+	$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-ulist.txt",dataType:"json",data:{},success:function(obj){
 		if (obj.status == "ok") { 
 			for (var i = 0; i < obj.data.length; i++) { 
 				if(obj.data[i].username==username) {
@@ -782,7 +785,7 @@ function edituser(obj){
             var objType=["text","checkbox","checkbox"];
             var keys=["fileName","",""];
             var prefix="UE_permission";
-            $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-1.txt",data:{},dataType:"json",type: "post",success:function(obj){
+            $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-edit.txt",data:{},dataType:"json",type: "post",success:function(obj){
                     if (obj.status == "ok") { 
                         var filelist=new List(parentClass,heading_par,objType,keys,prefix);
                         filelist.addRowsByJson(obj);
