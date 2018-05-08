@@ -212,6 +212,15 @@ a{
     text-align: center;
     table-layout:fixed;
 }
+.UM_userlisttable_trh{
+    height:60px;
+}
+.UM_userlisttable_tr{
+    height:60px;
+}
+.UM_userlisttable_tr:hover{
+    background: hsl(172, 36%, 84%);
+}
 .UM_ulistrow{
     height:60px;
 }
@@ -329,6 +338,9 @@ a{
     font-family: MicrosoftYahei;
     font-size: 100%;
     border-collapse: collapse; 
+}
+.UE_permissiontable_trh{
+    height:60px; 
 }
 .UE_permissiontable_tr{
     height:60px; 

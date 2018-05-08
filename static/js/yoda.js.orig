@@ -116,9 +116,8 @@ function trOnMouseOut(obj) {
 }
 
 /* 	parentClass: 父节点Class. 
-	headings: 表格标题，形式为["全选","任务名称","开始结束"]，每一项对应一列。
-	objType: 表格列定义，形式为["checkbox","text","img"],可选值仅限于button\checkbox\text\img\colorboard.
-	keys: 每一列从json取值时所需的key，形式为["", "taskname","taskstatus"]
+	headings: 表格标题，形式为["全选","状态","路径"]
+	content: 表格内容，HTML DOM的二维数组，形式为[[dom1,dom2,dom3],[dom4,dom5],[dom6,dom7,dom8]]
 	prefix: 相关元素class前缀。table的class为prefix+"table"，标题tr的class为prefix+"table"+"_trh"，内容tr的class为prefix+"table"+"_tr"，
 	td的class为prefix+"table"+"_td".
 */
@@ -126,6 +125,7 @@ class List {
 	constructor(parentClass, headings, objType, keys, prefix) {
 		this.parent = document.getElementsByClassName(parentClass)[0];
 		this.headings = headings;
+		this.content = [];
 		this.objType = objType;
 		this.keys = keys;
 		this.rowTemplate = this.objType2RowTemplate(objType);
@@ -139,6 +139,7 @@ class List {
 		this.parent.appendChild(this.table);
 		this.checkallColNum = null; 
 		this.setHeadings(headings);
+		// this.setContent(this.content);
 	}
 	//设置表格标题，使用方法如List.setHeadings(["全选","name","size","dateModified"])
 	setHeadings(headings) {
@@ -161,6 +162,7 @@ class List {
 				else {
 					boxObj.innerHTML = "<input type='checkbox'/>" + "<label>" + heading + "</label>";
 					boxObj.firstChild.addEventListener("mousedown",this.checkallClick.bind(this), false);
+					// boxObj.childNodes[1].addEventListener("mousedown",this.checkallClick.bind(this), false);
 					this.checkallColNum = i;
 				}
 				rowObj.appendChild(boxObj);
@@ -168,7 +170,6 @@ class List {
 			this.table.addFirstChild(rowObj);
 		}
 	}
-	//This is private.
 	checkallClick() {
 		if (this.checkallColNum != null) {
 			let checkboxes = this.getColObjs(this.checkallColNum);
@@ -195,7 +196,6 @@ class List {
 		this.rowTemplate = rowTemplate;
 		this.objType = this.rowTemplate2ObjType(rowTemplate);
 	}
-	//This is private
 	objType2RowTemplate(objType) {
 		let rowTemplate = [];
 		for(let i = 0; i< objType.length; i++) {
@@ -224,7 +224,6 @@ class List {
 		}
 		return rowTemplate;
 	}
-	//This is private
 	rowTemplate2ObjType(rowTemplate) {
 		let objType = [];
 		rowTemplate.forEach(function(value, index, array){  //当前仅支持以下5类
@@ -259,7 +258,7 @@ class List {
 				tdChild.innerHTML = rowData[i];
 			}
 			else if (objType[i] == "checkbox") {
-                tdChild.checked = rowData[i];
+				tdChild.checked = rowData[i];
 			}
 			else if (objType[i] == "text") {
 				tdChild.innerHTML = rowData[i];
@@ -275,7 +274,7 @@ class List {
 		}
 		return rowObj;
 	}
-	//后端json字符串转化为json对象后直接传入
+	//Given the json from backend, fill out the table.
 	addRowsByJson(jsonData) {
 		let rowsData = [];
 		for(let j = 0; j < jsonData.data.length; j++){
@@ -286,14 +285,13 @@ class List {
 					rowData.push("");
 				}
 				else{
-                    rowData.push(value[this.keys[i]]);
+					rowData.push(value[this.keys[i]]);
 				}
 			}
 			rowsData.push(rowData);
 		}
 		this.addRows(rowsData);
 	}
-	//添加行，rowData为json处理后的数据，形式如["","春季巡检","../images/start.jpg"]
 	addRow(rowData) {
 		if (this.rowTemplate != null) {
 			if (rowData.length != this.rowTemplate.length) {
@@ -310,7 +308,6 @@ class List {
 			throw "You should add row template by using List.setRowTemplate() before adding rows."
 		}
 	}
-	//添加多行
 	addRows(rowsData) {
 		if (this.rowTemplate != null) {
 			let rowData = rowsData[0];
@@ -404,7 +401,6 @@ class List {
 	hide() {
 		this.table.style.display = "none";
 	}
-	// Hide a row
 	hideRow(rowNum) {
 		if(this.table.hasChildNodes) {
 			if(rowNum < this.table.childNodes.length) {
@@ -432,7 +428,6 @@ class List {
 	getHiddenRows() {
 		return this.hiddenRows;
 	}
-	// get all hidden rows number.
 	getHiddenRowNums() {
 		let rowNums = [];
 		this.hiddenRows.forEach(function(value, index, array) {
@@ -443,7 +438,6 @@ class List {
 		});
 		return rowNums;
 	}
-	// unhide a row
 	unhideRow(rowNum) {
 		if(this.table.hasChildNodes) {
 			if(rowNum < this.table.childNodes.length) {
@@ -458,7 +452,6 @@ class List {
 	setTableClass(newClass) {
 		this.table.setAttribute("class", newClass);
 	}
-	//set class for <tr> except the heading <tr>
 	setCntRowClass(newClass) {
 		if(this.table.hasChildNodes) {
 			if(this.table.firstChild.className == this.trhClass) {
@@ -477,7 +470,6 @@ class List {
 			}
 		}
 	}
-	//set class for heading <tr>
 	setHeadRowClass(newClass) {
 		if(this.table.hasChildNodes) {
 			if(this.table.firstChild.className == this.trhClass) {
@@ -486,7 +478,6 @@ class List {
 			}
 		}
 	}
-	//set class for all <td> in a column
 	setColClass(colNum, newClass) {
 		if(this.table.hasChildNodes) {
 			let tableWidth = this.table.childNodes[0].childNodes.length;
@@ -498,7 +489,6 @@ class List {
 			}
 		}
 	}
-	//get the HTML DOMs inside all <td> of this row
 	getRowObjs(rowNum) {
 		let rowObjs = [];
 		if (rowNum < this.table.childNodes.length) {
@@ -513,7 +503,6 @@ class List {
 		}
 		return rowObjs;
 	}
-	//get multiple rows' DOMs
 	getRowsObjs(rowNums) {
 		let rowsObjs = [];
 		for(let i = 0; i < rowNums.length; i++) {
@@ -521,7 +510,6 @@ class List {
 		}
 		return rowsObjs;
 	}
-	//get items inside all <td> of this column
 	getColObjs(colNum) {
 		if(this.table.hasChildNodes) {
 			let tableWidth = this.table.childNodes[0].childNodes.length;
@@ -538,54 +526,39 @@ class List {
 			return colObjs;
 		}
 	}
-	//get the item inside a certain <td>
 	getOneBox(rowNum, colNum) {
 		let box = this.table.rows[rowNum].cells[colNum];
 		return box.childNodes;
 	}
-	// table's html
 	getHtml() {
 		return this.table.outerHTML;
 	}
 }
 /* 	parentClass: 父节点Class. 
-	headings: 表格标题，形式为["全选","任务名称","开始结束"]，每一项对应一列。
-	objType: 表格列定义，形式为["checkbox","text","img"],可选值仅限于button\checkbox\text\img\colorboard.
-	keys: 每一列从json取值时所需的key，形式为["", "taskname","taskstatus"]
+	headings: 表格标题，形式为["全选","状态","路径"]
+	content: 表格内容，HTML DOM的二维数组，形式为[[dom1,dom2,dom3],[dom4,dom5],[dom6,dom7,dom8]]
 	prefix: 相关元素class前缀。table的class为prefix+"table"，标题tr的class为prefix+"table"+"_trh"，内容tr的class为prefix+"table"+"_tr"，
 	td的class为prefix+"table"+"_td".
 */
 /*UM-gao */
 /*todo: 请求用户列表：请求后台返回list,创建table，返回html*/
 function request_userlist(){
-    $.ajax({url:"html/用户管理-管理员权限.html",data:{},dataType:"text",success:function(response){
-        element('content').innerHTML = response;
-        var parentClass="UM_userList";
-        var heading_par=["全选","用户名","修改密码","管理员权限","所有文件读写权限","任务管理权限","创建个人目录"];
-        var objType=["checkbox","text","button","checkbox","checkbox","checkbox","checkbox"];
-        var keys=["","username","","authAdmin","authFileReadAll","authTaskManageAll","hasUserFolder"];
-        var prefix="UM_userlist";
-	    $.ajax({url:"testjons/test-ulist.txt",dataType:"json",data:{},success:function(obj){
-		    if (obj.status == "ok") { 
-                var userlist=new List(parentClass,heading_par,objType,keys,prefix);
-                userlist.addRowsByJson(obj);
-               /// for (var i = 0; i < obj.data.length; i++) { }; 
-               $("."+prefix+"table_td button").each(function(){
-                   $(this).attr("class","UM_ulistbtn");
-                   $(this).click(function(){ changepasswd($(this))});
-                   $(this).html("修改密码");
-               });
-               $("."+prefix+"table_tr").each(function(){
-                $(this).children("td:eq(0)").children("input").attr("class","chkBox_0");
-                $(this).children("td:eq(3)").children("input").attr("disabled",true);
-                $(this).children("td:eq(4)").children("input").attr("disabled",true);
-                $(this).children("td:eq(5)").children("input").attr("disabled",true);
-                $(this).children("td:eq(6)").children("input").attr("disabled",true);
-                });
-		    }else{ 
-			    alert("返回失败"+obj.status); 
-		    };  
-	     }})
+	/*1.ajax request for the userlist and create userlist*/
+    /*let usertable=new */
+    var heading_par=["用户名","修改密码","Manager","All R/W","Task Manager","Create Dir"];
+	$.ajax({url:"testjons/test.json",dataType:"json",data:{},success:function(obj){
+		if (obj.status == "ok") { 
+			for (var i = 0; i < obj.data.length; i++) { 
+				var userlist=new List("UM_userList",["全选",heading_par[0],heading_par[1],heading_par[2],heading_par[3],heading_par[4],heading_par[5],heading_par[6]],);
+			}; 
+		}else{ 
+			alert("返回失败"+obj.status); 
+		};  
+	}})
+	/*页面跳转*/
+	$.ajax({url:"html/用户管理-管理员权限.html",data:{},function(response){
+		/*element('content').innerHTML = response;
+	    element('table').innerHTML=usertable;*/
 	}})
 }
 //类似于上
@@ -618,16 +591,14 @@ function adduser_do(obj){
 		flags[index]=$(this).is(":checked");
 		index++;
 		});
-		var content= {"action": "addUser",
+		var submit_data={
+		"Cookie":"username=$secret_username",
+		"content": {"action": "addUser",
 			          "data": {"username":username,"password":passwd_1,"authAdmin":flags[0],"authFileReadAll":flags[1],"authTaskManageAll":flags[2],"hasUserFolder":flags[3]}
-				 	 }
-		$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-add.txt",dataType:"json",data:content,success:function(obj){
-            if(obj.status=="ok"){
-                alert("添加用户成功："+content.action+content.data.username+content.data.password+content.data.authAdmin);
-                request_userlist();
-            }else{
-                alert(obj.status);
-            }
+					}
+		}
+		$.ajax({type:"get",url:"testjons/test.json",dataType:"json",data:submit_data,success:function(){
+			alert(submit_data.content.action+submit_data.content.data.username+submit_data.content.data.password+submit_data.content.data.authAdmin);
 		}});
 	}
 }
@@ -679,35 +650,30 @@ function changepasswd(obj){
 }
 /*todaytodo:实际修改用户*/
 function changepasswd_do(obj){
-	let username=$("#change_user").text();
+	let username=$("#change_user").html();
 	let passwd_1=$("input[name='passwd_1']").val();
-    let passwd_2=$("input[name='passwd_2']").val();
-    if(passwd_1==""){
-        alert("密码不能为空");
-    }
-	else if(passwd_1!=passwd_2){
+	let passwd_2=$("input[name='passwd_2']").val();
+	if(passwd_1!=passwd_2){
 		alert("两次输入的密码不一致");
 	}else{
 		var content={
 			"action": "changePassWord",
 			"data": {"username":username, "oldPassword":"", "newPassword":passwd_1}
 		}
-		$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-changepwd.txt",dataType:"json",data:content,success:function(obj){
-            if(obj.status=="ok"){
-                alert("修改用户"+obj.username+"密码成功。新密码："+passwd_1);
-            }else{
-                alert(obj.status);
-            }
-		}});
-    }
+		alert(username+passwd_1);
+		/*$.ajax({type:"get",url:"",dataType:"json",data:submit_data,success:function(){
+			
+		}*/
+	
+	}
 }
 /*tocomplete:删除用户*/
 function deleteuser(obj){
-	var selectuserTodel=[];
-    let num=0;
+	var selectuserTodel=new Array();
+	let num=0;
 	$(".chkBox_0").each(function() {
 		if($(this).is(":checked")){
-			selectuserTodel[num]=$(this).parent().next().text();
+			selectuserTodel[num]=$(this).parent().next().html();
 			num++;
 		}
 	});
@@ -721,20 +687,9 @@ function deleteuser(obj){
 	else{
 		var isconfirm=confirm("是否确认删除用户"+selectuserTodel+"的所有信息，该操作将不可恢复！");
 	    if(isconfirm){
-           var content={"action": "deleteUser","data": {"username":selectuserTodel,"delUserFolder":"true"}};
-           $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-del.txt",data:{},dataType:"json",success:function(obj){
-               if(obj.status=="ok"){
-                $(".chkBox_0").each(function() {
-                    if($(this).is(":checked")){
-                        $(this).parent().parent().remove(); /*to complete 跳转到用户列表*/
-                    }
-                });
-                alert(selectuserTodel+"用户已删除！");
-               }
-               else{
-                alert(obj.status);
-               }  
-           }});
+		/*to complete 发送ajax到后台，删除数据 response*/
+		   alert(selectuserTodel+"用户已删除！")
+		   /*to complete 跳转到用户列表*/
 	    }
 	}	
 }
@@ -763,8 +718,8 @@ function edituser(obj){
 	let num=0;
 	$(".chkBox_0").each(function() {
 		if($(this).is(":checked")){
-			selectuserToedit[num]=$(this).parent().next().text();
-			selectuserToedit_copy[num]=$(this).parent().next().text();
+			selectuserToedit[num]=$(this).parent().next().html();
+			selectuserToedit_copy[num]=$(this).parent().next().html();
 			num++;
 		}
 	});
@@ -775,30 +730,9 @@ function edituser(obj){
 		let url='html/userEdit-console.html';
 		/*下面三种方法均可实现 */
 		$.ajax({url: url, data: {}, dataType: "text", type: "GET", success: function(response) {
+			alert("ajax");
 			element('content').innerHTML = response;
-            element('edit_users').innerHTML='修改用户'+selectuserToedit+'的权限:';
-            var parentClass="UE_fileList";
-            var heading_par=["文件列表","读权限","写权限"];
-            var objType=["text","checkbox","checkbox"];
-            var keys=["fileName","",""];
-            var prefix="UE_permission";
-            $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-1.txt",data:{},dataType:"json",type: "post",success:function(obj){
-                    if (obj.status == "ok") { 
-                        var filelist=new List(parentClass,heading_par,objType,keys,prefix);
-                        filelist.addRowsByJson(obj);
-                       /*$("."+prefix+"table_td button").each(function(){
-                           $(this).attr("class","UM_ulistbtn");
-                           $(this).click(function(){ changepasswd($(this))});
-                           $(this).html("修改密码");
-                       });
-                       $("."+prefix+"table_tr").each(function(){
-                        $(this).children("td:eq(0)").children("input").attr("class","chkBox_0");
-                        });*/
-                    }else{ 
-                        alert("返回失败"+obj.status); 
-                    };  
-                }
-            });
+			element('edit_users').innerHTML='修改用户'+selectuserToedit+'的权限:';
 		}});
 		/*$.getJSON(url, {}, setContent_EditPvl);*/
 		/*$.getJSON(url,{},function(response) {
@@ -828,4 +762,5 @@ function  init(){
 	car1= createCar("red", 4, 23);
 } 
 function createuser(){
+ 
 }
