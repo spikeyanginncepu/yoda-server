@@ -41,7 +41,7 @@ function setContent_EditPvl(response) {
 function navigate(obj) {
 	subject = obj.text();
 	let url = 'html/' + subject + '.html';
-	$.postJSON(url, {}, setNav);
+	$.getJSON(url, {}, setNav);
 	//$.getJSON(url, {}, setNav);
 	/*$.getJSON("testjons/test.json",function(){alert("fdf")});*/
 }
@@ -49,7 +49,7 @@ function navigate(obj) {
 function leftNav(obj) {
 	item = $("td.dMcol1").first().text();
 	let url = 'html/' + subject + '-' + item + '.html';
-	$.postJSON(url, {}, setContent);
+	$.getJSON(url, {}, setContent);
 }
 
 function element(id) {
