@@ -1,7 +1,7 @@
 from dataCache import dataCache
 import auth
 
-columnlist=['userid','name','salt','password','auth']
+columnlist=['userid','username','salt','password','authority']
 columnstr=columnlist[0]
 for field in columnlist[1:]:
     columnstr=columnstr+','+field
@@ -19,12 +19,12 @@ class userCache(dataCache):
         curr=self.db.cursor()
         cc=dict()
         if path=='/':
-            curr.execute('select name from users')
+            curr.execute('select username from users')
             cc['children']=[result[0] for result in curr.fetchall()]
         else:
             assert path.startswith('/')
             username=path[1:]
-            curr.execute('select {} from users where name=%s'.format(columnstr),(username,))
+            curr.execute('select {} from users where username=%s'.format(columnstr),(username,))
             line=curr.fetchone()
             if line is None:
                 cc='notExist'
@@ -41,9 +41,9 @@ class userCache(dataCache):
         result['status']='ok'
         result['username']=currentUser
         cache=self.get('/'+currentUser)
-        result['auth']=dict()
+        result['authority']=dict()
         for authtype, authvalue in self.authcodes:
-            result['auth'][authtype]=cache[authtype]
+            result['authority'][authtype]=cache[authtype]
         result['config']=dict()
         result['config']['color']=cache['color']
         result['config']['font']=cache['font']
