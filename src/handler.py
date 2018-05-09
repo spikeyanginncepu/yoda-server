@@ -7,7 +7,7 @@ import tornado.gen
 from tornado.concurrent import run_on_executor
 from concurrent.futures import ThreadPoolExecutor   # `pip install futures` for python2
 import json
-from errors import returnError
+from error import returnError
 import sys
 MAX_WORKERS = 20
 backgroundActions= {'deleteUser', 'userFileAuthChange','tar','cp','changeTaskStatus','genResult','rmTask'}
