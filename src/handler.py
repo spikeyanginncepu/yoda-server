@@ -8,14 +8,16 @@ from tornado.concurrent import run_on_executor
 from concurrent.futures import ThreadPoolExecutor   # `pip install futures` for python2
 import json
 from error import *
-
+import sys
 MAX_WORKERS = 20
 backgroundActions= {'deleteUser', 'userFileAuthChange','tar','cp','changeTaskStatus','genResult','rmTask'}
 
 class BaseHandler(tornado.web.RequestHandler):
     executor = ThreadPoolExecutor(max_workers=MAX_WORKERS)
     def get_current_user(self):
-        username=self.get_secure_cookie("username").encode('utf-8')
+        username=self.get_secure_cookie("username")
+        if sys.version[0]=='3':
+            username=username.decode('utf-8')
         if not username:
             return None
         assert self.userCache is not None
