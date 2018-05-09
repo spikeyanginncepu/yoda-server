@@ -22,7 +22,7 @@ class userCache(dataCache):
             curr.execute('select name from users')
             cc['children']=[result[0] for result in curr.fetchall()]
         else:
-            assert path.startwith('/')
+            assert path.startswith('/')
             username=path[1:]
             curr.execute('select {} from users where name=%s'.format(columnstr),(username,))
             line=curr.fetchone()
