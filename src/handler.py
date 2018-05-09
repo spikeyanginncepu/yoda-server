@@ -20,7 +20,8 @@ class BaseHandler(tornado.web.RequestHandler):
         if type(self.userCache.get(username)) != str:
             return username
 
-    def __init__(self,application,request,authCache,taskCache, modelCache, fileCache,userCache,config,**kwargs):
+    def __init__(self,application,request,authCache=None,taskCache=None, modelCache=None,
+                 fileCache=None,userCache=None,config=None,**kwargs):
         self.authCache=authCache
         self.taskCache=taskCache
         self.modelCache=modelCache
