@@ -16,7 +16,7 @@ from utils.load_config import load_config,update_config
 import tornado.ioloop
 import tornado.web
 import tornado.httpserver
-
+from copy import copy
 is_closing = False
 
 
@@ -81,14 +81,20 @@ def server(argv):
                  'fileCache': cfile,
                  'config': config.tornado
                  }
+    DSettings=copy(RSettings)
+    DSettings['path']=os.path.join(curdir, 'data')
+    SSettings=copy(RSettings)
+    SSettings['path']=os.path.join(curdir, 'static')
+    PSettings = copy(RSettings)
+    PSettings['path'] = os.path.join(curdir, 'public')
 
     application = tornado.web.Application([
         (r'/p/login', handler.LoginHandler, RSettings),
         (r'/logout', handler.LogoutHandler),
         (r'(/request|/auth)$', handler.CommonRequestHandler, RSettings),
-        (r'/data/(.*?)$', handler.AuthStaticFileHandler, {'path': os.path.join(curdir, 'data')}),
-        (r'/site/(.*?)$', handler.AuthStaticFileHandler, {'path': os.path.join(curdir, 'static')}),
-        (r'/p/(.*?)$', tornado.web.StaticFileHandler, {'path': os.path.join(curdir, 'public')}),
+        (r'/data/(.*?)$', handler.AuthStaticFileHandler, DSettings),
+        (r'/site/(.*?)$', handler.AuthStaticFileHandler, SSettings),
+        (r'/p/(.*?)$', tornado.web.StaticFileHandler, PSettings),
         (r'/(.*?)$', handler.DefaultRedirectHandler),
     ], **settings)
 
