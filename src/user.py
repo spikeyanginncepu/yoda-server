@@ -31,7 +31,7 @@ class userCache(dataCache):
             else:
                 for idx,content in enumerate(line):
                     cc[columnlist[idx]]=content
-                for authtype,authvalue in self.authcodes:
+                for authtype,authvalue in self.authcodes.items():
                     cc[authtype]=bool(cc['authority'] & authvalue)
         self.cache[path]=cc
         curr.close()
@@ -42,7 +42,7 @@ class userCache(dataCache):
         result['username']=currentUser
         cache=self.get('/'+currentUser)
         result['authority']=dict()
-        for authtype, authvalue in self.authcodes:
+        for authtype, authvalue in self.authcodes.items():
             result['authority'][authtype]=cache[authtype]
         result['config']=dict()
         result['config']['color']=cache['color']
