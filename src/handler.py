@@ -7,7 +7,7 @@ import tornado.gen
 from tornado.concurrent import run_on_executor
 from concurrent.futures import ThreadPoolExecutor   # `pip install futures` for python2
 import json
-from src.error import returnError
+from errors import returnError
 import sys
 MAX_WORKERS = 20
 backgroundActions= {'deleteUser', 'userFileAuthChange','tar','cp','changeTaskStatus','genResult','rmTask'}
@@ -79,7 +79,7 @@ class AuthStaticFileHandler(BaseHandler,tornado.web.StaticFileHandler):
         return tornado.web.StaticFileHandler.get(self,*args,**kwargs)
 
 class CommonRequestHandler(BaseHandler):
-    @returnError()
+    @returnError
     def getResult(self):
         cur_user = self.current_user()
         if self.action=='login':
