@@ -63,7 +63,7 @@ class userCache(dataCache):
             user = self.get('/' + name)
             userAuth=(user['authority'] | maskOr) & maskAnd
             cursor.execute("""update users set authority = %s where userid = %s""",(user['userid'],userAuth))
-            self.rmCache('/'+name)
+            self.update('/'+name)
         cursor.close()
         result={'status':'ok'}
         return result
@@ -94,6 +94,7 @@ class userCache(dataCache):
         cursor.execute('insert into users (username,password,salt,authority,font,color) values (%s,%s,%s,%s,%s,%s)',
                        (username,pwd,salt,authcode,font,color))
         cursor.close()
+        self.rmCache('/'+username)
         result = {'status': 'ok'}
         return result
 
