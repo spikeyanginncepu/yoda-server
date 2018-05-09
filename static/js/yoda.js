@@ -41,15 +41,15 @@ function setContent_EditPvl(response) {
 function navigate(obj) {
 	subject = obj.text();
 	let url = 'html/' + subject + '.html';
-	$.postJSON(url, {}, setNav);
-	//$.getJSON(url, {}, setNav);
+	//$.postJSON(url, {}, setNav);
+	$.getJSON(url, {}, setNav);
 	/*$.getJSON("testjons/test.json",function(){alert("fdf")});*/
 }
 
 function leftNav(obj) {
 	item = $("td.dMcol1").first().text();
 	let url = 'html/' + subject + '-' + item + '.html';
-	$.postJSON(url, {}, setContent);
+	$.getJSON(url, {}, setContent);
 }
 
 function element(id) {
@@ -639,9 +639,7 @@ function adduser_do(obj){
 		var content= {"action": "addUser",
 			          "data": {"username":username,"password":passwd_1,"authAdmin":flags[0],"authFileReadAll":flags[1],"authTaskManageAll":flags[2],"hasUserFolder":flags[3]}
                       };
-        var content1=JSON.stringify(content);
-        alert(content1);
-		$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"/request",dataType:"json",data:content,success:function(obj){
+		$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"/request",dataType:"json",data:JSON.stringify(content),success:function(obj){
             if(obj.status=="ok"){
                 alert("添加用户成功："+content.action+content.data.username+content.data.password+content.data.authAdmin);
                 request_userlist();
@@ -712,7 +710,7 @@ function changepasswd_do(obj){
 			"action": "changePassWord",
 			"data": {"username":username, "oldPassword":"", "newPassword":passwd_1}
 		}
-		$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-changepwd.txt",dataType:"json",data:content,success:function(obj){
+		$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-changepwd.txt",dataType:"json",data:JSON.stringify(content),success:function(obj){
             if(obj.status=="ok"){
                 alert("修改用户"+obj.username+"密码成功。新密码："+passwd_1);
             }else{
@@ -730,7 +728,7 @@ function user_setting(){
         alert("两次输入的密码不一致");
     }else{
       var content={"action": "changePassWord","data": {"username": username, "oldPassword":oldpasswd, "newPassword":passwd_1}};
-      $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-changepwd.txt",data:content,dataType:"json",success:function(obj){
+      $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-changepwd.txt",data:JSON.stringify(content),dataType:"json",success:function(obj){
           if(obj.status=="ok"){
             alert("修改用户"+username+"密码成功。新密码："+passwd_1);
          }else{
@@ -760,7 +758,7 @@ function deleteuser(obj){
 		var isconfirm=confirm("是否确认删除用户"+selectuserTodel+"的所有信息，该操作将不可恢复！");
 	    if(isconfirm){
            var content={"action": "deleteUser","data": {"username":selectuserTodel,"delUserFolder":"true"}};
-           $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-del.txt",data:{},dataType:"json",success:function(obj){
+           $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-del.txt",data:JSON.stringify(content),dataType:"json",success:function(obj){
                if(obj.status=="ok"){
                 $(".chkBox_0").each(function() {
                     if($(this).is(":checked")){
@@ -831,7 +829,7 @@ function edituser(obj){
                       "limits":[1,-1]
                     }
             };
-            $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-flist.txt",data:content_1,dataType:"json",type: "post",success:function(obj){
+            $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-flist.txt",data:JSON.stringify(content_1),dataType:"json",type: "post",success:function(obj){
                 var parentClass="UE_fileList";
                 var heading_par=["文件列表","读权限","写权限"];
                 var objType=["text","checkbox","checkbox"];
