@@ -83,7 +83,7 @@ def server(argv):
                  }
 
     application = tornado.web.Application([
-        (r'/p/login', handler.LoginHandler),
+        (r'/p/login', handler.LoginHandler, RSettings),
         (r'/logout', handler.LogoutHandler),
         (r'(/request|/auth)$', handler.CommonRequestHandler, RSettings),
         (r'/data/(.*?)$', handler.AuthStaticFileHandler, {'path': os.path.join(curdir, 'data')}),

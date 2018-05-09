@@ -50,7 +50,10 @@ class LoginHandler(BaseHandler):
     def get(self):
         self.render('login.html')
     def post(self):
-        self.set_secure_cookie("username", self.get_argument("username"))
+        data={'username':self.get_argument('username'),'password':self.get_argument('pwd')}
+        content = self.authCache.login(data)
+        for name in content:
+            self.set_secure_cookie(name, content[name], expires_days=self.config.login_expire_days)
         self.redirect(self.get_argument('next','site/main.html'))
 
 class LogoutHandler(BaseHandler):
