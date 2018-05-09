@@ -20,7 +20,10 @@ def crypt(pwd,salt):
     return result
 
 def genSalt(n=12):
-    return base64.b64encode(os.urandom(n))
+    result=base64.b64encode(os.urandom(n))
+    if sys.version[0]=='3':
+        result=result.decode('utf-8')
+    return result
 
 class authFuncs:
     def __init__(self,db,config,fileCache,userCache,taskCache,modelCache):
