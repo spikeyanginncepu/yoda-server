@@ -81,7 +81,7 @@ class AuthStaticFileHandler(BaseHandler,tornado.web.StaticFileHandler):
 class CommonRequestHandler(BaseHandler):
     @returnError
     def getResult(self):
-        cur_user = self.current_user()
+        cur_user = self.current_user
         if self.action=='login':
             content=self.authCache.login(self.data)
             if not content:
