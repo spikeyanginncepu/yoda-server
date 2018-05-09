@@ -15,7 +15,7 @@ backgroundActions= {'deleteUser', 'userFileAuthChange','tar','cp','changeTaskSta
 class BaseHandler(tornado.web.RequestHandler):
     executor = ThreadPoolExecutor(max_workers=MAX_WORKERS)
     def get_current_user(self):
-        username=self.get_secure_cookie("username")
+        username=self.get_secure_cookie("username").encode('utf-8')
         if not username:
             return None
         assert self.userCache is not None
