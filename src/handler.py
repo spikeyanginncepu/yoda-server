@@ -65,7 +65,7 @@ class LogoutHandler(BaseHandler):
         self.clear_all_cookies()
         self.redirect("/")
 
-class AuthStaticFileHandler(tornado.web.StaticFileHandler,BaseHandler):
+class AuthStaticFileHandler(BaseHandler,tornado.web.StaticFileHandler):
     def get_current_user(self):
         return BaseHandler.get_current_user(self)
 
