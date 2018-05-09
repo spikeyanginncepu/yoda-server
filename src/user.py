@@ -63,7 +63,7 @@ class userCache(dataCache):
             user = self.get('/' + name)
             userAuth=(user['authority'] | maskOr) & maskAnd
             cursor.execute("""update users set authority = %s where userid = %s""",(user['userid'],userAuth))
-            self.update('/'+name)
+            self.rmCache('/'+name)
         cursor.close()
         result={'status':'ok'}
         return result
