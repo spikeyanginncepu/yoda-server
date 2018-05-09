@@ -84,7 +84,9 @@ class userCache(dataCache):
         authcode=0
         for k, v in self.authcodes.items():
             authcode += v if data.get(k,'false').lower()=='true' else 0
+
         username=data['username']
+        assert type(self.get('/' + username)) == str
         color=data.get('color','')
         font=data.get('font','')
         salt=auth.genSalt()
