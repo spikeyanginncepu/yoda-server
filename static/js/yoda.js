@@ -637,8 +637,9 @@ function adduser_do(obj){
 		index++;
 		});
 		var content= {"action": "addUser",
-			          "data": {"username":username,"password":passwd_1,"authAdmin":flags[0],"authFileReadAll":flags[1],"authTaskManageAll":flags[2],"hasUserFolder":flags[3]}
+			          "data": {"username":username,"password":passwd_1,"authAdmin":""+flags[0],"authFileReadAll":""+flags[1],"authTaskManageAll":""+flags[2],"hasUserFolder":""+flags[3]}
                       };
+        alert(JSON.stringify(content));
 		$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"/request",dataType:"json",data:JSON.stringify(content),success:function(obj){
             if(obj.status=="ok"){
                 alert("添加用户成功："+content.action+content.data.username+content.data.password+content.data.authAdmin);
@@ -861,6 +862,24 @@ function edituser(obj){
 }
 /*todo*/
 function edituser_do(){
+    /*var files=[];
+    var prefix="UE_permission";
+    $("."+prefix+"table_tr").each(function(){
+        var f1=$(this).children("td:eq(0)").text();
+        var td1=$(this).children("td:eq(1)").children("input");
+        var td2=$(this).children("td:eq(2)").children("input");
+        var f2=td1.indeterminate==true?"mixed":td1.indeterminate;
+                //var file={"fileName":};
+        $(this).children("td:eq(1)").children("input").attr("class","AllRead_chk");
+    });
+    
+
+    var content={"action": "userFileAuthChange",
+                  "data": {
+                      "asUser": selectuserToedit_copy,
+                       "files": [{fileName:"/张三",authRead:"true",authWrite:"false"},
+                                {fileName:"/李四",authRead:"true",authWrite:"mixed"}]
+    }*/
 
 }
 
