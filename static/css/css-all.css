@@ -618,6 +618,18 @@ a{
 
 /*****************setting-end**************/
 /*****************judgement-start**************/
+
+.jMrightNav{
+    margin-top: 3%;
+    width:100%;
+    height:8%;
+    /* background: palegreen; */
+    text-align:right;
+    font-family: Microsoft Yahei;
+    font-size: 105%;
+    border-collapse: collapse; 
+}
+
 #JD_resultList{
     margin-top: 5%;
     float: right;

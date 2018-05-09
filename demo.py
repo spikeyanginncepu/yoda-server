@@ -36,6 +36,7 @@ class LoginHandler(BaseHandler):
 class LogoutHandler(BaseHandler):
     def get(self):
         self.clear_cookie("username")
+        self.clear_all_cookies()
         self.redirect("/")
 
 class DefaultRedirectHandler(BaseHandler):
@@ -52,6 +53,7 @@ class AuthStaticFileHandler(BaseHandler,tornado.web.StaticFileHandler):
     @tornado.web.authenticated
     def post(self,*args,**kwargs):
         return tornado.web.StaticFileHandler.get(self,*args,**kwargs)
+
 
 if __name__ == "__main__":
     with open(os.path.join(curdir,'ssl/password1.txt')) as f:

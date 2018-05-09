@@ -1,9 +1,11 @@
 
 
 # init user data
-mkdir -p data/admin
+mkdir -p data
 
 # init ssh keygen
+mkdir -p ssl
+chmod +x mkcert.sh
 ./mkcert.sh
 
 #init postgresql
