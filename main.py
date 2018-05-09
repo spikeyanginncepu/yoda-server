@@ -1,20 +1,21 @@
-import tornado.ioloop
-import tornado.web
-import tornado.httpserver
+
 import os,sys
+''' =========main===========  '''
+
+curdir = os.path.abspath(os.path.dirname(__file__))
+odir = os.path.abspath('.')
+sys.path.insert(os.path.join(curdir, 'src'), 0)
+os.chdir(curdir)
+
 import tornado.options
 import logging
 import signal
 import tornado.gen
 import argparse
 from utils.load_config import load_config,update_config
-
-''' =========main===========  '''
-
-curdir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-odir = os.path.abspath('.')
-sys.path.insert(os.path.join(curdir, 'src'), 0)
-os.chdir(curdir)
+import tornado.ioloop
+import tornado.web
+import tornado.httpserver
 
 is_closing = False
 
@@ -41,7 +42,7 @@ ctparser.add_argument('-o', '--override', type=str, help='options override the c
 
 def server(argv):
     args = ctparser.parse_args(argv)
-    confFile = 'conf/server.yaml' if len(args.conf) == 0 else args.conf
+    confFile = 'conf/server.yaml' if len(args.conf) == 0 else os.path.join(odir, args.conf)
     config = load_config('conf/server.yaml.template')
     config_new = load_config(confFile)
     update_config(config, config_new)
