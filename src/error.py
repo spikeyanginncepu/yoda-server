@@ -17,10 +17,10 @@ def returnError(fun):
         try:
             return fun(*args,**kwargs)
         except Exception as t:
+            traceback.print_exc()
             return {
                 'status': str(type(t)).split('\'')[1],
                 'failedReason': str(t),
-                'traceback': traceback.format_exc()
             }
     return wrapper
 
