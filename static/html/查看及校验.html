@@ -1,0 +1,23 @@
+<html>
+<head>
+<title>结果查看及校验</title>
+<link rel="Stylesheet" type="text/css" href="css/css-all.css" />
+</head>
+<body>
+        <!-- <table class="rightNav">
+            <tr><td class="row0"><img src="./images/form.png"/></td><td class="row1">全部任务</td></tr>
+            <tr><td class="row0"><img src="./images/pic.png"/></td><td class="row1">图像分析任务</td></tr>
+            <tr><td class="row0"><img src="./images/video.png"/></td><td class="row1">视频分析任务</td></tr>
+            <tr><td class="row0"><img src="./images/process.png"/></td><td class="row1">运行中</td></tr>
+            <tr><td class="row0"><img src="./images/history.png"/></td><td class="row1">待审核</td></tr>
+        </table> -->
+        <table class="jMrightNav" id="leftMenu">
+            <tr class="jMrow" onclick="generate_JM_FileList($(this))"><td class="dMcol0"><img src="./images/form.png" class="dMimg"/></td><td class="dMcol1">结果列表</td></tr>
+        </table>
+        <div id="JD_resultList">
+            <table id="JM_FileList_Unchecked"><tr><th>未校验</th></tr></table>
+            <table id="JM_FileList_Correct"><tr><th>已校验-正确</th></tr></table>
+            <table id="JM_FileList_Wrong"><tr><th>已校验-错误</th></tr></table>
+        </div>
+</body>
+</html>
