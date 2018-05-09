@@ -21,7 +21,7 @@ class BaseHandler(tornado.web.RequestHandler):
         if not username:
             return None
         assert self.userCache is not None
-        if type(self.userCache.get(username)) != str:
+        if type(self.userCache.get('/'+username)) != str:
             return username
 
     def __init__(self,application,request,authCache=None,taskCache=None, modelCache=None,
@@ -87,17 +87,17 @@ class CommonRequestHandler(BaseHandler):
                 self.set_secure_cookie(name,content[name],expires_days=self.config.login_expire_days)
             return {'status':'ok'}
         elif self.action == 'changePassWord':
-            isAdmin=self.userCache.get(cur_user,'authAdmin')
-            cuser=self.userCache.get(self.data.username)
+            isAdmin=self.userCache.get('/'+cur_user,'authAdmin')
+            cuser=self.userCache.get('/'+self.data.username)
             oldpwd=self.data.get('oldPassword','')
             assert isAdmin or self.authCache.crypt(oldpwd,cuser['salt'])==cuser['password']
             return self.userCache.changePwd(self.data,cur_user)
         elif self.action == 'addUser':
-            isAdmin = self.userCache.get(cur_user, 'authAdmin')
+            isAdmin = self.userCache.get('/'+cur_user, 'authAdmin')
             assert isAdmin
             return self.userCache.addUser(self.data,cur_user)
         elif self.action == 'delUser':
-            isAdmin = self.userCache.get(cur_user, 'authAdmin')
+            isAdmin = self.userCache.get('/'+cur_user, 'authAdmin')
             assert isAdmin
             return self.userCache.delUser(self.data, cur_user)
 
