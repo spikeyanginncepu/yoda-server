@@ -15,7 +15,7 @@ jQuery.postJSON = function(url, args, callback) {
 		},
 	    url: url,
 		//data: {"_xsrf":getCookie("_xsrf")}, 
-		dataType: "text", 
+		dataType: "json", 
 		type: "POST", 
 		success: callback});
 };
@@ -572,6 +572,23 @@ class List {
 /*UM-gao */
 /*todo: 请求用户列表：请求后台返回list,创建table，返回html*/
 function request_userlist(){
+    let filter_content=$("#dMsrchPrintbox").val();
+    //alert(filter_content);
+    let filterOfAnd_content=[];
+    if(filter_content!=""){
+        filterOfAnd_content.push({"filterName":"username","content":filter_content});
+    }
+    var content={
+        "action": "requestUserList",
+        "data": {"column":["username","children","authAdmin","authFileReadAll","authTaskManageAll","hasUserFolder"],
+                "root": "/",
+                "filterOfAnd":filterOfAnd_content,//"filterOfAnd": [{"filterName":"username","content":"zhang"}]
+                "orderBy":"username",
+                "loadDepth": "1",
+                "limits":[1,-1]
+                }
+     }
+    // alert(JSON.stringify(content));
     $.ajax({url:"html/用户管理-管理员权限.html",data:{},dataType:"text",success:function(response){
         element('content').innerHTML = response;
         var parentClass="UM_userList";
@@ -579,7 +596,7 @@ function request_userlist(){
         var objType=["checkbox","text","button","checkbox","checkbox","checkbox","checkbox"];
         var keys=["","username","","authAdmin","authFileReadAll","authTaskManageAll","hasUserFolder"];
         var prefix="UM_userlist";
-	    $.ajax({url:"testjons/test-ulist.txt",dataType:"json",data:{},success:function(obj){
+	    $.ajax({url:"testjons/test-ulist.txt",dataType:"json",data:JSON.stringify(content),success:function(obj){
 		    if (obj.status == "ok") { 
                 var userlist=new List(parentClass,heading_par,objType,keys,prefix);
                 userlist.addRowsByJson(obj);
@@ -603,10 +620,6 @@ function request_userlist(){
 	}})
 }
 
-//类似于上
-function search_userlist(){
-
-}
 /*跳转到添加用户页*/
 function adduser(obj){
 	let url='html/userAdding-console.html';
@@ -623,9 +636,9 @@ function adduser_do(obj){
     else if(passwd_1==""){
         alert("密码不能为空");
     }
-	/*else if(CHK_repeatename_flag==false){
+	else if(CHK_repeatename_flag==false){
 		alert("用户名已存在");
-	}*/
+	}
 	else if(passwd_1!=passwd_2){
 		alert("密码不一致");
 	}
@@ -639,7 +652,7 @@ function adduser_do(obj){
 		var content= {"action": "addUser",
 			          "data": {"username":username,"password":passwd_1,"authAdmin":""+flags[0],"authFileReadAll":""+flags[1],"authTaskManageAll":""+flags[2],"hasUserFolder":""+flags[3]}
                       };
-        alert(JSON.stringify(content));
+        //alert(JSON.stringify(content));
 		$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"/request",dataType:"json",data:JSON.stringify(content),success:function(obj){
             if(obj.status=="ok"){
                 alert("添加用户成功："+content.action+content.data.username+content.data.password+content.data.authAdmin);
@@ -811,7 +824,7 @@ function edituser(obj){
 		}
 	});
 	if(selectuserToedit.length==0){
-		alert("至少选择一个要修改的用户！")
+		alert("至少选择一个要修改的用户！");
 	}
 	else{
 		let url='html/userEdit-console.html';
@@ -862,25 +875,30 @@ function edituser(obj){
 }
 /*todo*/
 function edituser_do(){
-    /*var files=[];
+    var files=[];
     var prefix="UE_permission";
     $("."+prefix+"table_tr").each(function(){
-        var f1=$(this).children("td:eq(0)").text();
+        var f0=$(this).children("td:eq(0)").text();
         var td1=$(this).children("td:eq(1)").children("input");
         var td2=$(this).children("td:eq(2)").children("input");
-        var f2=td1.indeterminate==true?"mixed":td1.indeterminate;
-                //var file={"fileName":};
-        $(this).children("td:eq(1)").children("input").attr("class","AllRead_chk");
+        var f1=(td1.is(":indeterminate")==true?"mixed":""+td1.is(":checked"));
+        var f2=(td2.is(":indeterminate")==true?"mixed":""+td2.is(":checked"));
+        files.push({"fileName":f0,"authRead":f1,"authWrite":f2});
     });
-    
-
     var content={"action": "userFileAuthChange",
                   "data": {
                       "asUser": selectuserToedit_copy,
-                       "files": [{fileName:"/张三",authRead:"true",authWrite:"false"},
-                                {fileName:"/李四",authRead:"true",authWrite:"mixed"}]
-    }*/
-
+                       "files": files
+                     }
+    }
+    alert(JSON.stringify(content));
+    $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"/request",data:JSON.stringify(content),dataType:"json",type: "post",success:function(obj){
+        if(obj.status=="ok"){
+            alert("权限修改成功！");
+        }else{
+            alert("权限修改失败："+obj.status);
+        }
+    }});
 }
 
 function createCar(color, doors, mpg) {
