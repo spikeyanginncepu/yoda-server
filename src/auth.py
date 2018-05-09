@@ -4,8 +4,10 @@ import os
 import sys
 def crypt(pwd,salt):
     if sys.version[0]=='3':
-        pwd=pwd.encode('utf-8')
-        salt=salt.encode('utf-8')
+        if type(pwd)==str:
+            pwd=pwd.encode('utf-8')
+        if type(salt)==str:
+            salt=salt.encode('utf-8')
     times = 250
     sha512 = hashlib.sha512()
     sha512.update(salt)
