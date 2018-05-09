@@ -63,6 +63,8 @@ class LogoutHandler(BaseHandler):
         self.redirect("/")
 
 class AuthStaticFileHandler(BaseHandler,tornado.web.StaticFileHandler):
+    def __init__(self,*args,**kwargs):
+        super(AuthStaticFileHandler,self).__init__(*args,**kwargs)
     def get_current_user(self):
         return BaseHandler.get_current_user(self)
 
