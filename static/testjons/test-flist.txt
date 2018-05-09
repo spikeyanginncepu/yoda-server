@@ -1,0 +1,13 @@
+{
+    "status": "ok",
+    "dataLength": 3,
+    "canModify": "true",
+    "data":[{"fileName":"用户-zhangsan0","authRead":"true","authWrite":"mixed"},
+            {"fileName":"用户-zhangsan1","authRead":"mixed","authWrite":"false"},
+            {"fileName":"用户-zhangsan2","authRead":"true","authWrite":"false"},
+            {"fileName":"用户-zhangsan3","authRead":"true","authWrite":"true"},
+            {"fileName":"用户-zhangsan4","authRead":"false","authWrite":"mixed"},
+            {"fileName":"用户-zhangsan5","authRead":"true","authWrite":"false"},
+            {"fileName":"用户-zhangsan6","authRead":"true","authWrite":"false"}
+          ]
+}
