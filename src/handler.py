@@ -119,7 +119,10 @@ class CommonRequestHandler(BaseHandler):
 
     @tornado.gen.coroutine
     def post(self,url):
-        jsonContent=json.loads( self.request.body)
+        if sys.version[0]=='3':
+            jsonContent=json.loads( self.request.body.decode('utf-8'))
+        else:
+            jsonContent=json.loads( self.request.body)
         self.action=jsonContent['action']
         self.data=jsonContent.get('data',None)
 
