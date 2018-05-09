@@ -19,7 +19,7 @@ class dataCache(object):
         if path in self.cache and self.cache[path] is not None:
             return self.cache[path]
         else:
-            self.cache[path]=self.update(path)
+            self.update(path)
         return self.cache[path]
 
     def get(self,path,field=None):
