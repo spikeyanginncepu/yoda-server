@@ -85,8 +85,6 @@ def server(argv):
     DSettings['path']=os.path.join(curdir, 'data')
     SSettings=copy(RSettings)
     SSettings['path']=os.path.join(curdir, 'static')
-    PSettings = copy(RSettings)
-    PSettings['path'] = os.path.join(curdir, 'public')
 
     application = tornado.web.Application([
         (r'/p/login', handler.LoginHandler, RSettings),
@@ -94,7 +92,7 @@ def server(argv):
         (r'(/request|/auth)$', handler.CommonRequestHandler, RSettings),
         (r'/data/(.*?)$', handler.AuthStaticFileHandler, DSettings),
         (r'/site/(.*?)$', handler.AuthStaticFileHandler, SSettings),
-        (r'/p/(.*?)$', tornado.web.StaticFileHandler, PSettings),
+        (r'/p/(.*?)$', tornado.web.StaticFileHandler),
         (r'/(.*?)$', handler.DefaultRedirectHandler),
     ], **settings)
 
