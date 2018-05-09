@@ -92,7 +92,7 @@ def server(argv):
         (r'(/request|/auth)$', handler.CommonRequestHandler, RSettings),
         (r'/data/(.*?)$', handler.AuthStaticFileHandler, DSettings),
         (r'/site/(.*?)$', handler.AuthStaticFileHandler, SSettings),
-        (r'/p/(.*?)$', tornado.web.StaticFileHandler),
+        (r'/p/(.*?)$', tornado.web.StaticFileHandler, {'path':os.path.join(curdir,'public')}),
         (r'/(.*?)$', handler.DefaultRedirectHandler),
     ], **settings)
 
