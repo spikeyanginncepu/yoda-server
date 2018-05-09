@@ -38,7 +38,7 @@ function maintain_JM_FileList(returnJSON,path)
 	JM_FileList_Correct = [];
 	JM_FileList_Wrong = [];
 	JM_root = path;
-	console.log(JM_FileList_Unchecked);
+
 	for (var i in returnJSON.data)
 	{
 		if (returnJSON.data[i].fileName == '未校验')
@@ -76,6 +76,10 @@ function maintain_JM_FileList(returnJSON,path)
 
 function generate_JM_FileList(obj)
 {
+	console.log(JM_FileList_Unchecked);
+	console.log(JM_FileList_Correct);
+	console.log(JM_FileList_Wrong);
+
 	var table_unchecked = document.getElementById("JM_FileList_Unchecked");
 	table_unchecked.innerHTML = "";
 	var tr_unchecked_head = document.createElement("tr");
@@ -83,6 +87,10 @@ function generate_JM_FileList(obj)
 	th_unchecked.innerText = '未校验';
 	tr_unchecked_head.appendChild(th_unchecked);
 	table_unchecked.appendChild(tr_unchecked_head);
+
+	console.log(JM_FileList_Unchecked);
+	console.log(JM_FileList_Correct);
+	console.log(JM_FileList_Wrong);
 	for (var i in JM_FileList_Unchecked)
 	{
 		var tr_unchecked = document.createElement("tr");
@@ -91,6 +99,7 @@ function generate_JM_FileList(obj)
 		td_unchecked.setAttribute('onclick','click_JM_FileList()');
 		tr_unchecked.appendChild(td_unchecked);
 		table_unchecked.appendChild(tr_unchecked);
+		console.log(tr_unchecked);
 	}
 
 	var table_correct= document.getElementById("JM_FileList_Correct");
@@ -121,7 +130,7 @@ function generate_JM_FileList(obj)
 	{
 		var tr_wrong = document.createElement("tr");
 		var td_wrong = document.createElement("td");
-		td_wrong.innerText = JM_FileList_wrong[i];
+		td_wrong.innerText = JM_FileList_Wrong[i];
 		td_wrong.setAttribute('onclick','click_JM_FileList()');
 		tr_wrong.appendChild(td_wrong);
 		table_wrong.appendChild(tr_wrong);
