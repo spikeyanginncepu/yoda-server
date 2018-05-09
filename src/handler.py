@@ -57,6 +57,9 @@ class LoginHandler(BaseHandler):
     def post(self):
         data={'username':self.get_argument('username'),'password':self.get_argument('pwd')}
         content = self.authCache.login(data)
+        if not content:
+            self.write(json.dumps({'status':'notLoggedIn'}))
+            return
         for name in content:
             self.set_secure_cookie(name, content[name], expires_days=self.config.login_expire_days)
         self.redirect(self.get_argument('next','site/main.html'))
