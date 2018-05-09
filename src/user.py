@@ -94,6 +94,7 @@ class userCache(dataCache):
         cursor.execute('insert into users (username,password,salt,authority,font,color) values (%s,%s,%s,%s,%s,%s)',
                        (username,pwd,salt,authcode,font,color))
         cursor.close()
+        self.rmCache('/'+username)
         result = {'status': 'ok'}
         return result
 

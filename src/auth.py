@@ -4,8 +4,10 @@ import os
 import sys
 def crypt(pwd,salt):
     if sys.version[0]=='3':
-        pwd=pwd.encode('utf-8')
-        salt=salt.encode('utf-8')
+        if type(pwd)==str:
+            pwd=pwd.encode('utf-8')
+        if type(salt)==str:
+            salt=salt.encode('utf-8')
     times = 250
     sha512 = hashlib.sha512()
     sha512.update(salt)
@@ -18,7 +20,10 @@ def crypt(pwd,salt):
     return result
 
 def genSalt(n=12):
-    return base64.b64encode(os.urandom(n))
+    result=base64.b64encode(os.urandom(n))
+    if sys.version[0]=='3':
+        result=result.decode('utf-8')
+    return result
 
 class authFuncs:
     def __init__(self,db,config,fileCache,userCache,taskCache,modelCache):
