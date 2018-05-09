@@ -1,3 +1,4 @@
+import traceback
 
 class ServerError(Exception):
     pass
@@ -18,7 +19,8 @@ def returnError(fun):
         except Exception as t:
             return {
                 'status': str(type(t)).split('\'')[1],
-                'failedReason': str(t)
+                'failedReason': str(t),
+                'traceback': traceback.format_exc()
             }
     return wrapper
 
