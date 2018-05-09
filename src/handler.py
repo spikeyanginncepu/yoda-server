@@ -16,6 +16,8 @@ class BaseHandler(tornado.web.RequestHandler):
     executor = ThreadPoolExecutor(max_workers=MAX_WORKERS)
     def get_current_user(self):
         username=self.get_secure_cookie("username")
+        if not username:
+            return None
         assert self.userCache is not None
         if type(self.userCache.get(username)) != str:
             return username
