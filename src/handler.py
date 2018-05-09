@@ -103,7 +103,16 @@ class CommonRequestHandler(BaseHandler):
             isAdmin = self.userCache.get('/'+cur_user, 'authAdmin')
             assert isAdmin
             return self.userCache.delUser(self.data, cur_user)
-
+        elif self.action == 'requestUserList':
+            if ['filterOfAnd'] in self.data:
+                foa=self.data['filterOfAnd']
+                filters=((j['filterName'],j['content'],(1,999999)) for j in foa)
+                columns=self.data['column']
+                orderby=self.data['orderby']
+                loadDepth=int(self.data['loadDepth'])
+                limits=(int(k) for k in self.data['limits'])
+                root=self.data['root']
+                return self.userCache.report(root,loadDepth,limits,filters,columns,orderby)
     @run_on_executor()
     def getResultBackground(self):
         return self.getResult()

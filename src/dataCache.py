@@ -53,7 +53,7 @@ class dataCache(object):
                     continue
             else:
                 filterName, fContent = line
-                if fContent not in content[filterName]:
+                if fContent != content[filterName] and fContent not in content[filterName]:
                     return None
 
         for name in columns:
@@ -63,7 +63,7 @@ class dataCache(object):
                 names=content['children']
                 children=[self.report(os.path.join(curpath,name),depth=depth,limits=limits,
                                       filters=filters,columns=columns,orderby=orderby,curdepth=curdepth+1) for name in names]
-                children.sort(key=lambda x: x.get(orderby,None))
+                children.sort(key=lambda x: x.get(orderby,None) if type(x) is not list else (x.get(i,None) for i in x) )
                 children=children[limits[curdepth][0]:limits[curdepth][1]]
                 cc=children
             elif name in content:
