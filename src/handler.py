@@ -79,6 +79,8 @@ class CommonRequestHandler(BaseHandler):
         cur_user = self.current_user()
         if self.action=='login':
             content=self.authCache.login(self.data)
+            if not content:
+                return {'status': 'failed'}
             for name in content:
                 self.set_secure_cookie(name,content[name],expires_days=self.config.login_expire_days)
             return {'status':'ok'}
