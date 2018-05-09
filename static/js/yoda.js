@@ -638,7 +638,9 @@ function adduser_do(obj){
 		});
 		var content= {"action": "addUser",
 			          "data": {"username":username,"password":passwd_1,"authAdmin":flags[0],"authFileReadAll":flags[1],"authTaskManageAll":flags[2],"hasUserFolder":flags[3]}
-				 	 }
+                      };
+        var content1=JSON.stringify(content);
+        alert(content1);
 		$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"/request",dataType:"json",data:content,success:function(obj){
             if(obj.status=="ok"){
                 alert("添加用户成功："+content.action+content.data.username+content.data.password+content.data.authAdmin);
