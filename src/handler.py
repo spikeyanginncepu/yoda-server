@@ -125,6 +125,8 @@ class CommonRequestHandler(BaseHandler):
             jsonContent=json.loads( self.request.body)
         self.action=jsonContent['action']
         self.data=jsonContent.get('data',None)
+        result=self.getResult()
+        self.finish(json.dumps(result))
 
 
 
