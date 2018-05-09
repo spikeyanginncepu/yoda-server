@@ -4,7 +4,7 @@ import os,sys
 
 curdir = os.path.abspath(os.path.dirname(__file__))
 odir = os.path.abspath('.')
-sys.path.insert(os.path.join(curdir, 'src'), 0)
+sys.path.insert(0,os.path.join(curdir, 'src'))
 os.chdir(curdir)
 
 import tornado.options
