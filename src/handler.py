@@ -20,14 +20,14 @@ class BaseHandler(tornado.web.RequestHandler):
         if type(self.userCache.get(username)) != str:
             return username
 
-    def __init__(self,authCache,taskCache, modelCache, fileCache,userCache,config, *args,**kwargs):
-        self.authCache=authCache
-        self.taskCache=taskCache
-        self.modelCache=modelCache
-        self.fileCache=fileCache
-        self.userCache=userCache
-        self.config=config
-        super(BaseHandler,self).__init__(*args,**kwargs)
+    def __init__(self,application,request,**kwargs):
+        self.authCache=kwargs.get('authCache',None)
+        self.taskCache=kwargs.get('taskCache',None)
+        self.modelCache=kwargs.get('modelCache',None)
+        self.fileCache=kwargs.get('fileCache',None)
+        self.userCache=kwargs.get('userCache',None)
+        self.config=kwargs.get('config',None)
+        super(BaseHandler,self).__init__(application,request,**kwargs)
     '''
     @run_on_executor
     def background_task(self, i):
