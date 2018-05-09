@@ -15,7 +15,7 @@ def load_config(path):
     pdir=os.path.dirname(path)
     with open(path) as f:
         cf=edict(yaml.load(f))
-    if 'include' in cf:
+    if 'include' in cf and len(cf.include)>0:
         for ipath in cf['include']:
             newpath = os.path.join(pdir, ipath)
             try:
