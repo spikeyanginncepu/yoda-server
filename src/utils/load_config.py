@@ -3,13 +3,13 @@
 from easydict import EasyDict as edict
 import yaml,os
 
-def update(source,target):
+def update_config(source,target):
     for key in target:
         if key not in source or (type(target[key]) != dict and type(target[key]) != edict) or \
                 (type(source[key]) != dict and type(source[key]) != edict):
             source[key]=target[key]
         else:
-            update(source[key],target[key])
+            update_config(source[key],target[key])
 
 def load_config(path):
     pdir=os.path.dirname(path)
@@ -21,7 +21,7 @@ def load_config(path):
             try:
                 assert os.path.isfile(newpath)
                 with open(newpath) as f:
-                    update(cf,yaml.load(f))
+                    update_config(cf,yaml.load(f))
             except Exception:
                 print('failed to load config from {}'.format(newpath))
     return cf

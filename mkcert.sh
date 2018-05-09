@@ -30,4 +30,4 @@ cp $DOMAIN.key auth.key
 
 head -c 32 /dev/urandom | base64 > password1.txt
 head -c 32 /dev/urandom | base64 > password2.txt
-echo -e "db:\n  password: `cat password2.txt`\ntornado:\n  secret:`cat password1.txt`" > ../conf/passwords.yaml
+echo -e "db:\n  password: `cat password2.txt`\ntornado:\n  secret: `cat password1.txt`" > ../conf/passwords.yaml

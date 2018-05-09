@@ -1,46 +1,107 @@
-from concurrent.futures import ThreadPoolExecutor
-from tornado.ioloop import IOLoop
-from tornado.concurrent import run_on_executor
+import tornado.ioloop
 import tornado.web
+import tornado.httpserver
+import tornado.options
+import logging
 import tornado.gen
+from tornado.concurrent import run_on_executor
+from concurrent.futures import ThreadPoolExecutor   # `pip install futures` for python2
+import json
 from error import *
 
+MAX_WORKERS = 20
+backgroundActions= {'deleteUser', 'userFileAuthChange','tar','cp','changeTaskStatus','genResult','rmTask'}
 
+class BaseHandler(tornado.web.RequestHandler):
+    executor = ThreadPoolExecutor(max_workers=MAX_WORKERS)
+    def get_current_user(self):
+        username=self.get_secure_cookie("username")
+        assert self.userCache is not None
+        if type(self.userCache.get(username)) != str:
+            return username
 
-class NormalPost:
-    def _get_current_user(self,handler,*args,**kwargs):
-        return handler.get_secure_cookie('username')
-    def _do_auth(self,handler,*args,**kwargs):
-        return handler.get_secure_cookie("username")
-    def _process_request(self,handler,*args,**kwargs):
-        return handler.get_secure_cookie("username")
-    def _post_response(self,handler,*args,**kwargs):
-        return handler.get_secure_cookie("username")
-
-    def _post_error(self,handler,*args,**kwargs):
-        pass
-    def __call__(self, RequestHandler,*args,**kwargs):
-        try:
-            RequestHandler.response = {}
-            self._get_current_user(RequestHandler, *args, **kwargs)
-            self._do_auth(RequestHandler, *args, **kwargs)
-            self._process_request(RequestHandler, *args, **kwargs)
-            self._post_response(RequestHandler, *args, **kwargs)
-        except:
-            self._post_error(RequestHandler, *args, **kwargs)
-
-
-class CommonRequestHandler(tornado.web.RequestHandler):
-    executor = ThreadPoolExecutor(30)
-
-    @tornado.web.asynchronous
-    @tornado.gen.coroutine
-    def get(self):
-        res = yield self.sleep()
-        self.write("when i sleep %f s" % (time.time() - start))
-        self.finish()
-
+    def __init__(self,*args,**kwargs):
+        self.authCache=kwargs.get('authCache',None)
+        self.taskCache=kwargs.get('taskCache',None)
+        self.modelCache=kwargs.get('modelCache',None)
+        self.fileCache=kwargs.get('fileCache',None)
+        self.userCache=kwargs.get('userCache',None)
+        self.config=kwargs.get('config',None)
+        super(BaseHandler,self).__init__(*args,**kwargs)
+    '''
     @run_on_executor
-    def sleep(self):
-        time.sleep(5)
-        return 5
+    def background_task(self, i):
+        """ This will be executed in `executor` pool. """
+        time.sleep(10)
+        return i
+
+    @tornado.gen.coroutine
+    def get(self, idx):
+        """ Request that asynchronously calls background task. """
+        res = yield self.background_task(idx)
+        self.write(res)
+    '''
+
+class DefaultRedirectHandler(BaseHandler):
+    def get(self,*args,**kwargs):
+        self.redirect("/site/main.html")
+
+class LoginHandler(BaseHandler):
+    def get(self):
+        self.render('login.html')
+    def post(self):
+        self.set_secure_cookie("username", self.get_argument("username"))
+        self.redirect(self.get_argument('next','site/main.html'))
+
+class LogoutHandler(BaseHandler):
+    def get(self):
+        self.clear_cookie("username")
+        self.clear_all_cookies()
+        self.redirect("/")
+
+class AuthStaticFileHandler(BaseHandler,tornado.web.StaticFileHandler):
+    def get_current_user(self):
+        return BaseHandler.get_current_user(self)
+
+    @tornado.web.authenticated
+    def get(self,*args,**kwargs):
+        return tornado.web.StaticFileHandler.get(self,*args,**kwargs)
+
+class CommonRequestHandler(BaseHandler):
+    @returnError()
+    def getResult(self):
+        cur_user = self.current_user()
+        if self.action=='login':
+            content=self.authCache.login(self.data)
+            for name in content:
+                self.set_secure_cookie(name,content[name],expires_days=self.config.login_expire_days)
+            return {'status':'ok'}
+        elif self.action == 'changePassWord':
+            isAdmin=self.userCache.get(cur_user,'authAdmin')
+            cuser=self.userCache.get(self.data.username)
+            oldpwd=self.data.get('oldPassword','')
+            assert isAdmin or self.authCache.crypt(oldpwd,cuser['salt'])==cuser['password']
+            return self.userCache.changePwd(self.data,cur_user)
+        elif self.action == 'addUser':
+            isAdmin = self.userCache.get(cur_user, 'authAdmin')
+            assert isAdmin
+            return self.userCache.addUser(self.data,cur_user)
+        elif self.action == 'delUser':
+            isAdmin = self.userCache.get(cur_user, 'authAdmin')
+            assert isAdmin
+            return self.userCache.delUser(self.data, cur_user)
+
+    @run_on_executor()
+    def getResultBackground(self):
+        return self.getResult()
+
+    @tornado.gen.coroutine
+    def post(self,url):
+        jsonContent=json.loads( self.request.body)
+        self.action=jsonContent['action']
+        self.data=jsonContent.get('data',None)
+
+
+
+
+

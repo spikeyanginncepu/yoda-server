@@ -21,7 +21,7 @@ import numpy as np
 import cv2
 from threading import Lock
 from concurrent.futures import thread
-from lib.utils.location import location
+from .location import location
 import time
 import mimetypes
 import traceback

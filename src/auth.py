@@ -13,3 +13,28 @@ def crypt(pwd,salt):
 
 def genSalt(n=12):
     return base64.b64encode(os.urandom(n))
+
+class authFuncs:
+    def __init__(self,db,config,fileCache,userCache,taskCache,modelCache):
+        self.db=db
+        self.fileCache=fileCache
+        self.userCache=userCache
+        self.taskCache=taskCache
+        self.modelCache=modelCache
+        self.authcode=config.authEncode
+        self.genSalt=genSalt
+        self.crypt=crypt
+    def login(self,data):
+        username=data['username']
+        password=data['password']
+        udata=self.userCache.get('/'+username)
+        if type(udata)==str:
+            salt=''
+            pwdIndb=''
+        else:
+            salt=udata['salt']
+            pwdIndb=udata['password']
+        if crypt(password,salt) == pwdIndb:
+            return {'username':username}
+        else:
+            return False

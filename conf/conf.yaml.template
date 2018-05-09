@@ -2,9 +2,13 @@ db:
   host: localhost
   database: yoda
   user: yoda
+  password: z2L76LFQHoYEqvXpzY+XYYhFOZaPeOljoJAt/oas2Pg=
 tornado:
-  port: 8888
+  port: 8889
   dataPath: data
+  secret: V2RksEY9UeGT1AJuZU8lmNnfPndeX7ZCOPQFSkn5ELk=
+  xsrf: true
+  login_expire_days: 1
 authEncode:
   userAuth:
     authAdmin: 1
@@ -19,4 +23,3 @@ authEncode:
     canModify: 2
     canValidate: 4
 include:
-- passwords.yaml

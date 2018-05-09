@@ -51,6 +51,7 @@ class AuthStaticFileHandler(BaseHandler,tornado.web.StaticFileHandler):
     def get(self,*args,**kwargs):
         return tornado.web.StaticFileHandler.get(self,*args,**kwargs)
 
+
 if __name__ == "__main__":
     with open(os.path.join(curdir,'ssl/password1.txt')) as f:
         cookie_secret=f.read().strip()
