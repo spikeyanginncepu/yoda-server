@@ -1,82 +1,82 @@
-<html>
+<!--html>
 <head>
 <title>用户管理</title>
 <meta charset="utf-8" /> 
-<link rel="Stylesheet" type="text/css" href="css/css-all.css" />
-</head>
-<body>
+<link rel="Stylesheet" type="text/css" href="css/css-all.css" /> 
+</head> 
+<body-->
     <div class="UM_container">
         <div class="dMmanybtn">
-        <button onclick="location.href='./userAdding-console.html';">新增</button>
-        <button>删除</button>
-        <button>权限修改</button>
+        <button onclick="adduser($(this))">新增</button>
+        <button onclick="deleteuser($(this))">删除</button>
+        <button onclick="edituser($(this))">权限修改</button>
         <div id="dMsearch"><button id="dMsearchbtn">搜索</button><input id="dMsrchPrintbox"type="text"/></div>
         </div>
         <div class="UM_userList">
-        <table class="UM_userlisttable" border='0'>
-            <tr class="UM_ulistrow"><th><input type="checkbox"><label>全选</label></th><th>用户名</th><th></th><th>拥有管理权限</th><th>拥有全部文件读权限</th><th>拥有任务管理权限</th><th>创建用户目录</th></tr>
-            <tr class="UM_ulistrow"><td><input type="checkbox"></td><td>zhangsan</td><td><button class="UM_ulistbtn">修改密码</button></td>
-                <td><input type="checkbox" id="chkBox" value="Manager"/></td>
-                <td><input type="checkbox" id="chkBox" value="All R/W"/></td>
-                <td><input type="checkbox" id="chkBox" value="Task Manager"/></td>
-                <td><input type="checkbox" id="chkBox" checked="checked" value="Create Dir"/></td>
+        <!--table class="UM_userlisttable" border='1'>
+            <tr class="UM_ulistrow"><th><input type="checkbox" id="CheckAll" onclick="Se_DE_Alluser($(this))"><label>全选</label></th><th>用户名</th><th></th><th>拥有管理权限</th><th>拥有全部文件读权限</th><th>拥有任务管理权限</th><th>创建用户目录</th></tr>
+            <tr class="UM_ulistrow"><td><input class="chkBox_0" type="checkbox" ></td><td>zhangsan</td><td><button class="UM_ulistbtn" onclick="changepasswd($(this))">修改密码</button></td>
+                <td><input type="checkbox" id="chkBox_1" value="Manager"/></td>
+                <td><input type="checkbox" id="chkBox_2" value="All R/W"/></td>
+                <td><input type="checkbox" id="chkBox_3" value="Task Manager"/></td>
+                <td><input type="checkbox" id="chkBox_4" checked="checked" value="Create Dir"/></td>
             </tr>
-            <tr class="UM_ulistrow"><td><input type="checkbox"></td><td>zhangsan</td><td><button class="UM_ulistbtn">修改密码</button></td>
-                <td><input type="checkbox" id="chkBox" value="Manager"/></td>
-                <td><input type="checkbox" id="chkBox" value="All R/W"/></td>
-                <td><input type="checkbox" id="chkBox" value="Task Manager"/></td>
-                <td><input type="checkbox" id="chkBox" checked="checked" value="Create Dir"/></td>
+            <tr class="UM_ulistrow"><td><input class="chkBox_0" type="checkbox" ></td><td>zhangsan</td><td><button class="UM_ulistbtn" onclick="changepasswd($(this))">修改密码</button></td>
+                <td><input type="checkbox" id="chkBox_1" value="Manager"/></td>
+                <td><input type="checkbox" id="chkBox_2" value="All R/W"/></td>
+                <td><input type="checkbox" id="chkBox_3" value="Task Manager"/></td>
+                <td><input type="checkbox" id="chkBox_4" checked="checked" value="Create Dir"/></td>
             </tr>
-            <tr class="UM_ulistrow"><td><input type="checkbox"></td><td>zhangsan</td><td><button class="UM_ulistbtn">修改密码</button></td>
-                <td><input type="checkbox" id="chkBox" value="Manager"/></td>
-                <td><input type="checkbox" id="chkBox" value="All R/W"/></td>
-                <td><input type="checkbox" id="chkBox" value="Task Manager"/></td>
-                <td><input type="checkbox" id="chkBox" checked="checked" value="Create Dir"/></td>
+            <tr class="UM_ulistrow"><td><input type="checkbox" class="chkBox_0"></td><td>zhangsan</td><td><button class="UM_ulistbtn" onclick="changepasswd($(this))">修改密码</button></td>
+                <td><input type="checkbox" id="chkBox_1" value="Manager"/></td>
+                <td><input type="checkbox" id="chkBox_2" value="All R/W"/></td>
+                <td><input type="checkbox" id="chkBox_3" value="Task Manager"/></td>
+                <td><input type="checkbox" id="chkBox_4" checked="checked" value="Create Dir"/></td>
             </tr>
-            <tr class="UM_ulistrow"><td><input type="checkbox"></td><td>zhangsan</td><td><button class="UM_ulistbtn">修改密码</button></td>
-                <td><input type="checkbox" id="chkBox" value="Manager"/></td>
-                <td><input type="checkbox" id="chkBox" value="All R/W"/></td>
-                <td><input type="checkbox" id="chkBox" value="Task Manager"/></td>
-                <td><input type="checkbox" id="chkBox" checked="checked" value="Create Dir"/></td>
+            <tr class="UM_ulistrow"><td><input type="checkbox" class="chkBox_0"></td><td>zhangsan</td><td><button class="UM_ulistbtn" onclick="changepasswd($(this))">修改密码</button></td>
+                <td><input type="checkbox" id="chkBox_1" value="Manager"/></td>
+                <td><input type="checkbox" id="chkBox_2" value="All R/W"/></td>
+                <td><input type="checkbox" id="chkBox_3" value="Task Manager"/></td>
+                <td><input type="checkbox" id="chkBox_4" checked="checked" value="Create Dir"/></td>
             </tr>
-            <tr class="UM_ulistrow"><td><input type="checkbox"></td><td>zhangsan</td><td><button class="UM_ulistbtn">修改密码</button></td>
-                <td><input type="checkbox" id="chkBox" value="Manager"/></td>
-                <td><input type="checkbox" id="chkBox" value="All R/W"/></td>
-                <td><input type="checkbox" id="chkBox" value="Task Manager"/></td>
-                <td><input type="checkbox" id="chkBox" checked="checked" value="Create Dir"/></td>
+            <tr class="UM_ulistrow"><td><input type="checkbox" class="chkBox_0"></td><td>zhangsan</td><td><button class="UM_ulistbtn" onclick="changepasswd($(this))">修改密码</button></td>
+                <td><input type="checkbox" id="chkBox_1" value="Manager"/></td>
+                <td><input type="checkbox" id="chkBox_2" value="All R/W"/></td>
+                <td><input type="checkbox" id="chkBox_3" value="Task Manager"/></td>
+                <td><input type="checkbox" id="chkBox_4" checked="checked" value="Create Dir"/></td>
             </tr>
-            <tr class="UM_ulistrow"><td><input type="checkbox"></td><td>zhangsan</td><td><button class="UM_ulistbtn">修改密码</button></td>
-                <td><input type="checkbox" id="chkBox" value="Manager"/></td>
-                <td><input type="checkbox" id="chkBox" value="All R/W"/></td>
-                <td><input type="checkbox" id="chkBox" value="Task Manager"/></td>
-                <td><input type="checkbox" id="chkBox" checked="checked" value="Create Dir"/></td>
+            <tr class="UM_ulistrow"><td><input type="checkbox" class="chkBox_0"></td><td>zhangsan</td><td><button class="UM_ulistbtn" onclick="changepasswd($(this))">修改密码</button></td>
+                <td><input type="checkbox" id="chkBox_1" value="Manager"/></td>
+                <td><input type="checkbox" id="chkBox_2" value="All R/W"/></td>
+                <td><input type="checkbox" id="chkBox_3" value="Task Manager"/></td>
+                <td><input type="checkbox" id="chkBox_4" checked="checked" value="Create Dir"/></td>
             </tr>
-            <tr class="UM_ulistrow"><td><input type="checkbox"></td><td>zhangsan</td><td><button class="UM_ulistbtn">修改密码</button></td>
-                <td><input type="checkbox" id="chkBox" value="Manager"/></td>
-                <td><input type="checkbox" id="chkBox" value="All R/W"/></td>
-                <td><input type="checkbox" id="chkBox" value="Task Manager"/></td>
-                <td><input type="checkbox" id="chkBox" checked="checked" value="Create Dir"/></td>
+            <tr class="UM_ulistrow"><td><input type="checkbox" class="chkBox_0"></td><td>zhangsan</td><td><button class="UM_ulistbtn" onclick="changepasswd($(this))">修改密码</button></td>
+                <td><input type="checkbox" id="chkBox_1" value="Manager"/></td>
+                <td><input type="checkbox" id="chkBox_2" value="All R/W"/></td>
+                <td><input type="checkbox" id="chkBox_3" value="Task Manager"/></td>
+                <td><input type="checkbox" id="chkBox_4" checked="checked" value="Create Dir"/></td>
             </tr>
-            <tr class="UM_ulistrow"><td><input type="checkbox"></td><td>zhangsan</td><td><button class="UM_ulistbtn">修改密码</button></td>
-                <td><input type="checkbox" id="chkBox" value="Manager"/></td>
-                <td><input type="checkbox" id="chkBox" value="All R/W"/></td>
-                <td><input type="checkbox" id="chkBox" value="Task Manager"/></td>
-                <td><input type="checkbox" id="chkBox" checked="checked" value="Create Dir"/></td>
+            <tr class="UM_ulistrow"><td><input type="checkbox" class="chkBox_0"></td><td>zhangsan</td><td><button class="UM_ulistbtn" onclick="changepasswd($(this))">修改密码</button></td>
+                <td><input type="checkbox" id="chkBox_1" value="Manager"/></td>
+                <td><input type="checkbox" id="chkBox_2" value="All R/W"/></td>
+                <td><input type="checkbox" id="chkBox_3" value="Task Manager"/></td>
+                <td><input type="checkbox" id="chkBox_4" checked="checked" value="Create Dir"/></td>
             </tr>
-            <tr class="UM_ulistrow"><td><input type="checkbox"></td><td>zhangsan</td><td><button class="UM_ulistbtn">修改密码</button></td>
-                <td><input type="checkbox" id="chkBox" value="Manager"/></td>
-                <td><input type="checkbox" id="chkBox" value="All R/W"/></td>
-                <td><input type="checkbox" id="chkBox" value="Task Manager"/></td>
-                <td><input type="checkbox" id="chkBox" checked="checked" value="Create Dir"/></td>
+            <tr class="UM_ulistrow"><td><input type="checkbox" class="chkBox_0"></td><td>zhangsan</td><td><button class="UM_ulistbtn" onclick="changepasswd($(this))">修改密码</button></td>
+                <td><input type="checkbox" id="chkBox_1" value="Manager"/></td>
+                <td><input type="checkbox" id="chkBox_2" value="All R/W"/></td>
+                <td><input type="checkbox" id="chkBox_3" value="Task Manager"/></td>
+                <td><input type="checkbox" id="chkBox_4" checked="checked" value="Create Dir"/></td>
             </tr>
-            <tr class="UM_ulistrow"><td><input type="checkbox"></td><td>zhangsan</td><td><button class="UM_ulistbtn">修改密码</button></td>
-                <td><input type="checkbox" id="chkBox" value="Manager"/></td>
-                <td><input type="checkbox" id="chkBox" value="All R/W"/></td>
-                <td><input type="checkbox" id="chkBox" value="Task Manager"/></td>
-                <td><input type="checkbox" id="chkBox" checked="checked" value="Create Dir"/></td>
+            <tr class="UM_ulistrow"><td><input type="checkbox" class="chkBox_0"></td><td>zhangsan</td><td><button class="UM_ulistbtn" onclick="changepasswd($(this))">修改密码</button></td>
+                <td><input type="checkbox" id="chkBox_1" value="Manager"/></td>
+                <td><input type="checkbox" id="chkBox_2" value="All R/W"/></td>
+                <td><input type="checkbox" id="chkBox_3" value="Task Manager"/></td>
+                <td><input type="checkbox" id="chkBox_4" checked="checked" value="Create Dir"/></td>
             </tr>
-        </table>
+        </table-->
         </div>
     </div>
-</body>
-</html>
+<!--/body>
+</html-->

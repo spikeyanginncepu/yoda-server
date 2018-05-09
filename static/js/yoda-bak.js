@@ -259,21 +259,7 @@ class List {
 				tdChild.innerHTML = rowData[i];
 			}
 			else if (objType[i] == "checkbox") {
-                /* let truefalse = rowData[i];
-                if(typeof rowData[i] == "string") {
-                    truefalse = eval(rowData[i].toLowerCase());
-                }*/
-                if(rowData[i]=="mixed"){
-                    tdChild.indeterminate = true;
-                   // console.log(truefalse);
-                }else if(rowData[i]=="true"){
-                    tdChild.checked = true;
-                }
-                else {
-                    tdChild.checked = false;
-                }
-               
-               // console.log(rowData[i]);
+                tdChild.checked = rowData[i];
 			}
 			else if (objType[i] == "text") {
 				tdChild.innerHTML = rowData[i];
@@ -602,7 +588,6 @@ function request_userlist(){
 	     }})
 	}})
 }
-
 //类似于上
 function search_userlist(){
 
@@ -719,24 +704,6 @@ function changepasswd_do(obj){
 		}});
     }
 }
-function user_setting(){
-    let username=$("#userid").text();
-    let oldpasswd=$("input[name='passwd_0']").val();
-    let passwd_1=$("input[name='passwd_1']").val();
-    let passwd_2=$("input[name='passwd_2']").val();
-    if(passwd_1!=passwd_2){
-        alert("两次输入的密码不一致");
-    }else{
-      var content={"action": "changePassWord","data": {"username": username, "oldPassword":oldpasswd, "newPassword":passwd_1}};
-      $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-changepwd.txt",data:content,dataType:"json",success:function(obj){
-          if(obj.status=="ok"){
-            alert("修改用户"+username+"密码成功。新密码："+passwd_1);
-         }else{
-            alert(obj.status);
-          }
-      } });
-    }
-  }
 /*tocomplete:删除用户*/
 function deleteuser(obj){
 	var selectuserTodel=[];
@@ -774,14 +741,10 @@ function deleteuser(obj){
 	    }
 	}	
 }
-function Se_DE_All(obj,classname){
+function Se_DE_Alluser(obj){
 	let flag = obj.is(":checked");
-    $("."+classname).each(function(){ 
-          $(this).indeterminate=false;
-         //$(this).checked=flag;
-         $(this).prop("indeterminate",false);
-          $(this).prop("checked",flag);
-          
+    $(".chkBox_0").each(function(){ 
+		  $(this).prop("checked",flag);
 	});
 }
 /*$("#selectAll").click(function(){
@@ -797,7 +760,6 @@ $("#CheckAll").click(function() {
      $(this).attr("checked", flag); 
 	})
 })*/
-
 let selectuserToedit_copy=new Array();
 function edituser(obj){
 	let selectuserToedit=new Array();
@@ -818,38 +780,28 @@ function edituser(obj){
 		$.ajax({url: url, data: {}, dataType: "text", type: "GET", success: function(response) {
 			element('content').innerHTML = response;
             element('edit_users').innerHTML='修改用户'+selectuserToedit+'的权限:';
-            var content_1={
-            "action": "requestFileList",
-             "data": {"column":["fileName","authRead","authWrite"],
-                      "asUser": selectuserToedit,
-                      "root": "/",
-                      "filterOfAnd":[],
-                      "orderBy":"fileName",
-                      "loadDepth": "1" ,
-                      "limits":[1,-1]
-                    }
-            };
-            $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-flist.txt",data:content_1,dataType:"json",type: "post",success:function(obj){
-                var parentClass="UE_fileList";
-                var heading_par=["文件列表","读权限","写权限"];
-                var objType=["text","checkbox","checkbox"];
-                var keys=["fileName","authRead","authWrite"];
-                var prefix="UE_permission";
-                if (obj.status == "ok") { 
-                    var filelist=new List(parentClass,heading_par,objType,keys,prefix);
-                    filelist.addRowsByJson(obj);
-                   /*$("."+prefix+"table_td button").each(function(){
-                       $(this).attr("class","UM_ulistbtn");
-                       $(this).click(function(){ changepasswd($(this))});
-                       $(this).html("修改密码");
-                   });*/
-                   $("."+prefix+"table_tr").each(function(){
-                    $(this).children("td:eq(1)").children("input").attr("class","AllRead_chk");
-                    });
-                }else{ 
-                    alert("失败:"+obj.status); 
-                }; 
-            }});
+            var parentClass="UE_fileList";
+            var heading_par=["文件列表","读权限","写权限"];
+            var objType=["text","checkbox","checkbox"];
+            var keys=["fileName","",""];
+            var prefix="UE_permission";
+            $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-edit.txt",data:{},dataType:"json",type: "post",success:function(obj){
+                    if (obj.status == "ok") { 
+                        var filelist=new List(parentClass,heading_par,objType,keys,prefix);
+                        filelist.addRowsByJson(obj);
+                       /*$("."+prefix+"table_td button").each(function(){
+                           $(this).attr("class","UM_ulistbtn");
+                           $(this).click(function(){ changepasswd($(this))});
+                           $(this).html("修改密码");
+                       });
+                       $("."+prefix+"table_tr").each(function(){
+                        $(this).children("td:eq(0)").children("input").attr("class","chkBox_0");
+                        });*/
+                    }else{ 
+                        alert("返回失败"+obj.status); 
+                    };  
+                }
+            });
 		}});
 		/*$.getJSON(url, {}, setContent_EditPvl);*/
 		/*$.getJSON(url,{},function(response) {

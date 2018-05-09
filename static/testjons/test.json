@@ -1,0 +1,17 @@
+{  
+    "status":"ok",
+    "data":
+    [{"username":"zhangsan","children":[],"authAdmin":"false","authFileReadAll":"true","authTaskManageAll":"false","hasUserFolder":"true"},
+     {"username":"lisi","children":[],"authAdmin":"false","authFileReadAll":"true","authTaskManageAll":"false","hasUserFolder":"true"},
+     {"username":"wangwu","children":[],"authAdmin":"false","authFileReadAll":"true","authTaskManageAll":"false","hasUserFolder":"true"},
+     {"username":"哈哈","children":[],"authAdmin":"false","authFileReadAll":"true","authTaskManageAll":"false","hasUserFolder":"true"},
+     {"username":"zhangsan","children":[],"authAdmin":"false","authFileReadAll":"true","authTaskManageAll":"false","hasUserFolder":"true"},
+     {"username":"zhangsan","children":[],"authAdmin":"false","authFileReadAll":"true","authTaskManageAll":"false","hasUserFolder":"true"},
+     {"username":"zhangsan","children":[],"authAdmin":"false","authFileReadAll":"true","authTaskManageAll":"false","hasUserFolder":"true"},
+     {"username":"zhangsan","children":[],"authAdmin":"false","authFileReadAll":"true","authTaskManageAll":"false","hasUserFolder":"true"},
+     {"username":"zhangsan","children":[],"authAdmin":"false","authFileReadAll":"true","authTaskManageAll":"false","hasUserFolder":"true"},
+     {"username":"zhangsan","children":[],"authAdmin":"false","authFileReadAll":"true","authTaskManageAll":"false","hasUserFolder":"true"},
+     {"username":"zhangsan","children":[],"authAdmin":"false","authFileReadAll":"true","authTaskManageAll":"false","hasUserFolder":"true"},
+     {"username":"zhangsan","children":[],"authAdmin":"false","authFileReadAll":"true","authTaskManageAll":"false","hasUserFolder":"true"},
+     {"username":"zhangsan","children":[],"authAdmin":"false","authFileReadAll":"true","authTaskManageAll":"false","hasUserFolder":"true"}]
+}
