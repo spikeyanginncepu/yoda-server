@@ -874,7 +874,7 @@ function edituser(obj){
 	}
 }
 /*todo*/
-function edituser_do(){
+function edituser_do1(){
     var files=[];
     var prefix="UE_permission";
     $("."+prefix+"table_tr").each(function(){
@@ -891,6 +891,26 @@ function edituser_do(){
                        "files": files
                      }
     }
+    alert(JSON.stringify(content));
+    $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"/request",data:JSON.stringify(content),dataType:"json",type: "post",success:function(obj){
+        if(obj.status=="ok"){
+            alert("权限修改成功！");
+        }else{
+            alert("权限修改失败："+obj.status);
+        }
+    }});
+}
+/*todo*/
+function edituser_do2(){
+    var flag=[];
+    $(".uAchkBox_class").each(function(){
+        flag.push($(this).is(":checked"));
+    });
+    var content={"action": "userManageAuthChange",
+                 "data": {
+                     "asUser":selectuserToedit_copy,
+                     "authAdmin":""+flag[0],"authFileReadAll":""+flag[1],"authTaskManageAll":""+flag[2]}
+}
     alert(JSON.stringify(content));
     $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"/request",data:JSON.stringify(content),dataType:"json",type: "post",success:function(obj){
         if(obj.status=="ok"){
