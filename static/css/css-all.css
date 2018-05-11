@@ -739,9 +739,8 @@ a{
 
 .dMmanybtn{
     width:90%;
-    float: left;
     margin-top:20;
-    margin-left:5%;
+    margin-left:50;
     padding: 0.5%;
     height:4%;
     /* float: left; */
@@ -864,6 +863,7 @@ a{
 .dMtable{
     height:1000px;
     width:100%;
+    /* height:100%; */
     padding:0;
     margin:0;
     font-family: Microsoft Yahei;
@@ -872,12 +872,17 @@ a{
     text-align: center;
 }
 .dMtable_tr,.dMtable_td{
+    height:60px;
     padding:0;
     margin:0;
     font-family: Microsoft Yahei;
     font-size: 105%;
     border-collapse: collapse; 
-    text-align: center;
+    text-align: left;
+}
+.dMtable_trh{
+    text-align: left;
+    height:60px;
 }
 .dMtable_tr:hover{
     background:hsl(174, 29%, 64%);
