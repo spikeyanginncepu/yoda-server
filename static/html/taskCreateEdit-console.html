@@ -2,13 +2,13 @@
       <div class="TE_tasksetting">
             <br>
            <div class="TE_div1"> 
-               <label for="tastname">任务名称&nbsp;&nbsp;&nbsp;&nbsp;</label><input id="tastname"type="text" class="TE_text1"/>
+               <label for="tastname">任务名称&nbsp;&nbsp;&nbsp;&nbsp;</label><input id="_tastname"type="text" class="TE_text1"/>
            </div>
             <br>
            <div class="TE_div1">
                 <!--a href="javascript:;" class="file">选择文件<input type="file" name="" id="" onchange="setFilepath($(this))"> </a>
                 <br-->
-                <div id="newtast_filetree" style="position:absolute;z-index:333;background: hsl(160, 16%, 96%);margin-left:23%;margin-top:1%;font-size: 10px;"></div>
+                <div id="newtast_filetree" class="newtast_filetree_css"></div>
                 <label for="tastname" >文件路径&nbsp;&nbsp;&nbsp;&nbsp;</label>
                 <input id="inputdir_task"  type="text" class="TE_text1"/>
             </div>
@@ -51,7 +51,7 @@
                         </tr>
                </table-->
            </div>
-           <div><button id="TE_submit_new_tast">保存</button></div>
+           <div><button id="TE_submit_new_tast" onclick="taskCreateEdit_do($(this))">保存</button></div>
      
     </div>
      <div class="TE_usertree">

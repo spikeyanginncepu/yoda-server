@@ -1062,5 +1062,15 @@ a{
     text-decoration: none;
 }***/
 
-.demo { overflow:auto; border:1px solid silver; min-height:100px; }
+.newtast_filetree_css{
+    position:absolute;
+    z-index:333;
+    background: hsl(160, 16%, 96%);
+    margin-left:23%;
+    margin-top:1%;
+    font-size: 10px;
+    /*width: 150px;
+    height: 300px;*/
+    
+}
 

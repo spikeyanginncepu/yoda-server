@@ -1,5 +1,9 @@
 {
-            "status":"ok",
-            "data":[{"filename":"lay_1","children":[]},
-                    {"filename":"lay_2","children":[]}]
+      "status": "ok",
+      "dataLength": 3,
+      "canModify": "true", 
+      "data": [{"fileName":"用户-zhangsan","type":"userFolder","filesContain":"8","size":"","dateModified":"1792553248","children":"notLoaded","authRead":"true","authWrite":"true","usedByTask":false},
+               {"fileName":"洛阳巡检1","type":"folder","filesContain":"124","size":"","dateModified":"1792563248", "children":"notLoaded","authRead":"true","authWrite":"false","usedByTask":true} ,
+               {"fileName":"洛阳巡检2","type":"folder","filesContain":"124","size":"","dateModified":"1792563248", "children":"notLoaded","authRead":"true","authWrite":"false","usedByTask":true}
+            ]
 }

@@ -1028,28 +1028,41 @@ function edituser_do2(){
     }});
 }
 /********************New_Task********************/
-function addTask(){
+function taskCreateEdit(obj){
  let url="html/taskCreateEdit-console.html"
  $.ajax({"url":url,"data":{},"dataType":"text",success:function(response){
      element("content").innerHTML=response;
+     if(obj.attr("id")=="_editTask"){
+        $("#_tastname").val("xxx");
+         $("#_tastname").attr("disabled",true);
+     }
      loadTree();
  }});
- //$.getJSON(url,{},setContent);
- //loadTree();
- request_modellist();
-    
+ request_modellist();    
 }
-function addTask_do(){
+function taskCreateEdit_do(obj){
+    let taskName=$("#_tastname").val();
+    let inputFolder=$("#inputdir_task").val();
+    if(inputFolder=="/")alert("请输入正确路径");
+    let backup=""+$("#ifbackup").is(":checked");
+    let model={};
+    model.modelName=$("#taskmodel").val();
+    model.objectList=[];
+    $(".TE_deftable_tr").each(function(){
+        if( $(this).children("td:eq(0)").children("input").is(":checked")){
+            let name=$(this).children("td:eq(1)").text();
+            let color=$(this).children("td:eq(2)").text();
+            var deft={"name":name,"color":color};
+            model.objectList.push(deft);
+        }
+    })
    var content={
        "action": "taskEdit",
-        "data": {"taskName":$taskName,"inputFolder":$inputFolder,"backup":"true", 
-        "model":{"modelName":"细粒度缺陷识别模型", 
-                 "objectList":[{"name":"鸟巢","color":"hsl(…,...,...)"},
-                               {}]
-        },
+        "data": {"taskName": taskName,"inputFolder":inputFolder,"backup":backup, "model":model },
        "authTaskManageUserList": ["zhangsan","lisi"],
-       "authTaskValidateUserList": ["shixisheng1","shixisheng2"] }
-}
+       "authTaskValidateUserList": ["shixisheng1","shixisheng2"] 
+    }
+    alert(JSON.stringify(content));
 }
 function request_modellist(){
    var content={
@@ -1099,25 +1112,33 @@ function setFilepath(obj){
 function loadTree() {
     $("#newtast_filetree").jstree({
         'core' : {      
-            'data' : [  { "id":"root",
+            'data' : [  { "id":"newtast_filetree_root",
                           "text" : "请选择输入文件夹", 
-                          "children" : [ { "id":"ch0_0","" : "dd","children":[] }]
+                          "children" : [ { "id":"ch0_0","text" : "","children":[] }],
+                          "state":{
+                           // "disabled": true         //该根节点不可点击
+                          }
                         }
                      ],//{ "id":"ch1_1","text" : "Child node 1_1","children":[] },{ "id":"ch1_2","text" : "Child node 1_1","children":[] }{ "id":"ch2_1","text" : "Child node 2_1","children":[] },{ "id":"ch2_2","text" : "Child node 2_2","children":[] }
             'check_callback': true
         }
     }).bind("open_node.jstree", function (e, data) {
-        /*打开时通过判断response和data.node.chi的长度判断是否重新刷新*/
-        /*var response={
-            "status":"ok",
-            "data":[{"filename":"lay_1","children":[]},
-                        {"filename":"lay_2","children":[]}]
-            }*/
         var dir_path=data.node.text;
-        var content={};
+        if(data.node.id=="newtast_filetree_root")
+            dir_path="/"
+        var content={"action": "requestFileList",
+                     "data": {
+                        "column":["fileName","type","filesContain","size","dateModified","children","authRead","authWrite","usedByTask"],
+                        "root": dir_path,
+                        "filterOfAnd": [{"filterName":"type","content":"folder"},{"filterName":"authRead","content":"true"}],
+                        "orderBy":"fileName",
+                        "loadDepth": "1" ,
+                        "limits":[1,-1]
+            }
+        }
         let url;
         if(data.node.parent=="#") url="testjons/test-edit_0.txt";
-        else if(data.node.parent=="root") url="testjons/test-edit_1.txt";
+        else if(data.node.parent=="newtast_filetree_root") url="testjons/test-edit_1.txt";
         else url="testjons/test-edit_2.txt";
         $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:url,data:JSON.stringify(content),dataType:"json",type: "post",success:function(response){
             if(response.status=="ok"){
@@ -1126,7 +1147,7 @@ function loadTree() {
                     deleteNode(node_ch[0]);
                     var par_id=data.node.id;
                     for(var i=0;i<response.data.length;i++){
-                        createNode(par_id, par_id+"_"+i, response.data[i].filename, "last"); 
+                        createNode(par_id, par_id+"_"+i, response.data[i].fileName, "last"); 
                         createNode(par_id+"_"+i, par_id+"_"+i+"_0", "", "last");  
                     }            
                 }
@@ -1180,8 +1201,17 @@ function loadTree() {
         
     });
     $("#newtast_filetree").on('select_node.jstree', function (e, data) {// 节点选择事件  
-       var selectNodeId = data.node.id;       //选择节点  
-       $('#inputdir_task').val(selectNodeId);//赋值给araename选择框                      
+        var text="/";
+        if(data.node.parent!="#"){
+            var parents=data.node.parents;
+        
+            for(var i=parents.length-3;i>=0;i--){
+                var  node = $('#newtast_filetree').jstree().get_node("#"+parents[i]);
+                text+=node.text+"/";
+            }
+            text+=data.node.text;
+        }
+       $('#inputdir_task').val(text);//赋值给araename选择框    
      });
 }
 function createNode(parent_node, new_node_id, new_node_text, position) { 
