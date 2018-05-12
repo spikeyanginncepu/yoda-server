@@ -22,7 +22,7 @@ jQuery.postJSON = function(url, args, callback) {
 
 let subject = null;
 let item = null;
-
+let fileList = null;
 function setNav(response) {
 	element('left').innerHTML = response;
 	let menu = element('leftMenu');
@@ -31,6 +31,16 @@ function setNav(response) {
 
 function setContent(response) {
 	element('content').innerHTML = response;
+	switch(subject) {
+		case "数据管理":
+			$(".dMfileList").empty();
+			dmFileList();
+			break;
+		case "任务管理":
+			break;
+		case "用户管理":
+			break;
+	}
 }
 
 function setContent_EditPvl(response) {
@@ -93,9 +103,9 @@ Array.prototype.max = function() {
 	return max;
 }
 Array.prototype.unique = function(){
-	var res = [];
-	var json = {};
-	for(var i = 0; i < this.length; i++){
+	let res = [];
+	let json = {};
+	for(let i = 0; i < this.length; i++){
 		if(!json[this[i]]) {
 			res.push(this[i]);
 			json[this[i]] = 1;
@@ -105,7 +115,7 @@ Array.prototype.unique = function(){
 }
 function copyElement(obj) {
 	let newObj = obj.cloneNode();
-	newObj.innerHTML = obj.innerHTML
+	newObj.innerHTML = obj.innerHTML;
 	return newObj;
 }
 function trOnMouse(obj) {
@@ -137,7 +147,7 @@ class List {
 		this.trhClass = this.tableClass + "_trh";
 		this.table.setAttribute("border",1);
 		this.parent.appendChild(this.table);
-		this.checkallColNum = null; 
+		this.checkallColNum = null;  //全选所在列的序号
 		this.setHeadings(headings);
 	}
 	//设置表格标题，使用方法如List.setHeadings(["全选","name","size","dateModified"])
@@ -259,21 +269,20 @@ class List {
 				tdChild.innerHTML = rowData[i];
 			}
 			else if (objType[i] == "checkbox") {
-                /* let truefalse = rowData[i];
-                if(typeof rowData[i] == "string") {
-                    truefalse = eval(rowData[i].toLowerCase());
-                }*/
-                if(rowData[i]=="mixed"){
-                    tdChild.indeterminate = true;
-                   // console.log(truefalse);
-                }else if(rowData[i]=="true"){
-                    tdChild.checked = true;
-                }
-                else {
-                    tdChild.checked = false;
-                }
-               
-               // console.log(rowData[i]);
+				// let truefalse = rowData[i];
+				// if(typeof rowData[i] == "string") {
+				// 	truefalse = eval(rowData[i].toLowerCase());
+				// }
+				// tdChild.checked = truefalse;
+				if(rowData[i]=="mixed"){
+					tdChild.indeterminate = true;
+				}
+				else if(rowData[i]=="true"){
+					tdChild.checked = true;
+				}
+				else {
+					tdChild.checked = false;
+				}
 			}
 			else if (objType[i] == "text") {
 				tdChild.innerHTML = rowData[i];
@@ -300,7 +309,7 @@ class List {
 					rowData.push("");
 				}
 				else{
-                    rowData.push(value[this.keys[i]]);
+					rowData.push(value[this.keys[i]]);
 				}
 			}
 			rowsData.push(rowData);
@@ -1180,4 +1189,191 @@ function createNode(parent_node, new_node_id, new_node_text, position) {
 }
 function deleteNode(node_id) { 
     $('#newtast_filetree').jstree('delete_node', $("#"+node_id));   
+}
+function dmFileList() {
+	fileList = new List("dMfileList",["全选","文件名或文件夹名","子文件数量","文件大小","修改日期","写权限"],["checkbox","text","text","text","text","checkbox"],["","fileName","filesContain","size","dateModified","authWrite"],"dM");
+	let jsonData = {
+		"status": "ok","dataLength": "3", "canModify":"true",
+		"data": [
+		{"fileName":"用户-贝克汉姆","type":"userFolder","filesContain":"1","size":"","dateModified":"1792553248","children":[{"fileName":"洛阳巡检","type":"folder","filesContain":"124","size":"","dateModified":"1792563248","children":[],"authRead":"true","authWrite":"mixed","usedByTask":"true"}],"authRead":"true","authWrite":"false", "usedByTask":"false"},
+		{"fileName":"用户-罗纳尔多","type":"folder","filesContain":"0","size":"","dateModified":"1792563248","children":[],"authRead":"true","authWrite":"true","usedByTask":"true"},
+		{"fileName":"用户-齐达内","type":"folder","filesContain":"1","size":"","dateModified":"1234563293","children":[{"fileName":"洛阳巡检","type":"folder","filesContain":"124","size":"","dateModified":"1792563248","children":[],"authRead":"true","authWrite":"mixed","usedByTask":"true"}],"authRead":"true","authWrite":"true","usedByTask":"true"},
+		{"fileName":"用户-贝利","type":"folder","filesContain":"0","size":"","dateModified":"1792598257","children":[],"authRead":"true","authWrite":"mixed","usedByTask":"true"},
+		{"fileName":"用户-梅西","type":"folder","filesContain":"0","size":"","dateModified":"1792523248","children":[],"authRead":"true","authWrite":"true","usedByTask":"true"},
+		{"fileName":"用户-马拉多纳","type":"folder","filesContain":"0","size":"","dateModified":"1797863265","children":[],"authRead":"true","authWrite":"mixed","usedByTask":"true"},
+		{"fileName":"1.jpg","type":"image","filesContain":"","size":"131225","dateModified":"1792573248","authRead":"true","authWrite":"false", "usedByTask":"false"},
+		]
+	};
+	fileList.addRowsByJson(jsonData);
+}
+function dmBtnClick(obj) {
+	let btName = obj.text();
+	if(btName == "上传") {
+		fileUpload();
+	}
+	else if(btName == "新建文件夹") {
+		newFolder();
+	}
+	else if(btName == "下载") {
+		fileDownLoad();
+	}
+	else if(btName == "重命名") {
+		fileRename();
+	}
+	else if(btName == "删除") {
+		fileDelete();
+	}
+	else if(btName == "复制到") {
+		fileCopy();
+	}
+	else if(btName == "移动到") {
+		fileMove();
+	}
+}
+
+let msgBoxID=""; //重要
+//弹出对话窗口(msgID-要显示的div的id)
+function showAlert(msgID){
+    //创建背景框，覆盖所有东西
+    let bgObj=document.createElement("div");
+    bgObj.setAttribute('id','bgID');
+    document.body.appendChild(bgObj);
+    showBigDiv();
+    msgBoxID=msgID;
+    showMsgDiv();
+}
+//关闭对话窗口
+function closeAlert() {
+	let msgObj=document.getElementById(msgBoxID);
+    let bgObj=document.getElementById("bgID");
+    msgObj.style.display="none";
+    document.body.removeChild(bgObj);
+    msgBoxID="";
+}
+
+//把要显示的div居中显示
+function showMsgDiv() {
+    let msgObj = document.getElementById(msgBoxID);
+    msgObj.style.display = "block";
+    let msgWidth = msgObj.scrollWidth;
+    let msgHeight= msgObj.scrollHeight;
+    let bgTop=myScrollTop();
+    let bgLeft=myScrollLeft();
+    let bgWidth=myClientWidth();
+    let bgHeight=myClientHeight();
+    let msgTop=bgTop+Math.round((bgHeight-msgHeight)/2);
+    let msgLeft=bgLeft+Math.round((bgWidth-msgWidth)/2);
+    msgObj.style.position = "absolute";
+    msgObj.style.top      = msgTop+"px";
+    msgObj.style.left     = msgLeft+"px";
+    msgObj.style.zIndex   = "10001";
+}
+//背景框满窗口显示
+function showBigDiv(){
+    let bgObj=document.getElementById("bgID");
+    let bgWidth=myClientWidth();
+    let bgHeight=myClientHeight();
+    let bgTop=myScrollTop();
+    let bgLeft=myScrollLeft();
+    bgObj.style.position   = "absolute";
+    bgObj.style.top        = bgTop+"px";
+    bgObj.style.left       = bgLeft+"px";
+    bgObj.style.width      = bgWidth + "px";
+    bgObj.style.height     = bgHeight + "px";
+    bgObj.style.zIndex     = "10000";
+    bgObj.style.background = "rgb(0,100,100)";
+    bgObj.style.opacity    = "0.3";
+}
+//网页被卷去的上高度
+function myScrollTop(){
+    let n=window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    return n;
+}
+//网页被卷去的左宽度
+function myScrollLeft(){
+    let n=window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft || 0;
+    return n;
+}
+//网页可见区域宽
+function myClientWidth(){
+    let n=document.documentElement.clientWidth || document.body.clientWidth || 0;
+    return n;
+}
+//网页可见区域高
+function myClientHeight(){
+    let n=document.documentElement.clientHeight || document.body.clientHeight || 0;
+    return n;
+}
+function newFolder() {
+	$("#dMreminder").text("请输入新建文件夹名称：");
+	$("#dMreminder").next().show();
+	$("#dMConfirmBtn").click(confirmNewFolder);
+	$("#dMCancelBtn").click(cancelNewFolder);
+	showAlert('dMbox');
+}
+function confirmNewFolder() {
+	let newFolderName = $("#newFolderName").val();
+	let request = {"action":"mkdir","data": {"curdir":"$curdir","dirname":newFolderName}};
+	let response = {"status": "ok"};
+	if (response.status == "ok") {
+		fileList.addRow(["",newFolderName,"0","",new Date().toString(),"false"]);
+		closeAlert();
+	}
+	else if(response.status == "curdirNotExist"){
+		$("#dMreminder").text("请输入新建文件夹名称： 当前所在目录不存在，请刷新！");
+	}
+	else if(response.status == "noAuthWrite") {
+		$("#dMreminder").text("请输入新建文件夹名称： 当前目录不可写！");
+	}
+	else if(response.status == "otherReason") {
+		$("#dMreminder").text("请输入新建文件夹名称： 未知原因导致创建失败！");
+	}
+	else if(response.status == "expired") {
+		//log out
+	}
+	$("#dMConfirmBtn").unbind();
+	$("#dMCancelBtn").unbind();
+	$("#newFolderName").val("");
+}
+function cancelNewFolder() {
+	$("#newFolderName").val("");
+	cancelFileDelete();
+}
+function fileDelete() {
+	let selRowNums = fileList.getSelRowNums();
+	if(selRowNums[0] == 0) {selRowNums.shift();}
+	if(selRowNums.length > 0) {
+		let names = [];
+		let colObjs = fileList.getColObjs(1);
+		selRowNums.forEach(function(value,index,array){
+			if(value!=0) {
+				names.push(colObjs[value][0].innerHTML);
+			}
+		})
+		names = names.join("、  ");
+		$("#dMreminder").text("确认删除以下文件（夹）： " + names + "？");
+		$("#dMreminder").next().hide();
+		$("#dMConfirmBtn").click(confirmFileDelete);
+		$("#dMCancelBtn").click(cancelFileDelete);
+		showAlert('dMbox');
+	}
+	else{
+		if($('#btnReminder')){
+			$('#btnReminder').remove();
+		}
+		$redWords =$("<span id='btnReminder' style='color:red;margin-left:30px'>没有可删除文档</span>");
+		$(".crumb").append($redWords);
+		$redWords.fadeOut(1000,function(){$(this).remove()});
+	}
+}
+function confirmFileDelete() {
+
+	$("#dMConfirmBtn").unbind();
+	$("#dMCancelBtn").unbind();
+	closeAlert();
+}
+function cancelFileDelete() {
+	$("#dMConfirmBtn").unbind();
+	$("#dMCancelBtn").unbind();
+	closeAlert();
 }

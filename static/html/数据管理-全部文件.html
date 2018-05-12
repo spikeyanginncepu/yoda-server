@@ -9,13 +9,13 @@
 <body>
 -->
     <div class="dMmanybtn">
-        <button>上传</button>
-        <button>新建文件夹</button>
-        <button>下载</button>
-        <button>重命名</button>
-        <button>删除</button>
-        <button>复制到</button>
-        <button>移动到</button>
+        <button onclick="dmBtnClick($(this))">上传</button>
+        <button onclick="dmBtnClick($(this))">新建文件夹</button>
+        <button onclick="dmBtnClick($(this))">下载</button>
+        <button onclick="dmBtnClick($(this))">重命名</button>
+        <button onclick="dmBtnClick($(this))">删除</button>
+        <button onclick="dmBtnClick($(this))">复制到</button>
+        <button onclick="dmBtnClick($(this))">移动到</button>
         <div id="dMsearch"><button id="dMsearchbtn">搜索</button><input id="dMsrchPrintbox"type="text"/></div>
     </div>
 
@@ -52,6 +52,13 @@
             <tr class="dMtable_tr"><td><input type="checkbox"></td><td>/全部文件/张三/春季巡检/上嘉一线</td><td>255</td><td>2018年1月13日</td></tr>
         </table>
     </div>
+    <div id="dMbox" style=" width:500px; background: whitesmoke; border:1px solid hsl(174, 29%, 64%); padding:20px; overflow:hidden; display:none;">
+        <p id="dMreminder"></p>
+        <input id="newFolderName" style="display:block;margin-bottom:15px;width:80%;"type="text">
+        <button id="dMConfirmBtn" style="background:hsl(174, 29%, 64%);border-radius: 5px;border:none;width:55px;height:30px;font-family: Microsoft Yahei;font-size: 100%;" >确定</button>
+        <button id="dMCancelBtn" style="background:hsl(174, 29%, 64%);border-radius: 5px;border:none;width:55px;height:30px;font-family: Microsoft Yahei;font-size: 100%;" >取消</button>
+    </div>
+
 <!--
 </body>
 </html>
