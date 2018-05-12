@@ -1,50 +1,59 @@
-<html>
-<head>
-<title>任务创建修改</title>
-<meta charset="utf-8" /> 
-<link rel="Stylesheet" type="text/css" href="css/css-all.css" />
-</head>
-<body>
+
       <div class="TE_tasksetting">
             <br>
-           <div class="TE_div1"> <label for="tastname">任务名称&nbsp;&nbsp;&nbsp;&nbsp;</label><input id="tastname"type="text" class="TE_text1"/></div>
-            <br>
-           <div class="TE_div1"><label for="inputdir_task">输入文件夹&nbsp;</label><input id="inputdir_task" type="text" class="TE_text1"/><button id="select_inputdir_task" class="TE_button1">选择</button></div>
-           <br>
-           <div class="TE_div1"><input id="ifbackup" type="checkbox"><label for="ifbackup">是否备份原图</label></div>         
-           <br>
-           <div  class="TE_div1"><label for="taskmodel">选择模型&nbsp;&nbsp;&nbsp;</label>
-            <select id="taskmodel" class="TE_button1">
-                <option>请选择模型</option>
-            </select>
+           <div class="TE_div1"> 
+               <label for="tastname">任务名称&nbsp;&nbsp;&nbsp;&nbsp;</label><input id="tastname"type="text" class="TE_text1"/>
            </div>
-           <br><br>
-           <div  class="TE_div1"><label for="taskmodel" class="TE_defect-font1">缺陷选择</label>
-           <input type="checkbox" class="TE_defect0"><label>全选</label> <label class="TE_defect1">缺陷名</label><label class="TE_defect1">画框配色</label> </div>
-           <div class="TE_div1-table">
-               <table class="TE_table1">
-                   <tr class="TE_tr1">
-                       <td class="TE_td1"><label class="TE_defect-font2">1</label></td>
-                       <td class="TE_td1"><input type="checkbox"></td>
-                       <td class="TE_td1"><label class="TE_defect-font2">鸟巢</label></td>
-                       <td class="TE_td1"><input type="text" class="TE_colorselect" ></td>
+            <br>
+           <div class="TE_div1">
+                <!--a href="javascript:;" class="file">选择文件<input type="file" name="" id="" onchange="setFilepath($(this))"> </a>
+                <br-->
+                <div id="newtast_filetree" style="position:absolute;z-index:333;background: hsl(160, 16%, 96%);margin-left:23%;margin-top:1%;font-size: 10px;"></div>
+                <label for="tastname" >文件路径&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                <input id="inputdir_task"  type="text" class="TE_text1"/>
+            </div>
+            
+            <div style="margin-top: 5%;margin-left: 5%">
+                <label >是否备份原图</label>
+                <input  id="ifbackup" type="checkbox">
+            </div>         
+            <br>
+            <div class="TE_div1"><label for="taskmodel">选择模型&nbsp;&nbsp;&nbsp;</label>
+                    <select id="taskmodel" class="TE_button1">
+                        <option selected>请选择</option>
+                    </select>
+            </div>
+            <div style="margin-top: 5%;margin-left: 5%"><label for="taskmodel">请选择识别目标&nbsp;&nbsp;&nbsp;</label>
+          </div>
+            
+           <!--div  class="TE_div1"><label for="taskmodel" class="TE_defect-font1">缺陷选择</label>
+                <input type="checkbox" class="TE_defect0"><label>全选</label> <label class="TE_defect1">缺陷名</label><label class="TE_defect1">画框配色</label> 
+           </div-->
+           <div class="TE_def">
+               <!--table class="TE_deftable">
+                   <tr class="TE_deftable_tr">
+                       <td class="TE_deftable_td"><label class="TE_defect-font2">1</label></td>
+                       <td class="TE_deftable_td"><input type="checkbox"></td>
+                       <td class="TE_deftable_td"><label class="TE_defect-font2">鸟巢</label></td>
+                       <td class="TE_deftable_td"><input type="text" class="TE_colorselect" ></td>
                    </tr>
-                   <tr class="TE_tr1">
-                        <td class="TE_td1"><label class="TE_defect-font2">2</label></td>
-                        <td class="TE_td1"><input type="checkbox"></td>
-                        <td class="TE_td1"><label class="TE_defect-font2">防震锤滑移</label></td>
-                        <td class="TE_td1"><input type="text" class="TE_colorselect" ></td>
+                   <tr class="TE_deftable_tr">
+                        <td class="TE_deftable_td"><label class="TE_defect-font2">2</label></td>
+                        <td class="TE_deftable_td"><input type="checkbox"></td>
+                        <td class="TE_deftable_td"><label class="TE_defect-font2">防震锤滑移</label></td>
+                        <td class="TE_deftable_td"><input type="text" class="TE_colorselect" ></td>
                     </tr>
-                    <tr class="TE_tr1">
-                            <td class="TE_td1"><label class="TE_defect-font2">3</label></td>
-                            <td class="TE_td1"><input type="checkbox"></td>
-                            <td class="TE_td1"><label class="TE_defect-font2">...</label></td>
-                            <td class="TE_td1"><input type="text" class="TE_colorselect" ></td>
+                    <tr class="TE_deftable_tr">
+                            <td class="TE_deftable_td"><label class="TE_defect-font2">3</label></td>
+                            <td class="TE_deftable_td"><input type="checkbox"></td>
+                            <td class="TE_deftable_td"><label class="TE_defect-font2">...</label></td>
+                            <td class="TE_deftable_td"><input type="text" class="TE_colorselect" ></td>
                         </tr>
-               </table>
+               </table-->
            </div>
            <div><button id="TE_submit_new_tast">保存</button></div>
-     </div>
+     
+    </div>
      <div class="TE_usertree">
             <br>
             <div class="TE_div1">拥有操作权限的用户:</div>
@@ -53,5 +62,3 @@
             <div class="TE_div1">拥有校验权限的用户:</div>
             <div class="TE_div2"></div>
     </div>
-</body>
-</html>

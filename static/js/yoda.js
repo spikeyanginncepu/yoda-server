@@ -1018,6 +1018,166 @@ function edituser_do2(){
         }
     }});
 }
+/********************New_Task********************/
+function addTask(){
+ let url="html/taskCreateEdit-console.html"
+ $.ajax({"url":url,"data":{},"dataType":"text",success:function(response){
+     element("content").innerHTML=response;
+     loadTree();
+ }});
+ //$.getJSON(url,{},setContent);
+ //loadTree();
+ request_modellist();
+    
+}
+function addTask_do(){
+   var content={
+       "action": "taskEdit",
+        "data": {"taskName":$taskName,"inputFolder":$inputFolder,"backup":"true", 
+        "model":{"modelName":"细粒度缺陷识别模型", 
+                 "objectList":[{"name":"鸟巢","color":"hsl(…,...,...)"},
+                               {}]
+        },
+       "authTaskManageUserList": ["zhangsan","lisi"],
+       "authTaskValidateUserList": ["shixisheng1","shixisheng2"] }
+}
+}
+function request_modellist(){
+   var content={
+       "action": "requestModelList",
+       "data": {
+           "column":["modelName","objectList"],
+            "filterOfAnd": [{"filterName":"modelname","content":[]}],
+            "orderBy":"modelName",
+            "limits":[1,-1]}
+    }
+    $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-mdefects.json",data:JSON.stringify(content),dataType:"json",type: "post",success:function(obj){
+        if(obj.status=="ok"){
+            for(var i=0;i<obj.data.length;i++){
+                $("#taskmodel").append("<option>"+obj.data[i].modelName+"</option>");
+            }
+            $("#taskmodel").change(function(){
+                let select_model=$("#taskmodel").val();
+                var parentClass="TE_def";
+                var heading_par=["全选","识别目标/缺陷","颜色"];
+                var objType=["checkbox","text","text"];
+                var keys=["","name","color"];
+                var prefix="TE_def";
+                if(select_model=="请选择"){
+                    $("."+parentClass).html("");
+                }
+                else{
+                    var obj_part={};
+                    r = obj.data.filter(function(a) {
+                        return a.modelName == select_model;
+                    });
+                    obj_part.data=r[0].objectList;
+                    //alert(JSON.stringify(obj_part));
+                    $("."+parentClass).html("");
+                    var deflist=new List(parentClass,heading_par,objType,keys,prefix);
+                    deflist.addRowsByJson(obj_part);
+                }
+            });
+            
+        }else{
+            alert("权限修改失败："+obj.status);
+        }
+    }});
+}
+function setFilepath(obj){
+    $("#inputdir_task").val(obj.val());
+}
+function loadTree() {
+    $("#newtast_filetree").jstree({
+        'core' : {      
+            'data' : [  { "id":"root",
+                          "text" : "请选择输入文件夹", 
+                          "children" : [ { "id":"ch0_0","" : "dd","children":[] }]
+                        }
+                     ],//{ "id":"ch1_1","text" : "Child node 1_1","children":[] },{ "id":"ch1_2","text" : "Child node 1_1","children":[] }{ "id":"ch2_1","text" : "Child node 2_1","children":[] },{ "id":"ch2_2","text" : "Child node 2_2","children":[] }
+            'check_callback': true
+        }
+    }).bind("open_node.jstree", function (e, data) {
+        /*打开时通过判断response和data.node.chi的长度判断是否重新刷新*/
+        /*var response={
+            "status":"ok",
+            "data":[{"filename":"lay_1","children":[]},
+                        {"filename":"lay_2","children":[]}]
+            }*/
+        var dir_path=data.node.text;
+        var content={};
+        let url;
+        if(data.node.parent=="#") url="testjons/test-edit_0.txt";
+        else if(data.node.parent=="root") url="testjons/test-edit_1.txt";
+        else url="testjons/test-edit_2.txt";
+        $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:url,data:JSON.stringify(content),dataType:"json",type: "post",success:function(response){
+            if(response.status=="ok"){
+                var node_ch=data.node.children;
+                if(node_ch.length==1&&$("#"+node_ch[0]).text()==""){
+                    deleteNode(node_ch[0]);
+                    var par_id=data.node.id;
+                    for(var i=0;i<response.data.length;i++){
+                        createNode(par_id, par_id+"_"+i, response.data[i].filename, "last"); 
+                        createNode(par_id+"_"+i, par_id+"_"+i+"_0", "", "last");  
+                    }            
+                }
+            }
+        }});
+        
+       // alert(data.node.parent);
+        /*if(data.node.id=="root"){
+            $("#ch1").attr("class","jstree-node jstree-closed"); 
+            console.log($("#ch1_1").html());
+            if($("#ch1_1").html()==""){
+                createNode("ch1", "ch1_1", "add", "last");
+            }
+           
+        }*/
+       // alert(JSON.stringify(data.node));
+      //  var id_new="ch1_1";
+       // createNode(id_new, id_new+"_"+1, "add", "last");
+        //$("#"+id_new+"_"+1).attr("class","jstree-node jstree-closed"); 
+      // if(data.node.id!="root"&&data.node.id!=="ch1"&&data.node.id!=="ch2"){
+            /*var response_1={
+                "status":"ok",
+                "data":[{"filename":"lay_1","children":[]},
+                            {"filename":"lay_2","children":[]}]
+                }
+            var response={
+                "status":"ok",
+                "data":[{"filename":"lay_1","children":[{"filename":"lay_1_1","children":[]},{"filename":"lay_1_2","children":[]}]},
+                        {"filename":"lay_2","children":[{"filename":"lay_2_1","children":[]},{"filename":"lay_2_2","children":[]}]}]
+            }
+            var id_new=data.node.id;  
+            alert(id_new);
+            for(var i=0;i<response_1.data.length;i++){
+               // alert(i);
+                createNode(id_new, id_new+"_"+i, response_1.data[i].filename, "last"); 
+                $("#"+id_new+"_"+i).attr("class","jstree-node jstree-closed"); 
 
-function createuser(){
+            }
+            /*for(var i=0;i<data.node.children.length;i++){
+                var id_new=data.node.children[i];
+                console.log(id_new);
+                var child_len=response.data[i].children.length;
+                console.log(child_len);
+                for(var j=0;j<child_len;j++){
+                    console.log("cycle:"+j);
+                    createNode(id_new, id_new+"_"+j, response.data[i].children[j].filename, "last"); 
+                    $("#"+id_new+"_"+1).attr("class","jstree-node jstree-closed"); 
+                }           
+            }*/
+        //}
+        
+    });
+    $("#newtast_filetree").on('select_node.jstree', function (e, data) {// 节点选择事件  
+       var selectNodeId = data.node.id;       //选择节点  
+       $('#inputdir_task').val(selectNodeId);//赋值给araename选择框                      
+     });
+}
+function createNode(parent_node, new_node_id, new_node_text, position) { 
+        $('#newtast_filetree').jstree('create_node', $("#"+parent_node), { "text":new_node_text, "id":new_node_id}, position, false, false);   
+}
+function deleteNode(node_id) { 
+    $('#newtast_filetree').jstree('delete_node', $("#"+node_id));   
 }

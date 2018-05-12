@@ -238,9 +238,7 @@ a{
 .UM_ulistbtn:hover{
     background:hsl(174, 16%, 45%);
 }
-.UM_UM-row0{
-    /* background: red; */
-}
+
 /****************usermanagement-end**************/
 /***************userEdit-start**************/
 .UE_config{
@@ -485,24 +483,26 @@ a{
 .TE_tasksetting{
     border: solid 1px hsl(174, 29%, 64%);
     float : left;
-    width: 53%;
+    width: 50%;
     height: 96%;
     margin-top: 1%;
-    margin-left: 1%;
+    margin-left: 60px;
+ 
 }
 .TE_usertree{
     border: solid 1px hsl(174, 29%, 64%);
     float : left;
-    width: 42%;
+    width: 36%;
     height: 96%;
     margin-top: 1%;
-    margin-left:2%;
+    margin-left: 40px;
+    
 }
 .TE_button1{
     background:hsl(174, 29%, 64%);
     border-radius: 5px;
     border:none;
-    width:13%;
+    width:25%;
     height:4%;
     font-family: Microsoft Yahei;
     font-size: 100%;
@@ -533,27 +533,30 @@ a{
     margin-left: 10px;
 }
 .TE_div1{
-    margin-left: 5%;
-    margin-top: 1%;
+    margin-left:5%;
+    margin-top: 2%;
 }
 .TE_div2{
     border: solid 1px hsl(174, 29%, 64%);
-    margin-left: 2%;
+    margin-left: 4.5%;
     margin-top: 1%;
-    width: 95%;
+    width: 90%;
     height: 40%;
 }
-.TE_div1-table{
-    margin-left: 5%;
+.TE_def{
+    /*float: left;*/
+    margin-left: 0%;
     margin-top: 1%;
     border: solid 1px hsl(174, 29%, 64%);
-    height: 51%;
-    width:90%;
+    height: 52%;
+    width:100%;
     overflow: scroll;
+    border-collapse: collapse; 
 }
 .TE_colorselect{
     width: 20px;
     background:hsl(174, 29%, 64%);
+    
 }
 #TE_submit_new_tast{
     background:hsl(174, 29%, 64%);
@@ -564,17 +567,24 @@ a{
     font-family: Microsoft Yahei;
     font-size: 100%;
     margin-left: 40%;
-    margin-top: 1%
+    margin-top: 1.5%
 }
-.TE_table1{
+.TE_deftable{
     margin-top: 1%;
     width:100%;
-    height:20%;
-    /* background: palegreen; */
-    text-align:right;
+    /*height:20%;
+    /* background: palegreen; 
+    text-align:right;*/
     font-family: MicrosoftYahei;
+    border-collapse: collapse; 
 }
-.TE_tr1,.TE_td1{
+.TE_deftable_tr{
+    height:60px;
+}
+.TE_deftable_trh{
+    height:60px;
+}
+.TE_deftable_td{
     padding:0;
     margin:0;
     font-family: Microsoft Yahei;
@@ -582,7 +592,7 @@ a{
     border-collapse: collapse; 
     text-align: center;
 }
-.TE_tr1:hover{
+.TE_deftable_tr:hover{
     background: hsl(174, 16%, 45%);
 
 }
@@ -995,9 +1005,59 @@ a{
 .uAbutton:hover{
     background: hsl(174, 16%, 45%);
 }
-/*****************useradd-end**************/
+/*****************useradd-end***********/
+.file {
+    position: relative;
+    display: inline-block;
+    background: hsl(174, 29%, 64%);
+    margin: 4px 2px;
+    border: none;
+    border-radius: 5px;
+    padding: 4px 2px;
+    color: black;
+    text-align: center;
+    font-family: Microsoft Yahei;
+    font-size: 18px;
+    width:15%;
+    height:3%;
+}
+.file input {
+    position: absolute;
+    font-size: 100%;
+    right: 0;
+    top: 0;
+    opacity: 0;
+}
+.file:hover {
+    background: hsl(174, 16%, 45%);
+}
+/*
+.file {
+    position: relative;
+    display: inline-block;
+    background: #D0EEFF;
+    border: 1px solid #99D3F5;
+    border-radius: 4px;
+    padding: 4px 12px;
+    overflow: hidden;
+    color: #1E88C7;
+    text-decoration: none;
+    text-indent: 0;
+    line-height: 20px;
+}
+.file input {
+    position: absolute;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+}
+.file:hover {
+    background: #AADFFD;
+    border-color: #78C3F3;
+    color: #004974;
+    text-decoration: none;
+}***/
 
-
-
-
+.demo { overflow:auto; border:1px solid silver; min-height:100px; }
 
