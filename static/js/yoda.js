@@ -22,7 +22,8 @@ jQuery.postJSON = function(url, args, callback) {
 
 let subject = null;
 let item = null;
-let fileList = null;
+let dMList = null;
+let curPath = null;
 function setNav(response) {
 	element('left').innerHTML = response;
 	let menu = element('leftMenu');
@@ -136,9 +137,6 @@ class List {
 	constructor(parentClass, headings, objType, keys, prefix) {
 		this.parent = document.getElementsByClassName(parentClass)[0];
 		this.headings = headings;
-		this.objType = objType;
-		this.keys = keys;
-		this.rowTemplate = this.objType2RowTemplate(objType);
 		this.prefix = prefix;
 		this.hiddenRows = new Set();
 		this.table = document.createElement("table");
@@ -149,6 +147,9 @@ class List {
 		this.parent.appendChild(this.table);
 		this.checkallColNum = null;  //全选所在列的序号
 		this.setHeadings(headings);
+		this.objType = objType;
+		this.keys = keys;
+		this.rowTemplate = this.objType2RowTemplate(objType);
 	}
 	//设置表格标题，使用方法如List.setHeadings(["全选","name","size","dateModified"])
 	setHeadings(headings) {
@@ -182,15 +183,16 @@ class List {
 	checkallClick() {
 		if (this.checkallColNum != null) {
 			let checkboxes = this.getColObjs(this.checkallColNum);
-			console.log(checkboxes[0][0].checked);
 			if (checkboxes[0][0].checked) {
 				for (let i = 1; i < checkboxes.length; i++) {
 					checkboxes[i][0].checked = false;
+					$(checkboxes[i][0]).parent().parent().css({"background-color":""});
 				}
 			}
 			else {
 				for (let i = 1; i < checkboxes.length; i++) {
 					checkboxes[i][0].checked = true;
+					$(checkboxes[i][0]).parent().parent().css({"background-color":"hsl(174, 29%, 64%)"});
 				}
 			}
 		}
@@ -217,6 +219,9 @@ class List {
 			else if (objType[i] == "checkbox"){
 				let obj = document.createElement("input");
 				obj.setAttribute("type","checkbox");
+				if (i == this.checkallColNum){
+					obj.setAttribute("onclick","checkboxClick($(this));");
+				}
 				rowTemplate.push(obj);
 			}
 			else if (objType[i] == "text"){
@@ -364,6 +369,10 @@ class List {
 		}
 		return selRowNums;
 	}
+	getSelCntRowNums() {
+		let selRowNums = this.getSelRowNums();
+		if(selRowNums[0] == 0 ) {selRowNums.shift();}
+	}
 	//获取选中行内容
 	getSelRowContents() {
 		let selRowContents = [];
@@ -387,6 +396,9 @@ class List {
 		if(this.table.hasChildNodes){
 			if(rowNum < this.table.childNodes.length){
 				this.table.removeChild(this.table.childNodes[rowNum]);
+				if(rowNum == 0 && this.checkallColNum != null) {
+					this.checkallColNum = null;
+				}
 			}
 			else{
 				throw "Invalid row number."
@@ -405,12 +417,20 @@ class List {
 				childNodes.push(this.table.childNodes[rowNums[i]]);
 			}
 			for(let i = 0; i < rowNums.length; i++){
+				if(rowNums[0] == 0 && this.checkallColNum != null) {
+					this.checkallColNum = null;
+				}
 				this.table.removeChild(childNodes[i]);
 			}
 		}
 		else{
 			throw "Invalid rows number."
 		}
+	}
+	deleteContent() {
+		let rows2Delete = Array.from({length:this.table.childNodes.length}, (v, k) => k);
+		if (this.checkallColNum !=null){rows2Delete.shift();}
+		if(rows2Delete.length > 0){this.deleteRows(rows2Delete);}
 	}
 	//Delete a column by column number.
 	deleteCol(colNum) {
@@ -571,7 +591,17 @@ class List {
 		return this.table.outerHTML;
 	}
 }
-/* 	parentClass: 父节点Class. 
+function checkboxClick(obj) {
+	let trOfObj = obj.parent().parent();
+	if(obj[0].checked == false){
+		trOfObj.css({"background-color": ""});
+	}
+	else{
+		trOfObj.css({"background-color": "hsl(174, 29%, 64%)"});
+	}
+}
+
+/* 	parentClass: 父节点Class.
 	headings: 表格标题，形式为["全选","任务名称","开始结束"]，每一项对应一列。
 	objType: 表格列定义，形式为["checkbox","text","img"],可选值仅限于button\checkbox\text\img\colorboard.
 	keys: 每一列从json取值时所需的key，形式为["", "taskname","taskstatus"]
@@ -1338,20 +1368,18 @@ function deleteNode(node_id) {
     $('#newtast_filetree').jstree('delete_node', $("#"+node_id));   
 }
 function dmFileList() {
-	fileList = new List("dMfileList",["全选","文件名或文件夹名","子文件数量","文件大小","修改日期","写权限"],["checkbox","text","text","text","text","checkbox"],["","fileName","filesContain","size","dateModified","authWrite"],"dM");
-	let jsonData = {
-		"status": "ok","dataLength": "3", "canModify":"true",
-		"data": [
-		{"fileName":"用户-贝克汉姆","type":"userFolder","filesContain":"1","size":"","dateModified":"1792553248","children":[{"fileName":"洛阳巡检","type":"folder","filesContain":"124","size":"","dateModified":"1792563248","children":[],"authRead":"true","authWrite":"mixed","usedByTask":"true"}],"authRead":"true","authWrite":"false", "usedByTask":"false"},
-		{"fileName":"用户-罗纳尔多","type":"folder","filesContain":"0","size":"","dateModified":"1792563248","children":[],"authRead":"true","authWrite":"true","usedByTask":"true"},
-		{"fileName":"用户-齐达内","type":"folder","filesContain":"1","size":"","dateModified":"1234563293","children":[{"fileName":"洛阳巡检","type":"folder","filesContain":"124","size":"","dateModified":"1792563248","children":[],"authRead":"true","authWrite":"mixed","usedByTask":"true"}],"authRead":"true","authWrite":"true","usedByTask":"true"},
-		{"fileName":"用户-贝利","type":"folder","filesContain":"0","size":"","dateModified":"1792598257","children":[],"authRead":"true","authWrite":"mixed","usedByTask":"true"},
-		{"fileName":"用户-梅西","type":"folder","filesContain":"0","size":"","dateModified":"1792523248","children":[],"authRead":"true","authWrite":"true","usedByTask":"true"},
-		{"fileName":"用户-马拉多纳","type":"folder","filesContain":"0","size":"","dateModified":"1797863265","children":[],"authRead":"true","authWrite":"mixed","usedByTask":"true"},
-		{"fileName":"1.jpg","type":"image","filesContain":"","size":"131225","dateModified":"1792573248","authRead":"true","authWrite":"false", "usedByTask":"false"},
-		]
-	};
-	fileList.addRowsByJson(jsonData);
+	dMList = new List("dMfileList",["全选","文件名或文件夹名","子文件数量","文件大小","修改日期","写权限"],["checkbox","text","text","text","text","checkbox"],["","fileName","filesContain","size","dateModified","authWrite"],"dM");
+	let dMfileRequest = makeDMfileRqst("", "/", "type", "1");
+	$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },
+	url:"testjons/test-dmFileList1.txt",
+	data:JSON.stringify(dMfileRequest),
+	dataType:"json",
+	type: "post",
+	success:function(request){
+		dMList.deleteContent();
+		dMList.addRowsByJson(request);
+	}});
+	goFurther("hahaha");
 }
 function dmBtnClick(obj) {
 	let btName = obj.text();
@@ -1463,7 +1491,7 @@ function confirmNewFolder() {
 	let request = {"action":"mkdir","data": {"curdir":"$curdir","dirname":newFolderName}};
 	let response = {"status": "ok"};
 	if (response.status == "ok") {
-		fileList.addRow(["",newFolderName,"0","",new Date().toString(),"false"]);
+		dMList.addRow(["",newFolderName,"0","",new Date().toString(),"false"]);
 		closeAlert();
 	}
 	else if(response.status == "curdirNotExist"){
@@ -1487,20 +1515,21 @@ function cancelNewFolder() {
 	cancelFileDelete();
 }
 function fileDelete() {
-	let selRowNums = fileList.getSelRowNums();
+	let selRowNums = dMList.getSelRowNums();
 	if(selRowNums[0] == 0) {selRowNums.shift();}
 	if(selRowNums.length > 0) {
 		let names = [];
-		let colObjs = fileList.getColObjs(1);
+		let colObjs = dMList.getColObjs(1);
 		selRowNums.forEach(function(value,index,array){
 			if(value!=0) {
 				names.push(colObjs[value][0].innerHTML);
 			}
 		})
+		let fileNameJson = {names:names, selRowNums,selRowNums};
 		names = names.join("、  ");
 		$("#dMreminder").text("确认删除以下文件（夹）： " + names + "？");
 		$("#dMreminder").next().hide();
-		$("#dMConfirmBtn").click(confirmFileDelete);
+		$("#dMConfirmBtn").click(fileNameJson, confirmFileDelete);
 		$("#dMCancelBtn").click(cancelFileDelete);
 		showAlert('dMbox');
 	}
@@ -1509,18 +1538,131 @@ function fileDelete() {
 			$('#btnReminder').remove();
 		}
 		$redWords =$("<span id='btnReminder' style='color:red;margin-left:30px'>没有可删除文档</span>");
-		$(".crumb").append($redWords);
+		$("#crumb").append($redWords);
 		$redWords.fadeOut(1000,function(){$(this).remove()});
 	}
 }
-function confirmFileDelete() {
+function confirmFileDelete(fileNameJson) {
+	let dMfileRqst = makeDMdelRqst(getDestDir($(".dMcurdir").children().last()), fileNameJson.data.names);
+	$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },
+		url:"testjons/test-deleteFile.txt",
+		data:JSON.stringify(dMfileRqst),
+		dataType:"json",
+		type: "post",
+		success:function(response){
+			if(response.status == "ok"){
+				dMList.deleteRows(fileNameJson.data.selRowNums);
+				$("#dMConfirmBtn").unbind();
+				$("#dMCancelBtn").unbind();
+				closeAlert();
+			}
+			else {
+				alert("delete fail");
+			}
+		}
+	});
 
-	$("#dMConfirmBtn").unbind();
-	$("#dMCancelBtn").unbind();
-	closeAlert();
 }
 function cancelFileDelete() {
 	$("#dMConfirmBtn").unbind();
 	$("#dMCancelBtn").unbind();
 	closeAlert();
+}
+function makeDMdelRqst(destDir, fileNames) {
+	let files2BeDel = fileNames.map(function(x){return destDir + "/" + x;});
+	let dMfileRqst = {
+		action:"rm",
+		"data": {filename:files2BeDel}
+	}
+	return dMfileRqst;
+}
+function goFurther(next) {
+	let nextFolder = $("<label onclick=\"curDirClick($(this))\" onmouseover=\"this.style.cursor='hand';\" class=\"dMdirs\"> > " + next + "</label>");
+	$("#dMcurdir").append(nextFolder);
+}
+function makeDMfileRqst(asUser, root, orderBy, loadDepth) {
+	let dMfileRequest = {
+	"action": "requestFileList",
+	"data": {"column":["fileName","type","filesContain","size","dateModified","children","authRead","authWrite","usedByTask"],
+			"asUser":asUser,
+			"root": root,
+			"filterOfAnd":[],
+			"orderBy":orderBy,
+			"loadDepth":loadDepth,
+			"limits":[1,-1]
+			}
+	}
+	return dMfileRequest;
+}
+function curDirClick(obj) {
+	let destDir = getDestDir(obj);
+	obj.nextAll().remove();
+	let dMfileRequest = makeDMfileRqst("", destDir, "type", "1");
+	$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },
+			url:"testjons/test-dmFileList2.txt",
+			data:JSON.stringify(dMfileRequest),
+			dataType:"json",
+			type: "post",
+			success:function(request){
+				dMList.deleteContent();
+				dMList.addRowsByJson(request);
+			}
+		});
+}
+function getDestDir(obj) {
+	let folderNames = $("#dMcurdir").children();
+	let destDir = "";
+	if (folderNames[0] == obj[0]) {return "/";}
+	for(let i = 1; i < folderNames.length; i++) {
+		if(folderNames[i] == obj[0]) {
+			destDir += "/"+obj.text().substring(3);
+			return destDir;
+		}
+		destDir += "/" + $(folderNames[i]).text().substring(3);
+	}
+	return destDir;
+}
+function fileCopy(){
+	let selRowNums = dMList.getSelRowNums();
+	if(selRowNums[0] == 0) {selRowNums.shift();}
+	if(selRowNums.length > 0) {
+		let names = [];
+		let colObjs = dMList.getColObjs(1);
+		selRowNums.forEach(function(value,index,array){
+			if(value!=0) {
+				names.push(colObjs[value][0].innerHTML);
+			}
+		})
+		let fileNameJson = {names:names};
+		$("#dMreminder").text("请选择目标路径：");
+		$("#dMreminder").next().hide();
+		$("#dMConfirmBtn").click(fileNameJson, confirmFileCopy);
+		$("#dMCancelBtn").click(cancelFileCopy);
+		showAlert('dMbox');
+	}
+	else{
+
+	}
+}
+function confirmFileCopy(fileNameJson) {
+	let dMfileRqst = makeDMdelRqst(getDestDir($(".dMcurdir").children().last()), fileNameJson.data.names);
+	$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },
+		url:"testjons/test-copyFile.txt",
+		data:JSON.stringify(dMfileRqst),
+		dataType:"json",
+		type: "post",
+		success:function(response){
+			if(response.status == "ok"){
+				$("#dMConfirmBtn").unbind();
+				$("#dMCancelBtn").unbind();
+				closeAlert();
+			}
+			else {
+				alert("copy fail");
+			}
+		}
+	});
+}
+function cancelFileCopy() {
+	cancelFileDelete();
 }

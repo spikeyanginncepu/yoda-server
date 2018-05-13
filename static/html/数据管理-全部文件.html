@@ -20,12 +20,9 @@
     </div>
 
     <div class="dMdir">
-        <div class="crumb">
-            <span>
-                <a class="dMdirlink" href="#">全部文件</a> &gt; 
-                <a class="dMdirlink" id="cell1" href="#">张三</a> &gt; 
-                <a class="dMdirlink" id="cell2" href="#">2018春季巡检</a> &gt; 
-                <a class="dMdirlink" id="cell2" href="#">柴拉线</a>
+        <div id="crumb">
+            <span id="dMcurdir">
+                <label onclick="curDirClick($(this))" onmouseover="this.style.cursor='hand';" class="dMdirs">当前目录：全部文件</label>
             </span>
         </div>
     </div>

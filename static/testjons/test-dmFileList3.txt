@@ -1,0 +1,9 @@
+{
+		"status": "ok","dataLength": "3", "canModify":"true",
+		"data": [
+		{"fileName":"鄂岳一线0160～0161号塔线下有吊车施工，净空10m.jpg","type":"image","filesContain":"","size":"4085754","dateModified":"1792553248","children":[],"authRead":"true","authWrite":"false", "usedByTask":"false"},
+		{"fileName":"锦苏线2311号～2312号塔线下建桥墩有2台大型吊车施工.jpg","type":"image","filesContain":"","size":"4015842","dateModified":"1792563248","children":[],"authRead":"true","authWrite":"true","usedByTask":"true"},
+		{"fileName":"左潞一线0160号～0159号塔线下有挖掘机.jpg","type":"image","filesContain":"","size":"9343450","dateModified":"1234563293","children":[],"authRead":"true","authWrite":"true","usedByTask":"true"},
+		{"fileName":"淮芜二线0522号～0523号塔线下有挖掘机施工.jpg","type":"image","filesContain":"","size":"7182839","dateModified":"1792598257","children":[],"authRead":"true","authWrite":"mixed","usedByTask":"true"}
+		]
+}

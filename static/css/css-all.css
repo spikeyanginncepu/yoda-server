@@ -840,7 +840,7 @@ a{
     font-family: Microsoft YaHei;
     font-size: 90%;
 }
-.dMdirlink{
+.dMdirs{
     color:hsl(174, 29%, 64%);
     font-family: Microsoft YaHei;
 }
@@ -911,7 +911,7 @@ a{
     text-align: center;
 }
 .dMtable_tr,.dMtable_td{
-    height:70px;
+    height:60px;
     padding:0;
     margin:0;
     font-family: Microsoft Yahei;
@@ -921,7 +921,7 @@ a{
 }
 .dMtable_trh{
     text-align: left;
-    height:70px;
+    height:60px;
 }
 .dMtable_tr:hover{
     background:hsl(174, 29%, 64%);
