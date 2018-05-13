@@ -536,12 +536,43 @@ a{
     margin-left:5%;
     margin-top: 2%;
 }
-.TE_div2{
+.TE_div2_1{
     border: solid 1px hsl(174, 29%, 64%);
     margin-left: 4.5%;
     margin-top: 1%;
     width: 90%;
     height: 40%;
+    overflow: scroll;
+    overflow-x: hidden;
+    
+}
+.TE_div2_2{
+    border: solid 1px hsl(174, 29%, 64%);
+    margin-left: 4.5%;
+    margin-top: 1%;
+    width: 90%;
+    height: 40%;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+.TE_userlisttable{
+    width:100%;
+    padding:0;
+    margin:0;
+    font-family: Microsoft Yahei;
+    font-size: 100%;
+    border-collapse: collapse; 
+    text-align: center;
+    table-layout:fixed;
+}
+.TE_userlisttable_trh{
+    height:45px;
+}
+.TE_userlisttable_tr{
+    height:45px;
+}
+.TE_userlisttable_tr:hover{
+    background: hsl(172, 36%, 84%);
 }
 .TE_def{
     /*float: left;*/

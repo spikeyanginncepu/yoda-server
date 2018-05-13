@@ -1033,17 +1033,20 @@ function taskCreateEdit(obj){
  $.ajax({"url":url,"data":{},"dataType":"text",success:function(response){
      element("content").innerHTML=response;
      if(obj.attr("id")=="_editTask"){
-        $("#_tastname").val("xxx");
-         $("#_tastname").attr("disabled",true);
+        var taskname=obj.parent().parent().children("td:eq(1)").text();
+        $("#_tastname").val(taskname);
+        $("#_tastname").attr("disabled",true);
+        var filepath=obj.parent().parent().children("td:eq(4)").text();
+        $("#inputdir_task").val(filepath);
      }
      loadTree();
  }});
- request_modellist();    
+ request_modellist();
+ request_tasklist_foruser(obj);
 }
 function taskCreateEdit_do(obj){
     let taskName=$("#_tastname").val();
     let inputFolder=$("#inputdir_task").val();
-    if(inputFolder=="/")alert("请输入正确路径");
     let backup=""+$("#ifbackup").is(":checked");
     let model={};
     model.modelName=$("#taskmodel").val();
@@ -1056,13 +1059,127 @@ function taskCreateEdit_do(obj){
             model.objectList.push(deft);
         }
     })
+    let authTaskManageUserList=[];
+    let authTaskValidateUserList=[];
+    $(".TE_div2_1 tr").each(function(){
+        if( $(this).children("td:eq(0)").children("input").is(":checked")){
+            let name=$(this).children("td:eq(1)").text();
+            authTaskManageUserList.push(name);
+        }
+    });
+    $(".TE_div2_2 tr").each(function(){
+        if( $(this).children("td:eq(0)").children("input").is(":checked")){
+            let name=$(this).children("td:eq(1)").text();
+            authTaskValidateUserList.push(name);
+        }
+    });
    var content={
        "action": "taskEdit",
         "data": {"taskName": taskName,"inputFolder":inputFolder,"backup":backup, "model":model },
-       "authTaskManageUserList": ["zhangsan","lisi"],
-       "authTaskValidateUserList": ["shixisheng1","shixisheng2"] 
+       "authTaskManageUserList": authTaskManageUserList,//["zhangsan","lisi"],
+       "authTaskValidateUserList": authTaskValidateUserList//["shixisheng1","shixisheng2"] 
     }
-    alert(JSON.stringify(content));
+    if(taskName=="") alert("任务名称不能为空");
+    else if(inputFolder=="/")alert("请输入正确路径");
+    else if(model.modelName=="请选择"||model.objectList.length==0) alert("请选择模型及识别目标/缺陷！")
+    else{
+        
+        $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-add.txt",data:JSON.stringify(content),dataType:"json",type: "post",success:function(response){
+            if(response.status=="ok"){
+                alert("权限修改成功！"+JSON.stringify(content));
+            }else{
+                alert("权限修改失败："+response.status);
+            }
+        }});
+    }
+    
+}
+function request_tasklist_foruser(obj){
+    var tasklist_foruser_json={};
+    tasklist_foruser_json.data=[];
+   // var map_tmp1={};var map_tmp2={};
+    var content_u={
+        "action": "requestUserList",
+        "data": {"column":["username"],//"children","authAdmin","authFileReadAll","authTaskManageAll","hasUserFolder"],
+                "root": "/",
+                "filterOfAnd":[],//"filterOfAnd": [{"filterName":"username","content":"zhang"}]
+                "orderBy":"username",
+                "loadDepth": "1",
+                "limits":[1,-1]
+                }
+     }
+     $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-ulist.txt",dataType:"json",data:JSON.stringify(content_u),success:function(response){
+         if(response.status=="ok"){
+            for(var i=0;i<response.data.length;i++){
+                //map_tmp1[response.data[i].username]="false";
+                //map_tmp2[response.data[i].username]="false";
+                tasklist_foruser_json.data.push({"username":response.data[i].username,"authTaskManage":"false","authTaskValidate":"false"});
+            }
+         if(obj.attr("id")=="_editTask"){
+            var filterOfAnd=[];
+            filterOfAnd.push({"filterName":"taskName","content":$("#_tastname").val()});
+            var content_t={ 
+                "action": "requestTaskList",
+                "data": {
+                    "column":["taskName","taskStatus","input","numLeft","numTotal","modelName","modelType","isOwner","canModify","canValidate","authTaskManageUserList","authTaskValidateUserList"],
+                    "filterOfAnd": filterOfAnd,
+                    "orderBy":"taskName",
+                    "limits" :[1,-1]
+                }
+            }
+            $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-tlist.txt",dataType:"json",data:JSON.stringify(content),success:function(response_t){
+                if(response_t.status=="ok"&&response_t.dataLength==1)  {
+                    for(var i=0;i<response_t.data[0].authTaskManageUserList.length;i++){
+                       // var user_t=response_t.data[0].authTaskManageUserList[i];
+                       //map_tmp1[user_t]="true";
+                        var r=tasklist_foruser_json.data.filter(function(e){
+                            return e.username==response_t.data[0].authTaskManageUserList[i];
+                        });
+                        r[0].authTaskManage="true";
+                        //console.log(JSON.stringify(r[0]));*/
+                    }
+                    for(var i=0;i<response_t.data[0].authTaskValidateUserList.length;i++){
+                        //var user_t=response_t.data[0].authTaskValidateUserList[i];
+                        //map_tmp2[user_t]="true";
+                        var r=tasklist_foruser_json.data.filter(function(e){
+                            return e.username==response_t.data[0].authTaskValidateUserList[i];
+                        });
+                        r[0].authTaskValidate="true";
+                       // console.log(JSON.stringify(r[0]));*/
+                    }
+                    create_userlist_create_edit(response,tasklist_foruser_json);
+                }else{
+                    alert(response.status);
+                }  
+            }})
+         }
+         else{
+            create_userlist_create_edit(response,tasklist_foruser_json);
+         }
+         
+        }
+        else{
+            alert(response.status);
+        }
+     }});
+}
+function create_userlist_create_edit(response,tasklist_foruser_json){
+    console.log(JSON.stringify(tasklist_foruser_json));
+    var parentClass_1="TE_div2_1";
+    var parentClass_2="TE_div2_2";
+    var heading_1=["全选","用户名","是否拥有设置权限"];
+    var heading_2=["全选","用户名","是否拥有校验权限"];
+    var objType=["checkbox","text","checkbox"];
+    var keys_1=["","username","authTaskManage"];
+    var keys_2=["","username","authTaskValidate"];
+    var prefix="TE_userlist";
+    var userlist_1=new List(parentClass_1,heading_1,objType,keys_1,prefix);
+    userlist_1.addRowsByJson(tasklist_foruser_json);
+    var userlist_2=new List(parentClass_2,heading_2,objType,keys_2,prefix);
+    userlist_2.addRowsByJson(tasklist_foruser_json);
+    $("."+prefix+"table_tr").each(function(){
+       $(this).children("td:eq(2)").children("input").attr("disabled",true);
+   });
 }
 function request_modellist(){
    var content={
@@ -1122,7 +1239,8 @@ function loadTree() {
                      ],//{ "id":"ch1_1","text" : "Child node 1_1","children":[] },{ "id":"ch1_2","text" : "Child node 1_1","children":[] }{ "id":"ch2_1","text" : "Child node 2_1","children":[] },{ "id":"ch2_2","text" : "Child node 2_2","children":[] }
             'check_callback': true
         }
-    }).bind("open_node.jstree", function (e, data) {
+    });
+    $("#newtast_filetree").on("open_node.jstree", function (e, data) {
         var dir_path=data.node.text;
         if(data.node.id=="newtast_filetree_root")
             dir_path="/"
@@ -1130,7 +1248,7 @@ function loadTree() {
                      "data": {
                         "column":["fileName","type","filesContain","size","dateModified","children","authRead","authWrite","usedByTask"],
                         "root": dir_path,
-                        "filterOfAnd": [{"filterName":"type","content":"folder"},{"filterName":"authRead","content":"true"}],
+                        "filterOfAnd": [{"filterName":"type","content":"folder"},{"filterName":"authWrite","content":"true"}],
                         "orderBy":"fileName",
                         "loadDepth": "1" ,
                         "limits":[1,-1]
@@ -1204,7 +1322,6 @@ function loadTree() {
         var text="/";
         if(data.node.parent!="#"){
             var parents=data.node.parents;
-        
             for(var i=parents.length-3;i>=0;i--){
                 var  node = $('#newtast_filetree').jstree().get_node("#"+parents[i]);
                 text+=node.text+"/";
