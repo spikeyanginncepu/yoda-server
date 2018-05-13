@@ -1071,7 +1071,7 @@ function taskCreateEdit(obj){
      }
      loadTree();
  }});
- request_modellist();
+ request_modellist(obj);
  request_tasklist_foruser(obj);
 }
 function taskCreateEdit_do(obj){
@@ -1211,12 +1211,12 @@ function create_userlist_create_edit(response,tasklist_foruser_json){
        $(this).children("td:eq(2)").children("input").attr("disabled",true);
    });
 }
-function request_modellist(){
+function request_modellist(obj1){
    var content={
        "action": "requestModelList",
        "data": {
            "column":["modelName","objectList"],
-            "filterOfAnd": [{"filterName":"modelname","content":[]}],
+            "filterOfAnd": [],//{"filterName":"modelname","content":[]}
             "orderBy":"modelName",
             "limits":[1,-1]}
     }
@@ -1252,6 +1252,28 @@ function request_modellist(){
             alert("权限修改失败："+obj.status);
         }
     }});
+    //缺少请求某个任务的列表
+    if(obj1.attr("id")=="_editTask"){
+        var content_request={
+
+        }
+        $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-edit-task.json",data:JSON.stringify(content_request),dataType:"json",type: "post",success:function(obj){
+           if(obj.status=="ok"){
+            $("#taskmodel").val(obj.data[0].modelName).trigger("change");
+            for(var i=0;i<obj.data[0].objectList.length;i++){
+                $(".TE_deftable_tr").each(function(){
+                 if($(this).children("td:eq(1)").text()==obj.data[0].objectList[i].name){
+                    // alert($(this).children("td:eq(1)").text());
+                    $(this).children("td:eq(0)").children("input").prop("checked",true);
+                    $(this).children("td:eq(2)").text(obj.data[0].objectList[i].color);                    
+                 }
+                });
+            }
+           }else{
+               alert(obj.status);
+           }    
+        }});
+    }
 }
 function setFilepath(obj){
     $("#inputdir_task").val(obj.val());
