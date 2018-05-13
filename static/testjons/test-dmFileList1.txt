@@ -1,0 +1,12 @@
+{
+		"status": "ok","dataLength": "3", "canModify":"true",
+		"data": [
+		{"fileName":"用户-A","type":"userFolder","filesContain":"23","size":"","dateModified":"1792553248","children":[{"fileName":"洛阳巡检","type":"folder","filesContain":"124","size":"","dateModified":"1792563248","children":[],"authRead":"true","authWrite":"mixed","usedByTask":"true"}],"authRead":"true","authWrite":"false", "usedByTask":"false"},
+		{"fileName":"用户-B","type":"folder","filesContain":"144","size":"","dateModified":"1792563248","children":[],"authRead":"true","authWrite":"true","usedByTask":"true"},
+		{"fileName":"用户-C","type":"folder","filesContain":"782","size":"","dateModified":"1234563293","children":[{"fileName":"洛阳巡检","type":"folder","filesContain":"124","size":"","dateModified":"1792563248","children":[],"authRead":"true","authWrite":"mixed","usedByTask":"true"}],"authRead":"true","authWrite":"true","usedByTask":"true"},
+		{"fileName":"用户-D","type":"folder","filesContain":"548","size":"","dateModified":"1792598257","children":[],"authRead":"true","authWrite":"mixed","usedByTask":"true"},
+		{"fileName":"用户-E","type":"folder","filesContain":"0","size":"","dateModified":"1792523248","children":[],"authRead":"true","authWrite":"true","usedByTask":"true"},
+		{"fileName":"用户-F","type":"folder","filesContain":"0","size":"","dateModified":"1797863265","children":[],"authRead":"true","authWrite":"mixed","usedByTask":"true"},
+		{"fileName":"1.jpg","type":"image","filesContain":"","size":"131225","dateModified":"1792573248","authRead":"true","authWrite":"false", "usedByTask":"false"}
+		]
+	}

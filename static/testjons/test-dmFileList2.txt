@@ -1,0 +1,9 @@
+{
+		"status": "ok","dataLength": "3", "canModify":"true",
+		"data": [
+		{"fileName":"洛阳巡检","type":"folder","filesContain":"5","size":"","dateModified":"1792553248","children":[],"authRead":"true","authWrite":"false", "usedByTask":"false"},
+		{"fileName":"焦作巡检","type":"folder","filesContain":"0","size":"","dateModified":"1792563248","children":[],"authRead":"true","authWrite":"true","usedByTask":"true"},
+		{"fileName":"驻马店巡检","type":"folder","filesContain":"0","size":"","dateModified":"1234563293","children":[],"authRead":"true","authWrite":"true","usedByTask":"true"},
+		{"fileName":"漯河巡检","type":"folder","filesContain":"0","size":"","dateModified":"1792598257","children":[],"authRead":"true","authWrite":"mixed","usedByTask":"true"}
+		]
+}

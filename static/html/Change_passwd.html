@@ -1,0 +1,36 @@
+<!--html>
+<head>
+<title>添加用户</title>
+<meta charset="utf-8" /> 
+<link rel="Stylesheet" type="text/css" href="./userAdding-console.css" /> 
+<link rel="Stylesheet" type="text/css" href="css/css-all.css" />
+</head>
+<body>
+-->
+
+		<div id="uAmainLabelBox">			
+			<table id="uAtabelbox">
+				<tr id="uAtr"><td colspan="2">修改用户<label id="change_user" style="font-size: 120%"></label>的密码</td></tr>
+				<tr id="uAtr">
+					<td id=uAtd0>新密码</td>
+					<td id=uAtd1><input id="uAPrintbox" type="password" name="passwd_1" onblur="CHK_illegalpasswd($(this))"/></td>
+				</tr>
+				<tr id="uAtr">
+					<td id=uAtd0>再次输入</td>
+					<td id=uAtd1><input id="uAPrintbox"type="password" name="passwd_2" onblur="CHK_passwd()"/></td>
+				</tr>
+				<tr id="uAtr-tip">
+						<td id=uAtd0></td>
+						<td id="tip-2" style="color: red;" hidden="hidden">两次输入的密码不一致</td>
+				</tr>
+			</table>
+			<div id=uAbuttonBox>
+				<button class="uAbutton" onclick="changepasswd_do($(this))"> 修改</button>
+			</div>
+			
+		</div>
+		
+<!--		
+</body>
+</html>
+-->

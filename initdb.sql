@@ -44,11 +44,9 @@ SET default_with_oids = false;
 --
 
 CREATE TABLE dirauth (
-    folder text NOT NULL,
+    path text NOT NULL,
     userid integer,
-    read integer,
-    write integer,
-    location text,
+    authority integer,
     daid integer NOT NULL
 );
 
@@ -100,9 +98,9 @@ ALTER TABLE models OWNER TO yoda;
 
 CREATE TABLE tasks (
     taskid integer NOT NULL,
-    name text,
+    taskname text,
     input text,
-    modelname text,
+    pipe text,
     defts text
 );
 
@@ -179,7 +177,7 @@ ALTER SEQUENCE taskauth_id_seq OWNED BY taskauth.taid;
 
 CREATE TABLE users (
     userid integer NOT NULL,
-    name text NOT NULL,
+    username text NOT NULL,
     salt text,
     password text,
     font text,
@@ -252,7 +250,7 @@ ALTER TABLE ONLY users ALTER COLUMN userid SET DEFAULT nextval('user_uid_seq'::r
 -- Data for Name: dirauth; Type: TABLE DATA; Schema: public; Owner: yoda
 --
 
-COPY dirauth (folder, userid, read, write, location, daid) FROM stdin;
+COPY dirauth (path, userid, authority, daid) FROM stdin;
 \.
 
 
@@ -281,7 +279,7 @@ COPY models (modelname, pipe, deft) FROM stdin;
 -- Data for Name: task; Type: TABLE DATA; Schema: public; Owner: yoda
 --
 
-COPY tasks (taskid, name, input, modelname, defts) FROM stdin;
+COPY tasks (taskid, taskname, input, pipe, defts) FROM stdin;
 \.
 
 
@@ -319,8 +317,8 @@ SELECT pg_catalog.setval('taskauth_id_seq', 1, false);
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: yoda
 --
 
-COPY users (userid, name, salt, password, authority) FROM stdin;
-1	admin	4HRZ0GN2BsxuA4WoxHmiVGpqq48=	iMPZ28q9Z8nxFnzbGYGUlqQPZr0A6NpuWcW3tPYuwz2NJ56CtuXyOXHsW67hlm78	7
+COPY users (userid, username, salt, password, authority) FROM stdin;
+1	admin	4HRZ0GN2BsxuA4WoxHmiVGpqq48=	5uOn44AaZMlkHEdqziQBS0tZJF8YOlJ4ZWCV/LASj3+CRzbbWQEzNRXIOu6eEMGj	7
 \.
 
 
@@ -339,7 +337,7 @@ SELECT pg_catalog.setval('user_uid_seq', 1, true);
 --
 
 ALTER TABLE ONLY dirauth
-    ADD CONSTRAINT dirauth_folder_userid_location_key UNIQUE (folder, userid, location);
+    ADD CONSTRAINT dirauth_folder_userid_location_key UNIQUE (path, userid);
 
 
 --
@@ -357,7 +355,7 @@ ALTER TABLE ONLY users
 --
 
 ALTER TABLE ONLY models
-    ADD CONSTRAINT "primary key" PRIMARY KEY (modelname);
+    ADD CONSTRAINT "primary key" PRIMARY KEY (pipe);
 
 
 --
@@ -402,7 +400,7 @@ ALTER TABLE ONLY taskauth
 --
 
 ALTER TABLE ONLY users
-    ADD CONSTRAINT "uniq username" UNIQUE (name);
+    ADD CONSTRAINT "uniq username" UNIQUE (username);
 
 
 --

@@ -10,38 +10,39 @@
 		<div id="uAmainLabelBox">			
 			
 			<table id="uAtabelbox">
-				<tr>
+				<tr id="uAtr">
 					<td id=uAtd0>用户名</td>
-					<td id=uAtd1><input id="uAPrintbox"type="text"/></td>
+					<td id=uAtd1><input id="uAPrintbox" type="text" name="username" onblur="CHK_repeatename($(this))"/></td>
+					<td id="tip-1" style="color: red;" hidden="hidden">该用户名已注册</td>
 				</tr>
-				<tr>
+				<tr id="uAtr">
 					<td id=uAtd0>密码</td>
-					<td id=uAtd1><input id="uAPrintbox"type="text"/></td>
+					<td id=uAtd1><input id="uAPrintbox" type="password" name="passwd_1" onblur="CHK_illegalpasswd($(this))"/></td>
 				</tr>
-				<tr>
+				<tr id="uAtr">
 					<td id=uAtd0>再次输入</td>
-					<td id=uAtd1><input id="uAPrintbox"type="text"/></td>
+					<td id=uAtd1><input id="uAPrintbox" type="password" name="passwd_2" onblur="CHK_passwd()"/></td>
+					<td id="tip-2" style="color: red;" hidden="hidden">两次输入的密码不一致</td>
 				</tr>
 			</table>
 			
 			<table id="uAcheckBox">
 				<tr>
-					<td id=uAtdC><input type="checkbox" id="uAchkBox" value="Manager"/></td>
+					<td id=uAtdC><input type="checkbox" id="uAchkBox" class="uAchkBox_class" value="Manager"/></td>
 					<td id=uAtdCL>拥有管理权限</td>
-					<td id=uAtdC><input type="checkbox" id="uAchkBox" value="All R/W"/></td>
+					<td id=uAtdC><input type="checkbox" id="uAchkBox" class="uAchkBox_class" value="All R/W"/></td>
 					<td id=uAtdCL>对“全部文件”有读权限</td>
-					<td id=uAtdC><input type="checkbox" id="uAchkBox" value="Task Manager"/></td>
-					<td id=uAtdCL>有任务管理权限</td>
 				</tr>
 				<tr>
-					<td id=uAtdC><input type="checkbox" id="uAchkBox" checked="checked" value="Create Dir"/></td>
+					<td id=uAtdC><input type="checkbox" id="uAchkBox" class="uAchkBox_class" value="Task Manager"/></td>
+					<td id=uAtdCL>有任务管理权限</td>
+					<td id=uAtdC><input type="checkbox" id="uAchkBox" class="uAchkBox_class" checked="checked" value="Create Dir"/></td>
 					<td id=uAtdCL>创建用户目录</td>
 				</tr>
 			</table>
-			
-			
+						
 			<div id=uAbuttonBox>
-				<button class="uAbutton">创建</button>
+				<button class="uAbutton" onclick="adduser_do($(this))">创建</button>
 			</div>
 			
 		</div>

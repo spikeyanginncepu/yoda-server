@@ -9,13 +9,21 @@ jQuery.getJSON = function(url, args, callback) {
 };
 
 jQuery.postJSON = function(url, args, callback) {
-	args._xsrf = getCookie("_xsrf");
-    $.ajax({url: url, data: $.param(args), dataType: "text", type: "POST", success: callback});
+    $.ajax({
+		headers: {
+			"X-XSRFToken":getCookie("_xsrf"),     // 如果tornado在数据中找不到xsrf就会到headers中找
+		},
+	    url: url,
+		//data: {"_xsrf":getCookie("_xsrf")}, 
+		dataType: "json", 
+		type: "POST", 
+		success: callback});
 };
 
 let subject = null;
 let item = null;
-
+let dMList = null;
+let curPath = null;
 function setNav(response) {
 	element('left').innerHTML = response;
 	let menu = element('leftMenu');
@@ -24,12 +32,29 @@ function setNav(response) {
 
 function setContent(response) {
 	element('content').innerHTML = response;
+	switch(subject) {
+		case "数据管理":
+			$(".dMfileList").empty();
+			dmFileList();
+			break;
+		case "任务管理":
+			break;
+		case "用户管理":
+			break;
+	}
+}
+
+function setContent_EditPvl(response) {
+	element('content').innerHTML = response;
+	element('edit_users').innerHTML='修改用户'+selectuserToedit_copy+'的权限:';
 }
 
 function navigate(obj) {
 	subject = obj.text();
 	let url = 'html/' + subject + '.html';
+	//$.postJSON(url, {}, setNav);
 	$.getJSON(url, {}, setNav);
+	/*$.getJSON("testjons/test.json",function(){alert("fdf")});*/
 }
 
 function leftNav(obj) {
@@ -41,7 +66,6 @@ function leftNav(obj) {
 function element(id) {
 	return document.getElementById(id);
 }
-
 Element.prototype.addFirstChild = function(newFirst) {
 	if(this.hasChildNodes()) {
 		this.insertBefore(newFirst, this.childNodes[0]);
@@ -80,9 +104,9 @@ Array.prototype.max = function() {
 	return max;
 }
 Array.prototype.unique = function(){
-	var res = [];
-	var json = {};
-	for(var i = 0; i < this.length; i++){
+	let res = [];
+	let json = {};
+	for(let i = 0; i < this.length; i++){
 		if(!json[this[i]]) {
 			res.push(this[i]);
 			json[this[i]] = 1;
@@ -92,7 +116,7 @@ Array.prototype.unique = function(){
 }
 function copyElement(obj) {
 	let newObj = obj.cloneNode();
-	newObj.innerHTML = obj.innerHTML
+	newObj.innerHTML = obj.innerHTML;
 	return newObj;
 }
 function trOnMouse(obj) {
@@ -113,9 +137,6 @@ class List {
 	constructor(parentClass, headings, objType, keys, prefix) {
 		this.parent = document.getElementsByClassName(parentClass)[0];
 		this.headings = headings;
-		this.objType = objType;
-		this.keys = keys;
-		this.rowTemplate = this.objType2RowTemplate(objType);
 		this.prefix = prefix;
 		this.hiddenRows = new Set();
 		this.table = document.createElement("table");
@@ -124,8 +145,11 @@ class List {
 		this.trhClass = this.tableClass + "_trh";
 		this.table.setAttribute("border",1);
 		this.parent.appendChild(this.table);
-		this.checkallColNum = null; 
+		this.checkallColNum = null;  //全选所在列的序号
 		this.setHeadings(headings);
+		this.objType = objType;
+		this.keys = keys;
+		this.rowTemplate = this.objType2RowTemplate(objType);
 	}
 	//设置表格标题，使用方法如List.setHeadings(["全选","name","size","dateModified"])
 	setHeadings(headings) {
@@ -159,15 +183,16 @@ class List {
 	checkallClick() {
 		if (this.checkallColNum != null) {
 			let checkboxes = this.getColObjs(this.checkallColNum);
-			console.log(checkboxes[0][0].checked);
 			if (checkboxes[0][0].checked) {
 				for (let i = 1; i < checkboxes.length; i++) {
 					checkboxes[i][0].checked = false;
+					$(checkboxes[i][0]).parent().parent().css({"background-color":""});
 				}
 			}
 			else {
 				for (let i = 1; i < checkboxes.length; i++) {
 					checkboxes[i][0].checked = true;
+					$(checkboxes[i][0]).parent().parent().css({"background-color":"hsl(174, 29%, 64%)"});
 				}
 			}
 		}
@@ -194,6 +219,9 @@ class List {
 			else if (objType[i] == "checkbox"){
 				let obj = document.createElement("input");
 				obj.setAttribute("type","checkbox");
+				if (i == this.checkallColNum){
+					obj.setAttribute("onclick","checkboxClick($(this));");
+				}
 				rowTemplate.push(obj);
 			}
 			else if (objType[i] == "text"){
@@ -246,7 +274,20 @@ class List {
 				tdChild.innerHTML = rowData[i];
 			}
 			else if (objType[i] == "checkbox") {
-				tdChild.checked = rowData[i];
+				// let truefalse = rowData[i];
+				// if(typeof rowData[i] == "string") {
+				// 	truefalse = eval(rowData[i].toLowerCase());
+				// }
+				// tdChild.checked = truefalse;
+				if(rowData[i]=="mixed"){
+					tdChild.indeterminate = true;
+				}
+				else if(rowData[i]=="true"){
+					tdChild.checked = true;
+				}
+				else {
+					tdChild.checked = false;
+				}
 			}
 			else if (objType[i] == "text") {
 				tdChild.innerHTML = rowData[i];
@@ -328,6 +369,10 @@ class List {
 		}
 		return selRowNums;
 	}
+	getSelCntRowNums() {
+		let selRowNums = this.getSelRowNums();
+		if(selRowNums[0] == 0 ) {selRowNums.shift();}
+	}
 	//获取选中行内容
 	getSelRowContents() {
 		let selRowContents = [];
@@ -351,6 +396,9 @@ class List {
 		if(this.table.hasChildNodes){
 			if(rowNum < this.table.childNodes.length){
 				this.table.removeChild(this.table.childNodes[rowNum]);
+				if(rowNum == 0 && this.checkallColNum != null) {
+					this.checkallColNum = null;
+				}
 			}
 			else{
 				throw "Invalid row number."
@@ -369,12 +417,20 @@ class List {
 				childNodes.push(this.table.childNodes[rowNums[i]]);
 			}
 			for(let i = 0; i < rowNums.length; i++){
+				if(rowNums[0] == 0 && this.checkallColNum != null) {
+					this.checkallColNum = null;
+				}
 				this.table.removeChild(childNodes[i]);
 			}
 		}
 		else{
 			throw "Invalid rows number."
 		}
+	}
+	deleteContent() {
+		let rows2Delete = Array.from({length:this.table.childNodes.length}, (v, k) => k);
+		if (this.checkallColNum !=null){rows2Delete.shift();}
+		if(rows2Delete.length > 0){this.deleteRows(rows2Delete);}
 	}
 	//Delete a column by column number.
 	deleteCol(colNum) {
@@ -534,4 +590,1079 @@ class List {
 	getHtml() {
 		return this.table.outerHTML;
 	}
+}
+function checkboxClick(obj) {
+	let trOfObj = obj.parent().parent();
+	if(obj[0].checked == false){
+		trOfObj.css({"background-color": ""});
+	}
+	else{
+		trOfObj.css({"background-color": "hsl(174, 29%, 64%)"});
+	}
+}
+
+/* 	parentClass: 父节点Class.
+	headings: 表格标题，形式为["全选","任务名称","开始结束"]，每一项对应一列。
+	objType: 表格列定义，形式为["checkbox","text","img"],可选值仅限于button\checkbox\text\img\colorboard.
+	keys: 每一列从json取值时所需的key，形式为["", "taskname","taskstatus"]
+	prefix: 相关元素class前缀。table的class为prefix+"table"，标题tr的class为prefix+"table"+"_trh"，内容tr的class为prefix+"table"+"_tr"，
+	td的class为prefix+"table"+"_td".
+*/
+/*UM-gao */
+/*todo: 请求用户列表：请求后台返回list,创建table，返回html*/
+function request_userlist(){
+/*let filter_content=$("#dMsrchPrintbox").val();
+    //alert(filter_content);
+    let filterOfAnd_content=[];
+    if(filter_content!=""){
+        filterOfAnd_content.push({"filterName":"username","content":filter_content});
+    }
+    var content={
+        "action": "requestUserList",
+        "data": {"column":["username","children","authAdmin","authFileReadAll","authTaskManageAll","hasUserFolder"],
+                "root": "/",
+                "filterOfAnd":filterOfAnd_content,//"filterOfAnd": [{"filterName":"username","content":"zhang"}]
+                "orderBy":"username",
+                "loadDepth": "1",
+                "limits":[1,-1]
+                }
+     }*/
+    var content={
+        "action": "requestUserList",
+        "data": {"column":["username","children","authAdmin","authFileReadAll","authTaskManageAll","hasUserFolder"],
+                "root": "/",
+                "filterOfAnd":[],
+                "orderBy":"username",
+                "loadDepth": "1",
+                "limits":[1,-1]
+                }
+     }
+    // alert(JSON.stringify(content));
+    $.ajax({url:"html/用户管理-管理员权限.html",data:{},dataType:"text",success:function(response){
+        element('content').innerHTML = response;
+        var parentClass="UM_userList";
+        var heading_par=["全选","用户名","修改密码","管理员权限","所有文件读写权限","任务管理权限","创建个人目录"];
+        var objType=["checkbox","text","button","checkbox","checkbox","checkbox","checkbox"];
+        var keys=["","username","","authAdmin","authFileReadAll","authTaskManageAll","hasUserFolder"];
+        var prefix="UM_userlist";
+	    $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-ulist.txt",dataType:"json",data:JSON.stringify(content),success:function(obj){
+		    if (obj.status == "ok") { 
+                var userlist=new List(parentClass,heading_par,objType,keys,prefix);
+                userlist.addRowsByJson(obj);
+               /// for (var i = 0; i < obj.data.length; i++) { }; 
+               $("."+prefix+"table_td button").each(function(){
+                   $(this).attr("class","UM_ulistbtn");
+                   $(this).click(function(){ changepasswd($(this))});
+                   $(this).html("修改密码");
+               });
+               $("."+prefix+"table_tr").each(function(){
+                $(this).children("td:eq(0)").children("input").attr("class","chkBox_0");
+                $(this).children("td:eq(3)").children("input").attr("disabled",true);
+                $(this).children("td:eq(4)").children("input").attr("disabled",true);
+                $(this).children("td:eq(5)").children("input").attr("disabled",true);
+                $(this).children("td:eq(6)").children("input").attr("disabled",true);
+                });
+		    }else{ 
+			    alert("返回失败"+obj.status); 
+		    };  
+	     }})
+	}})
+}
+function search_userlist(){
+    let filter_content=$("#dMsrchPrintbox").val();
+    //alert(filter_content);
+    if(filter_content==""){
+        request_userlist();
+    }
+    else{
+        var content={
+            "action": "requestUserList",
+            "data": {"column":["username","children","authAdmin","authFileReadAll","authTaskManageAll","hasUserFolder"],
+                    "root": "/",
+                    "filterOfAnd":[],//"filterOfAnd": [{"filterName":"username","content":"zhang"}]
+                    "orderBy":"username",
+                    "loadDepth": "1",
+                    "limits":[1,-1]
+                    }
+         }
+         $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-ulist.txt",dataType:"json",data:JSON.stringify(content),success:function(obj){
+            if (obj.status == "ok") { 
+                var parentClass="UM_userList";
+                var heading_par=["全选","用户名","修改密码","管理员权限","所有文件读写权限","任务管理权限","创建个人目录"];
+                var objType=["checkbox","text","button","checkbox","checkbox","checkbox","checkbox"];
+                var keys=["","username","","authAdmin","authFileReadAll","authTaskManageAll","hasUserFolder"];
+                var prefix="UM_userlist";
+                $("."+parentClass).children("table").html("");
+                for(var i=0;i<obj.data.length;i++){
+                    if(obj.data[i].username.indexOf(filter_content)==-1){
+                            obj.data.splice(i,1);
+                            i--;
+                    }
+                }
+               // alert(JSON.stringify(obj));
+                var userlist=new List(parentClass,heading_par,objType,keys,prefix);
+                userlist.addRowsByJson(obj);
+              // $("."+prefix+"table tr:not(:first)").addRowsByJson(obj);
+               $("."+prefix+"table_td button").each(function(){
+                   $(this).attr("class","UM_ulistbtn");
+                   $(this).click(function(){ changepasswd($(this))});
+                   $(this).html("修改密码");
+               });
+               $("."+prefix+"table_tr").each(function(){
+                $(this).children("td:eq(0)").children("input").attr("class","chkBox_0");
+                $(this).children("td:eq(3)").children("input").attr("disabled",true);
+                $(this).children("td:eq(4)").children("input").attr("disabled",true);
+                $(this).children("td:eq(5)").children("input").attr("disabled",true);
+                $(this).children("td:eq(6)").children("input").attr("disabled",true);
+                });
+            }else{ 
+                alert("返回失败"+obj.status); 
+            };  
+         }})
+    }
+}
+function adduser(obj){
+	let url='html/userAdding-console.html';
+	$.getJSON(url,{},setContent);
+}
+/*todaytodo:实际添加用户*/
+function adduser_do(obj){
+	let username=$("input[name='username']").val();
+	let passwd_1=$("input[name='passwd_1']").val();
+	let passwd_2=$("input[name='passwd_2']").val();
+	if(username==""){
+		alert("用户名不能为空");
+    }
+    else if(passwd_1==""){
+        alert("密码不能为空");
+    }
+	else if(CHK_repeatename_flag==false){
+		alert("用户名已存在");
+	}
+	else if(passwd_1!=passwd_2){
+		alert("密码不一致");
+	}
+	else{
+		var flags=new Array(); 
+		var index=0;
+		$(".uAchkBox_class").each(function(){
+		flags[index]=$(this).is(":checked");
+		index++;
+		});
+		var content= {"action": "addUser",
+			          "data": {"username":username,"password":passwd_1,"authAdmin":""+flags[0],"authFileReadAll":""+flags[1],"authTaskManageAll":""+flags[2],"hasUserFolder":""+flags[3]}
+                      };
+        //alert(JSON.stringify(content));
+		$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"/request",dataType:"json",data:JSON.stringify(content),success:function(obj){
+            if(obj.status=="ok"){
+                alert("添加用户成功："+content.action+content.data.username+content.data.password+content.data.authAdmin);
+                request_userlist();
+            }else{
+                alert(obj.status);
+            }
+		}});
+	}
+}
+/*检测是否有重复的用户名---------------------需要与后台交互*/
+let CHK_repeatename_flag=true;
+function CHK_repeatename(){
+	let username=$("input[name='username']").val();
+	$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-ulist.txt",dataType:"json",data:{},success:function(obj){
+		if (obj.status == "ok") { 
+			for (var i = 0; i < obj.data.length; i++) { 
+				if(obj.data[i].username==username) {
+					$("#tip-1").show();
+					CHK_username_flag=false;
+					break;
+				}
+			} 
+			if(i==obj.data.length){
+				$("#tip-1").hide();
+				CHK_username_flag=true;
+			}
+		}
+	}});
+}
+/*检测密码是否合法**/
+function CHK_illegalpasswd(){
+	return true;
+}
+/*检测两次密码的输入是否相同*/
+function CHK_passwd(){
+	let passwd_1=$("input[name='passwd_1']").val();
+	let passwd_2=$("input[name='passwd_2']").val();
+	if(passwd_1!=passwd_2){
+		$("#tip-2").show();
+		return false;
+	}
+	else{
+		$("#tip-2").hide();
+		return true;
+	}
+}
+/*跳转到修改用户页*/
+function changepasswd(obj){
+	let username=obj.parent().prev().html();
+	let url='html/Change_passwd.html';
+	$.getJSON(url,{},function(response) {
+		element('content').innerHTML = response;
+		element('change_user').innerHTML=username;
+	});
+}
+/*todaytodo:实际修改用户*/
+function changepasswd_do(obj){
+	let username=$("#change_user").text();
+	let passwd_1=$("input[name='passwd_1']").val();
+    let passwd_2=$("input[name='passwd_2']").val();
+    if(passwd_1==""){
+        alert("密码不能为空");
+    }
+	else if(passwd_1!=passwd_2){
+		alert("两次输入的密码不一致");
+	}else{
+		var content={
+			"action": "changePassWord",
+			"data": {"username":username, "oldPassword":"", "newPassword":passwd_1}
+		}
+		$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-changepwd.txt",dataType:"json",data:JSON.stringify(content),success:function(obj){
+            if(obj.status=="ok"){
+                alert("修改用户"+obj.username+"密码成功。新密码："+passwd_1);
+            }else{
+                alert(obj.status);
+            }
+		}});
+    }
+}
+function user_setting(){
+    let username=$("#userid").text();
+    let oldpasswd=$("input[name='passwd_0']").val();
+    let passwd_1=$("input[name='passwd_1']").val();
+    let passwd_2=$("input[name='passwd_2']").val();
+    if(oldpasswd==""||passwd_1==""){
+        alert("原始密码或新密码为空！");
+    }else if(passwd_1!=passwd_2){
+        alert("两次输入的密码不一致");
+    }else{
+      var content={"action": "changePassWord","data": {"username": username, "oldPassword":oldpasswd, "newPassword":passwd_1}};
+      $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-changepwd.txt",data:JSON.stringify(content),dataType:"json",success:function(obj){
+          if(obj.status=="ok"){
+            alert("修改用户"+username+"密码成功。新密码："+passwd_1);
+         }else{
+            alert(obj.status);
+          }
+      } });
+    }
+  }
+/*tocomplete:删除用户*/
+function deleteuser(obj){
+	var selectuserTodel=[];
+    let num=0;
+	$(".chkBox_0").each(function() {
+		if($(this).is(":checked")){
+			selectuserTodel[num]=$(this).parent().next().text();
+			num++;
+		}
+	});
+	/*$("input[type=checkbox][checked]").each(function(){ //由于复选框一般选中的是多个,所以可以循环输出 
+		selectuserTodel[num]=$(this).val();
+		num++; 
+	}); 	*/
+	if(selectuserTodel.length==0){
+		alert("请至少选择一个需要删除的用户！")
+	}
+	else{
+		var isconfirm=confirm("是否确认删除用户"+selectuserTodel+"的所有信息，该操作将不可恢复！");
+	    if(isconfirm){
+           var content={"action": "deleteUser","data": {"username":selectuserTodel,"delUserFolder":"true"}};
+           $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-del.txt",data:JSON.stringify(content),dataType:"json",success:function(obj){
+               if(obj.status=="ok"){
+                $(".chkBox_0").each(function() {
+                    if($(this).is(":checked")){
+                        $(this).parent().parent().remove(); /*to complete 跳转到用户列表*/
+                    }
+                });
+                alert(selectuserTodel+"用户已删除！");
+               }
+               else{
+                alert(obj.status);
+               }  
+           }});
+	    }
+	}	
+}
+function Se_DE_All(obj,classname){
+	let flag = obj.is(":checked");
+    $("."+classname).each(function(){ 
+         // $(this).indeterminate=false;
+         //$(this).checked=flag;
+         $(this).prop("indeterminate",false);
+          $(this).prop("checked",flag);
+          
+	});
+}
+/*$("#selectAll").click(function(){
+	var flag = $(this).attr("checked"); 
+	alert(flag);
+    $("[name=chkBox_0]:checkbox").each(function() { 
+    $(this).attr("checked", flag); 
+	})
+})
+$("#CheckAll").click(function() { 
+	let flag = obj.is(":checked");
+    $(".chkBox_0").each(function(){ 
+     $(this).attr("checked", flag); 
+	})
+})*/
+
+let selectuserToedit_copy=new Array();
+function edituser(obj){
+	let selectuserToedit=new Array();
+	let num=0;
+	$(".chkBox_0").each(function() {
+		if($(this).is(":checked")){
+			selectuserToedit[num]=$(this).parent().next().text();
+			selectuserToedit_copy[num]=$(this).parent().next().text();
+			num++;
+		}
+	});
+	if(selectuserToedit.length==0){
+		alert("至少选择一个要修改的用户！");
+	}
+	else{
+		let url='html/userEdit-console.html';
+		/*下面三种方法均可实现 */
+		$.ajax({url: url, data: {}, dataType: "text", type: "GET", success: function(response) {
+			element('content').innerHTML = response;
+            element('edit_users').innerHTML='修改用户'+selectuserToedit+'的权限:';
+            var content_1={
+            "action": "requestFileList",
+             "data": {"column":["fileName","authRead","authWrite"],
+                      "asUser": selectuserToedit,
+                      "root": "/",
+                      "filterOfAnd":[],
+                      "orderBy":"fileName",
+                      "loadDepth": "1" ,
+                      "limits":[1,-1]
+                    }
+            };
+            $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-flist.txt",data:JSON.stringify(content_1),dataType:"json",type: "post",success:function(obj){
+                var parentClass="UE_fileList";
+                var heading_par=["文件列表","读权限","写权限"];
+                var objType=["text","checkbox","checkbox"];
+                var keys=["fileName","authRead","authWrite"];
+                var prefix="UE_permission";
+                if (obj.status == "ok") { 
+                    var filelist=new List(parentClass,heading_par,objType,keys,prefix);
+                    filelist.addRowsByJson(obj);
+                   $("."+prefix+"table_tr").each(function(){
+                    $(this).children("td:eq(1)").children("input").attr("class","AllRead_chk");
+                    });
+                }else{ 
+                    alert("文件权限列表获取失败:"+obj.status); 
+                }; 
+            }});
+            var content_2={
+                    "action": "requestUserList",
+                    "data": {"column":["username","children","authAdmin","authFileReadAll","authTaskManageAll","hasUserFolder"],
+                            "root": "/",
+                            "filterOfAnd":[],//"filterOfAnd": [{"filterName":"username","content":"zhang"}]
+                            "orderBy":"username",
+                            "loadDepth": "1",
+                            "limits":[1,-1]
+                 }
+            }
+            $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-ulist.txt",data:JSON.stringify(content_2),dataType:"json",type: "post",success:function(obj){
+                var tf_flags=[0,0,0,0];
+                if (obj.status == "ok") { 
+                   for(var i=0;i<selectuserToedit.length;i++){
+                    tf_flags[0]+=(obj.data[i].authAdmin=="true"?1:0);
+                    tf_flags[1]+=(obj.data[i].authFileReadAll=="true"?1:0);
+                    tf_flags[2]+=(obj.data[i].authTaskManageAll=="true"?1:0);
+                    tf_flags[3]+=(obj.data[i].hasUserFolder=="true"?1:0);
+                   }
+                  // alert(tf_flags);
+                   var j=0;
+                   $(".uAchkBox_class").each(function(){
+                       //alert(j);
+                    if(tf_flags[j]==selectuserToedit.length) {
+                        $(this).prop("indeterminate",false);
+                        $(this).prop("checked",true);
+                    }else if(tf_flags[j]==0){
+                        $(this).prop("indeterminate",false);
+                        $(this).prop("checked",false);
+                    }else{
+                        $(this).prop("indeterminate",true);
+                    }
+                    j++;
+                   });
+                }else{ 
+                    alert("文件权限列表获取失败:"+obj.status); 
+                }; 
+            }});
+
+		}});
+		/*$.getJSON(url, {}, setContent_EditPvl);*/
+		/*$.getJSON(url,{},function(response) {
+			alert("fdf");
+			element('content').innerHTML = response;
+			element('edit_users').innerHTML='修改用户'+selectuserToedit+'的权限:';
+		});*/
+	}
+}
+
+/*todo*/
+function edituser_do1(){
+    var files=[];
+    var prefix="UE_permission";
+    $("."+prefix+"table_tr").each(function(){
+        var f0=$(this).children("td:eq(0)").text();
+        var td1=$(this).children("td:eq(1)").children("input");
+        var td2=$(this).children("td:eq(2)").children("input");
+        var f1=(td1.is(":indeterminate")==true?"mixed":""+td1.is(":checked"));
+        var f2=(td2.is(":indeterminate")==true?"mixed":""+td2.is(":checked"));
+        files.push({"fileName":f0,"authRead":f1,"authWrite":f2});
+    });
+    var content={"action": "userFileAuthChange",
+                  "data": {
+                      "asUser": selectuserToedit_copy,
+                       "files": files
+                     }
+    }
+    alert(JSON.stringify(content));
+    $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"/request",data:JSON.stringify(content),dataType:"json",type: "post",success:function(obj){
+        if(obj.status=="ok"){
+            alert("权限修改成功！");
+        }else{
+            alert("权限修改失败："+obj.status);
+        }
+    }});
+}
+/*todo*/
+function edituser_do2(){
+    var flag=[];
+    $(".uAchkBox_class").each(function(){
+        flag.push($(this).is(":indeterminate")==true?"mixed":""+$(this).is(":checked"));
+    });
+    var content={"action": "userManageAuthChange",
+                 "data": {
+                     "asUser":selectuserToedit_copy,
+                     "authAdmin":flag[0],"authFileReadAll":flag[1],"authTaskManageAll":flag[2],"hasUserFolder":flag[3]}
+    }
+    alert(JSON.stringify(content));
+    $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"/request",data:JSON.stringify(content),dataType:"json",type: "post",success:function(obj){
+        if(obj.status=="ok"){
+            alert("权限修改成功！");
+        }else{
+            alert("权限修改失败："+obj.status);
+        }
+    }});
+}
+/********************New_Task********************/
+function taskCreateEdit(obj){
+ let url="html/taskCreateEdit-console.html"
+ $.ajax({"url":url,"data":{},"dataType":"text",success:function(response){
+     element("content").innerHTML=response;
+     if(obj.attr("id")=="_editTask"){
+        var taskname=obj.parent().parent().children("td:eq(1)").text();
+        $("#_tastname").val(taskname);
+        $("#_tastname").attr("disabled",true);
+        var filepath=obj.parent().parent().children("td:eq(4)").text();
+        $("#inputdir_task").val(filepath);
+     }
+     loadTree();
+ }});
+ request_modellist();
+ request_tasklist_foruser(obj);
+}
+function taskCreateEdit_do(obj){
+    let taskName=$("#_tastname").val();
+    let inputFolder=$("#inputdir_task").val();
+    let backup=""+$("#ifbackup").is(":checked");
+    let model={};
+    model.modelName=$("#taskmodel").val();
+    model.objectList=[];
+    $(".TE_deftable_tr").each(function(){
+        if( $(this).children("td:eq(0)").children("input").is(":checked")){
+            let name=$(this).children("td:eq(1)").text();
+            let color=$(this).children("td:eq(2)").text();
+            var deft={"name":name,"color":color};
+            model.objectList.push(deft);
+        }
+    })
+    let authTaskManageUserList=[];
+    let authTaskValidateUserList=[];
+    $(".TE_div2_1 tr").each(function(){
+        if( $(this).children("td:eq(0)").children("input").is(":checked")){
+            let name=$(this).children("td:eq(1)").text();
+            authTaskManageUserList.push(name);
+        }
+    });
+    $(".TE_div2_2 tr").each(function(){
+        if( $(this).children("td:eq(0)").children("input").is(":checked")){
+            let name=$(this).children("td:eq(1)").text();
+            authTaskValidateUserList.push(name);
+        }
+    });
+   var content={
+       "action": "taskEdit",
+        "data": {"taskName": taskName,"inputFolder":inputFolder,"backup":backup, "model":model },
+       "authTaskManageUserList": authTaskManageUserList,//["zhangsan","lisi"],
+       "authTaskValidateUserList": authTaskValidateUserList//["shixisheng1","shixisheng2"] 
+    }
+    if(taskName=="") alert("任务名称不能为空");
+    else if(inputFolder=="/")alert("请输入正确路径");
+    else if(model.modelName=="请选择"||model.objectList.length==0) alert("请选择模型及识别目标/缺陷！")
+    else{
+        
+        $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-add.txt",data:JSON.stringify(content),dataType:"json",type: "post",success:function(response){
+            if(response.status=="ok"){
+                alert("权限修改成功！"+JSON.stringify(content));
+            }else{
+                alert("权限修改失败："+response.status);
+            }
+        }});
+    }
+    
+}
+function request_tasklist_foruser(obj){
+    var tasklist_foruser_json={};
+    tasklist_foruser_json.data=[];
+   // var map_tmp1={};var map_tmp2={};
+    var content_u={
+        "action": "requestUserList",
+        "data": {"column":["username"],//"children","authAdmin","authFileReadAll","authTaskManageAll","hasUserFolder"],
+                "root": "/",
+                "filterOfAnd":[],//"filterOfAnd": [{"filterName":"username","content":"zhang"}]
+                "orderBy":"username",
+                "loadDepth": "1",
+                "limits":[1,-1]
+                }
+     }
+     $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-ulist.txt",dataType:"json",data:JSON.stringify(content_u),success:function(response){
+         if(response.status=="ok"){
+            for(var i=0;i<response.data.length;i++){
+                //map_tmp1[response.data[i].username]="false";
+                //map_tmp2[response.data[i].username]="false";
+                tasklist_foruser_json.data.push({"username":response.data[i].username,"authTaskManage":"false","authTaskValidate":"false"});
+            }
+         if(obj.attr("id")=="_editTask"){
+            var filterOfAnd=[];
+            filterOfAnd.push({"filterName":"taskName","content":$("#_tastname").val()});
+            var content_t={ 
+                "action": "requestTaskList",
+                "data": {
+                    "column":["taskName","taskStatus","input","numLeft","numTotal","modelName","modelType","isOwner","canModify","canValidate","authTaskManageUserList","authTaskValidateUserList"],
+                    "filterOfAnd": filterOfAnd,
+                    "orderBy":"taskName",
+                    "limits" :[1,-1]
+                }
+            }
+            $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"testjons/test-tlist.txt",dataType:"json",data:JSON.stringify(content),success:function(response_t){
+                if(response_t.status=="ok"&&response_t.dataLength==1)  {
+                    for(var i=0;i<response_t.data[0].authTaskManageUserList.length;i++){
+                       // var user_t=response_t.data[0].authTaskManageUserList[i];
+                       //map_tmp1[user_t]="true";
+                        var r=tasklist_foruser_json.data.filter(function(e){
+                            return e.username==response_t.data[0].authTaskManageUserList[i];
+                        });
+                        r[0].authTaskManage="true";
+                        //console.log(JSON.stringify(r[0]));*/
+                    }
+                    for(var i=0;i<response_t.data[0].authTaskValidateUserList.length;i++){
+                        //var user_t=response_t.data[0].authTaskValidateUserList[i];
+                        //map_tmp2[user_t]="true";
+                        var r=tasklist_foruser_json.data.filter(function(e){
+                            return e.username==response_t.data[0].authTaskValidateUserList[i];
+                        });
+                        r[0].authTaskValidate="true";
+                       // console.log(JSON.stringify(r[0]));*/
+                    }
+                    create_userlist_create_edit(response,tasklist_foruser_json);
+                }else{
+                    alert(response.status);
+                }  
+            }})
+         }
+         else{
+            create_userlist_create_edit(response,tasklist_foruser_json);
+         }
+         
+        }
+        else{
+            alert(response.status);
+        }
+     }});
+}
+function create_userlist_create_edit(response,tasklist_foruser_json){
+    console.log(JSON.stringify(tasklist_foruser_json));
+    var parentClass_1="TE_div2_1";
+    var parentClass_2="TE_div2_2";
+    var heading_1=["全选","用户名","是否拥有设置权限"];
+    var heading_2=["全选","用户名","是否拥有校验权限"];
+    var objType=["checkbox","text","checkbox"];
+    var keys_1=["","username","authTaskManage"];
+    var keys_2=["","username","authTaskValidate"];
+    var prefix="TE_userlist";
+    var userlist_1=new List(parentClass_1,heading_1,objType,keys_1,prefix);
+    userlist_1.addRowsByJson(tasklist_foruser_json);
+    var userlist_2=new List(parentClass_2,heading_2,objType,keys_2,prefix);
+    userlist_2.addRowsByJson(tasklist_foruser_json);
+    $("."+prefix+"table_tr").each(function(){
+       $(this).children("td:eq(2)").children("input").attr("disabled",true);
+   });
+}
+function request_modellist(){
+   var content={
+       "action": "requestModelList",
+       "data": {
+           "column":["modelName","objectList"],
+            "filterOfAnd": [{"filterName":"modelname","content":[]}],
+            "orderBy":"modelName",
+            "limits":[1,-1]}
+    }
+    $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-mdefects.json",data:JSON.stringify(content),dataType:"json",type: "post",success:function(obj){
+        if(obj.status=="ok"){
+            for(var i=0;i<obj.data.length;i++){
+                $("#taskmodel").append("<option>"+obj.data[i].modelName+"</option>");
+            }
+            $("#taskmodel").change(function(){
+                let select_model=$("#taskmodel").val();
+                var parentClass="TE_def";
+                var heading_par=["全选","识别目标/缺陷","颜色"];
+                var objType=["checkbox","text","text"];
+                var keys=["","name","color"];
+                var prefix="TE_def";
+                if(select_model=="请选择"){
+                    $("."+parentClass).html("");
+                }
+                else{
+                    var obj_part={};
+                    r = obj.data.filter(function(a) {
+                        return a.modelName == select_model;
+                    });
+                    obj_part.data=r[0].objectList;
+                    //alert(JSON.stringify(obj_part));
+                    $("."+parentClass).html("");
+                    var deflist=new List(parentClass,heading_par,objType,keys,prefix);
+                    deflist.addRowsByJson(obj_part);
+                }
+            });
+            
+        }else{
+            alert("权限修改失败："+obj.status);
+        }
+    }});
+}
+function setFilepath(obj){
+    $("#inputdir_task").val(obj.val());
+}
+function loadTree() {
+    $("#newtast_filetree").jstree({
+        'core' : {      
+            'data' : [  { "id":"newtast_filetree_root",
+                          "text" : "请选择输入文件夹", 
+                          "children" : [ { "id":"ch0_0","text" : "","children":[] }],
+                          "state":{
+                           // "disabled": true         //该根节点不可点击
+                          }
+                        }
+                     ],//{ "id":"ch1_1","text" : "Child node 1_1","children":[] },{ "id":"ch1_2","text" : "Child node 1_1","children":[] }{ "id":"ch2_1","text" : "Child node 2_1","children":[] },{ "id":"ch2_2","text" : "Child node 2_2","children":[] }
+            'check_callback': true
+        }
+    });
+    $("#newtast_filetree").on("open_node.jstree", function (e, data) {
+        var dir_path=data.node.text;
+        if(data.node.id=="newtast_filetree_root")
+            dir_path="/"
+        var content={"action": "requestFileList",
+                     "data": {
+                        "column":["fileName","type","filesContain","size","dateModified","children","authRead","authWrite","usedByTask"],
+                        "root": dir_path,
+                        "filterOfAnd": [{"filterName":"type","content":"folder"},{"filterName":"authWrite","content":"true"}],
+                        "orderBy":"fileName",
+                        "loadDepth": "1" ,
+                        "limits":[1,-1]
+            }
+        }
+        let url;
+        if(data.node.parent=="#") url="testjons/test-edit_0.txt";
+        else if(data.node.parent=="newtast_filetree_root") url="testjons/test-edit_1.txt";
+        else url="testjons/test-edit_2.txt";
+        $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:url,data:JSON.stringify(content),dataType:"json",type: "post",success:function(response){
+            if(response.status=="ok"){
+                var node_ch=data.node.children;
+                if(node_ch.length==1&&$("#"+node_ch[0]).text()==""){
+                    deleteNode(node_ch[0]);
+                    var par_id=data.node.id;
+                    for(var i=0;i<response.data.length;i++){
+                        createNode(par_id, par_id+"_"+i, response.data[i].fileName, "last"); 
+                        createNode(par_id+"_"+i, par_id+"_"+i+"_0", "", "last");  
+                    }            
+                }
+            }
+        }});
+        
+       // alert(data.node.parent);
+        /*if(data.node.id=="root"){
+            $("#ch1").attr("class","jstree-node jstree-closed"); 
+            console.log($("#ch1_1").html());
+            if($("#ch1_1").html()==""){
+                createNode("ch1", "ch1_1", "add", "last");
+            }
+           
+        }*/
+       // alert(JSON.stringify(data.node));
+      //  var id_new="ch1_1";
+       // createNode(id_new, id_new+"_"+1, "add", "last");
+        //$("#"+id_new+"_"+1).attr("class","jstree-node jstree-closed"); 
+      // if(data.node.id!="root"&&data.node.id!=="ch1"&&data.node.id!=="ch2"){
+            /*var response_1={
+                "status":"ok",
+                "data":[{"filename":"lay_1","children":[]},
+                            {"filename":"lay_2","children":[]}]
+                }
+            var response={
+                "status":"ok",
+                "data":[{"filename":"lay_1","children":[{"filename":"lay_1_1","children":[]},{"filename":"lay_1_2","children":[]}]},
+                        {"filename":"lay_2","children":[{"filename":"lay_2_1","children":[]},{"filename":"lay_2_2","children":[]}]}]
+            }
+            var id_new=data.node.id;  
+            alert(id_new);
+            for(var i=0;i<response_1.data.length;i++){
+               // alert(i);
+                createNode(id_new, id_new+"_"+i, response_1.data[i].filename, "last"); 
+                $("#"+id_new+"_"+i).attr("class","jstree-node jstree-closed"); 
+
+            }
+            /*for(var i=0;i<data.node.children.length;i++){
+                var id_new=data.node.children[i];
+                console.log(id_new);
+                var child_len=response.data[i].children.length;
+                console.log(child_len);
+                for(var j=0;j<child_len;j++){
+                    console.log("cycle:"+j);
+                    createNode(id_new, id_new+"_"+j, response.data[i].children[j].filename, "last"); 
+                    $("#"+id_new+"_"+1).attr("class","jstree-node jstree-closed"); 
+                }           
+            }*/
+        //}
+        
+    });
+    $("#newtast_filetree").on('select_node.jstree', function (e, data) {// 节点选择事件  
+        var text="/";
+        if(data.node.parent!="#"){
+            var parents=data.node.parents;
+            for(var i=parents.length-3;i>=0;i--){
+                var  node = $('#newtast_filetree').jstree().get_node("#"+parents[i]);
+                text+=node.text+"/";
+            }
+            text+=data.node.text;
+        }
+       $('#inputdir_task').val(text);//赋值给araename选择框    
+     });
+}
+function createNode(parent_node, new_node_id, new_node_text, position) { 
+        $('#newtast_filetree').jstree('create_node', $("#"+parent_node), { "text":new_node_text, "id":new_node_id}, position, false, false);   
+}
+function deleteNode(node_id) { 
+    $('#newtast_filetree').jstree('delete_node', $("#"+node_id));   
+}
+function dmFileList() {
+	dMList = new List("dMfileList",["全选","文件名或文件夹名","子文件数量","文件大小","修改日期","写权限"],["checkbox","text","text","text","text","checkbox"],["","fileName","filesContain","size","dateModified","authWrite"],"dM");
+	let dMfileRequest = makeDMfileRqst("", "/", "type", "1");
+	$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },
+	url:"testjons/test-dmFileList1.txt",
+	data:JSON.stringify(dMfileRequest),
+	dataType:"json",
+	type: "post",
+	success:function(request){
+		dMList.deleteContent();
+		dMList.addRowsByJson(request);
+	}});
+	goFurther("hahaha");
+}
+function dmBtnClick(obj) {
+	let btName = obj.text();
+	if(btName == "上传") {
+		fileUpload();
+	}
+	else if(btName == "新建文件夹") {
+		newFolder();
+	}
+	else if(btName == "下载") {
+		fileDownLoad();
+	}
+	else if(btName == "重命名") {
+		fileRename();
+	}
+	else if(btName == "删除") {
+		fileDelete();
+	}
+	else if(btName == "复制到") {
+		fileCopy();
+	}
+	else if(btName == "移动到") {
+		fileMove();
+	}
+}
+
+let msgBoxID=""; //重要
+//弹出对话窗口(msgID-要显示的div的id)
+function showAlert(msgID){
+    //创建背景框，覆盖所有东西
+    let bgObj=document.createElement("div");
+    bgObj.setAttribute('id','bgID');
+    document.body.appendChild(bgObj);
+    showBigDiv();
+    msgBoxID=msgID;
+    showMsgDiv();
+}
+//关闭对话窗口
+function closeAlert() {
+	let msgObj=document.getElementById(msgBoxID);
+    let bgObj=document.getElementById("bgID");
+    msgObj.style.display="none";
+    document.body.removeChild(bgObj);
+    msgBoxID="";
+}
+
+//把要显示的div居中显示
+function showMsgDiv() {
+    let msgObj = document.getElementById(msgBoxID);
+    msgObj.style.display = "block";
+    let msgWidth = msgObj.scrollWidth;
+    let msgHeight= msgObj.scrollHeight;
+    let bgTop=myScrollTop();
+    let bgLeft=myScrollLeft();
+    let bgWidth=myClientWidth();
+    let bgHeight=myClientHeight();
+    let msgTop=bgTop+Math.round((bgHeight-msgHeight)/2);
+    let msgLeft=bgLeft+Math.round((bgWidth-msgWidth)/2);
+    msgObj.style.position = "absolute";
+    msgObj.style.top      = msgTop+"px";
+    msgObj.style.left     = msgLeft+"px";
+    msgObj.style.zIndex   = "10001";
+}
+//背景框满窗口显示
+function showBigDiv(){
+    let bgObj=document.getElementById("bgID");
+    let bgWidth=myClientWidth();
+    let bgHeight=myClientHeight();
+    let bgTop=myScrollTop();
+    let bgLeft=myScrollLeft();
+    bgObj.style.position   = "absolute";
+    bgObj.style.top        = bgTop+"px";
+    bgObj.style.left       = bgLeft+"px";
+    bgObj.style.width      = bgWidth + "px";
+    bgObj.style.height     = bgHeight + "px";
+    bgObj.style.zIndex     = "10000";
+    bgObj.style.background = "rgb(0,100,100)";
+    bgObj.style.opacity    = "0.3";
+}
+//网页被卷去的上高度
+function myScrollTop(){
+    let n=window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    return n;
+}
+//网页被卷去的左宽度
+function myScrollLeft(){
+    let n=window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft || 0;
+    return n;
+}
+//网页可见区域宽
+function myClientWidth(){
+    let n=document.documentElement.clientWidth || document.body.clientWidth || 0;
+    return n;
+}
+//网页可见区域高
+function myClientHeight(){
+    let n=document.documentElement.clientHeight || document.body.clientHeight || 0;
+    return n;
+}
+function newFolder() {
+	$("#dMreminder").text("请输入新建文件夹名称：");
+	$("#dMreminder").next().show();
+	$("#dMConfirmBtn").click(confirmNewFolder);
+	$("#dMCancelBtn").click(cancelNewFolder);
+	showAlert('dMbox');
+}
+function confirmNewFolder() {
+	let newFolderName = $("#newFolderName").val();
+	let request = {"action":"mkdir","data": {"curdir":"$curdir","dirname":newFolderName}};
+	let response = {"status": "ok"};
+	if (response.status == "ok") {
+		dMList.addRow(["",newFolderName,"0","",new Date().toString(),"false"]);
+		closeAlert();
+	}
+	else if(response.status == "curdirNotExist"){
+		$("#dMreminder").text("请输入新建文件夹名称： 当前所在目录不存在，请刷新！");
+	}
+	else if(response.status == "noAuthWrite") {
+		$("#dMreminder").text("请输入新建文件夹名称： 当前目录不可写！");
+	}
+	else if(response.status == "otherReason") {
+		$("#dMreminder").text("请输入新建文件夹名称： 未知原因导致创建失败！");
+	}
+	else if(response.status == "expired") {
+		//log out
+	}
+	$("#dMConfirmBtn").unbind();
+	$("#dMCancelBtn").unbind();
+	$("#newFolderName").val("");
+}
+function cancelNewFolder() {
+	$("#newFolderName").val("");
+	cancelFileDelete();
+}
+function fileDelete() {
+	let selRowNums = dMList.getSelRowNums();
+	if(selRowNums[0] == 0) {selRowNums.shift();}
+	if(selRowNums.length > 0) {
+		let names = [];
+		let colObjs = dMList.getColObjs(1);
+		selRowNums.forEach(function(value,index,array){
+			if(value!=0) {
+				names.push(colObjs[value][0].innerHTML);
+			}
+		})
+		let fileNameJson = {names:names, selRowNums,selRowNums};
+		names = names.join("、  ");
+		$("#dMreminder").text("确认删除以下文件（夹）： " + names + "？");
+		$("#dMreminder").next().hide();
+		$("#dMConfirmBtn").click(fileNameJson, confirmFileDelete);
+		$("#dMCancelBtn").click(cancelFileDelete);
+		showAlert('dMbox');
+	}
+	else{
+		if($('#btnReminder')){
+			$('#btnReminder').remove();
+		}
+		$redWords =$("<span id='btnReminder' style='color:red;margin-left:30px'>没有可删除文档</span>");
+		$("#crumb").append($redWords);
+		$redWords.fadeOut(1000,function(){$(this).remove()});
+	}
+}
+function confirmFileDelete(fileNameJson) {
+	let dMfileRqst = makeDMdelRqst(getDestDir($(".dMcurdir").children().last()), fileNameJson.data.names);
+	$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },
+		url:"testjons/test-deleteFile.txt",
+		data:JSON.stringify(dMfileRqst),
+		dataType:"json",
+		type: "post",
+		success:function(response){
+			if(response.status == "ok"){
+				dMList.deleteRows(fileNameJson.data.selRowNums);
+				$("#dMConfirmBtn").unbind();
+				$("#dMCancelBtn").unbind();
+				closeAlert();
+			}
+			else {
+				alert("delete fail");
+			}
+		}
+	});
+
+}
+function cancelFileDelete() {
+	$("#dMConfirmBtn").unbind();
+	$("#dMCancelBtn").unbind();
+	closeAlert();
+}
+function makeDMdelRqst(destDir, fileNames) {
+	let files2BeDel = fileNames.map(function(x){return destDir + "/" + x;});
+	let dMfileRqst = {
+		action:"rm",
+		"data": {filename:files2BeDel}
+	}
+	return dMfileRqst;
+}
+function goFurther(next) {
+	let nextFolder = $("<label onclick=\"curDirClick($(this))\" onmouseover=\"this.style.cursor='hand';\" class=\"dMdirs\"> > " + next + "</label>");
+	$("#dMcurdir").append(nextFolder);
+}
+function makeDMfileRqst(asUser, root, orderBy, loadDepth) {
+	let dMfileRequest = {
+	"action": "requestFileList",
+	"data": {"column":["fileName","type","filesContain","size","dateModified","children","authRead","authWrite","usedByTask"],
+			"asUser":asUser,
+			"root": root,
+			"filterOfAnd":[],
+			"orderBy":orderBy,
+			"loadDepth":loadDepth,
+			"limits":[1,-1]
+			}
+	}
+	return dMfileRequest;
+}
+function curDirClick(obj) {
+	let destDir = getDestDir(obj);
+	obj.nextAll().remove();
+	let dMfileRequest = makeDMfileRqst("", destDir, "type", "1");
+	$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },
+			url:"testjons/test-dmFileList2.txt",
+			data:JSON.stringify(dMfileRequest),
+			dataType:"json",
+			type: "post",
+			success:function(request){
+				dMList.deleteContent();
+				dMList.addRowsByJson(request);
+			}
+		});
+}
+function getDestDir(obj) {
+	let folderNames = $("#dMcurdir").children();
+	let destDir = "";
+	if (folderNames[0] == obj[0]) {return "/";}
+	for(let i = 1; i < folderNames.length; i++) {
+		if(folderNames[i] == obj[0]) {
+			destDir += "/"+obj.text().substring(3);
+			return destDir;
+		}
+		destDir += "/" + $(folderNames[i]).text().substring(3);
+	}
+	return destDir;
+}
+function fileCopy(){
+	let selRowNums = dMList.getSelRowNums();
+	if(selRowNums[0] == 0) {selRowNums.shift();}
+	if(selRowNums.length > 0) {
+		let names = [];
+		let colObjs = dMList.getColObjs(1);
+		selRowNums.forEach(function(value,index,array){
+			if(value!=0) {
+				names.push(colObjs[value][0].innerHTML);
+			}
+		})
+		let fileNameJson = {names:names};
+		$("#dMreminder").text("请选择目标路径：");
+		$("#dMreminder").next().hide();
+		$("#dMConfirmBtn").click(fileNameJson, confirmFileCopy);
+		$("#dMCancelBtn").click(cancelFileCopy);
+		showAlert('dMbox');
+	}
+	else{
+
+	}
+}
+function confirmFileCopy(fileNameJson) {
+	let dMfileRqst = makeDMdelRqst(getDestDir($(".dMcurdir").children().last()), fileNameJson.data.names);
+	$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },
+		url:"testjons/test-copyFile.txt",
+		data:JSON.stringify(dMfileRqst),
+		dataType:"json",
+		type: "post",
+		success:function(response){
+			if(response.status == "ok"){
+				$("#dMConfirmBtn").unbind();
+				$("#dMCancelBtn").unbind();
+				closeAlert();
+			}
+			else {
+				alert("copy fail");
+			}
+		}
+	});
+}
+function cancelFileCopy() {
+	cancelFileDelete();
 }

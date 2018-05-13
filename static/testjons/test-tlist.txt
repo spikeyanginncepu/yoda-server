@@ -1,0 +1,6 @@
+{
+    "status": "ok",
+    "dataLength": 1,
+    "numRunningTask": 7,
+    "data": [{"taskName":"春季巡检-上嘉一线","taskStatus":"running","input":"/张三/春季巡检/上嘉一线","numLeft":"255","numTotal":"555","modelName":"细粒度缺陷识别","modelType":"image","isOwner":"true","canModify":"true","canValidate":"true","authTaskManageUserList": ["zhangsan","lisi"],"authTaskValidateUserList": ["zhangsan1","zhangsan2"]}           ]
+}

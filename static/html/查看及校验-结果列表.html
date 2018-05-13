@@ -9,12 +9,12 @@
         <div class="JD_imgAndInfo">
             <div class="JD_imgContainer"><img id="JD_mainImage" src=""/></div>
             <div class="JD_infoContainer">
-                <p>自动识别结果：正确</p>
-                <div class="JD_rightorwrong">
-                    <input type="radio" checked name="correctness" value='right'/><label>正确</label>  
-                    <input name="correctness" type="radio" value="wrong"/><label>错误</label>  
+                <p id="JD_correctness">自动识别结果： </p>
+                <div class="JD_rightorwrong" id="JD_rightorwrong">
+                    <input class="correctness_radio" type="radio" checked name="correctness" value='right' onclick='click_JM_correctness("正确")'/><label>正确</label>  
+                    <input class="correctness_radio" name="correctness" type="radio" value="wrong" onclick='click_JM_correctness("错误")'/><label>错误</label>  
                 </div>
-                <textarea></textarea>
+                <textarea id="JD_descript"></textarea>
                 <table class="JD_imageChange">
                     <tr><td class="JD_changebtn"><button>上一张</button></td><td class="JD_changebtn"><button>保存</button></td><td class="JD_changebtn"><button>下一张</button></td></tr>
                 </table>

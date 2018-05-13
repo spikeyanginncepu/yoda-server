@@ -1,8 +1,8 @@
-INSERT INTO model (modelname,pipe,deft)
+INSERT INTO models (modelname,pipe,deft)
     VALUES ('输电线路普通缺陷识别模型', 'drfcn22l',
     '鸟巢,防振锤滑移,地线绝缘子(放电间隙松动),防振锤挨在一起,防振锤（安装不规范）,绝缘子（损坏部分）,防振锤（损坏）,杆塔基础（水淹）,杆塔基础（沉降）
 ');
-INSERT INTO model (modelname,pipe,deft)
+INSERT INTO models (modelname,pipe,deft)
     VALUES ('输电线路缺陷识别模型(含细粒度缺陷)', 'drfcn22',
     '鸟巢,缺销子,缺螺栓,防振锤滑移,地线绝缘子(放电间隙松动),防振锤挨在一起,防振锤（安装不规范）,绝缘子（损坏部分）,防振锤（损坏）,杆塔基础（水淹）,杆塔基础（沉降）
 ');

@@ -1,0 +1,25 @@
+db:
+  host: localhost
+  database: yoda
+  user: yoda
+  password: z2L76LFQHoYEqvXpzY+XYYhFOZaPeOljoJAt/oas2Pg=
+tornado:
+  port: 8889
+  dataPath: data
+  secret: V2RksEY9UeGT1AJuZU8lmNnfPndeX7ZCOPQFSkn5ELk=
+  xsrf: true
+  login_expire_days: 1
+authEncode:
+  userAuth:
+    authAdmin: 1
+    authFileReadAll: 2
+    authTaskManageAll: 4
+    hasUserFolder: 8
+  fileAuth:
+    authRead: 1
+    authWrite: 2
+  taskAuth:
+    isOwner: 1
+    canModify: 2
+    canValidate: 4
+include:
