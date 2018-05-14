@@ -1098,14 +1098,14 @@ function taskCreateEdit_do(obj){
     let authTaskManageUserList=[];
     let authTaskValidateUserList=[];
     $(".TE_div2_1 tr").each(function(){
-        if( $(this).children("td:eq(0)").children("input").is(":checked")){
-            let name=$(this).children("td:eq(1)").text();
+        if( $(this).children("td:eq(1)").children("input").is(":checked")){
+            let name=$(this).children("td:eq(0)").text();
             authTaskManageUserList.push(name);
         }
     });
     $(".TE_div2_2 tr").each(function(){
-        if( $(this).children("td:eq(0)").children("input").is(":checked")){
-            let name=$(this).children("td:eq(1)").text();
+        if( $(this).children("td:eq(1)").children("input").is(":checked")){
+            let name=$(this).children("td:eq(0)").text();
             authTaskValidateUserList.push(name);
         }
     });
@@ -1122,9 +1122,10 @@ function taskCreateEdit_do(obj){
         
         $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-add.txt",data:JSON.stringify(content),dataType:"json",type: "post",success:function(response){
             if(response.status=="ok"){
-                alert("权限修改成功！"+JSON.stringify(content));
+                if(obj.attr("id")=="_editTask")  alert("任务修改成功！"+JSON.stringify(content));
+                else alert("任务创建成功！"+JSON.stringify(content));
             }else{
-                alert("权限修改失败："+response.status);
+                alert("失败："+response.status);
             }
         }});
     }
@@ -1183,14 +1184,24 @@ function request_tasklist_foruser(obj){
                         r[0].authTaskValidate="true";
                        // console.log(JSON.stringify(r[0]));*/
                     }
-                    create_userlist_create_edit(response,tasklist_foruser_json);
+                    create_userlist_create_edit(tasklist_foruser_json);
+                    $("#taskmodel").val(response_t.data[0].modelName).trigger("change");
+                    for(var i=0;i<response_t.data[0].objectList.length;i++){
+                        $(".TE_deftable_tr").each(function(){
+                         if($(this).children("td:eq(1)").text()==response_t.data[0].objectList[i].name){
+                            // alert($(this).children("td:eq(1)").text());
+                            $(this).children("td:eq(0)").children("input").prop("checked",true);
+                            $(this).children("td:eq(2)").text(response_t.data[0].objectList[i].color);                    
+                         }
+                        });
+                    }
                 }else{
                     alert(response.status);
                 }  
             }})
          }
          else{
-            create_userlist_create_edit(response,tasklist_foruser_json);
+            create_userlist_create_edit(tasklist_foruser_json);
          }
          
         }
@@ -1199,23 +1210,23 @@ function request_tasklist_foruser(obj){
         }
      }});
 }
-function create_userlist_create_edit(response,tasklist_foruser_json){
+function create_userlist_create_edit(tasklist_foruser_json){
     console.log(JSON.stringify(tasklist_foruser_json));
     var parentClass_1="TE_div2_1";
     var parentClass_2="TE_div2_2";
-    var heading_1=["全选","用户名","是否拥有设置权限"];
-    var heading_2=["全选","用户名","是否拥有校验权限"];
-    var objType=["checkbox","text","checkbox"];
-    var keys_1=["","username","authTaskManage"];
-    var keys_2=["","username","authTaskValidate"];
+    var heading_1=["用户名","是否拥有设置权限"];
+    var heading_2=["用户名","是否拥有校验权限"];
+    var objType=["text","checkbox"];
+    var keys_1=["username","authTaskManage"];
+    var keys_2=["username","authTaskValidate"];
     var prefix="TE_userlist";
     var userlist_1=new List(parentClass_1,heading_1,objType,keys_1,prefix);
     userlist_1.addRowsByJson(tasklist_foruser_json);
     var userlist_2=new List(parentClass_2,heading_2,objType,keys_2,prefix);
     userlist_2.addRowsByJson(tasklist_foruser_json);
-    $("."+prefix+"table_tr").each(function(){
+    /*$("."+prefix+"table_tr").each(function(){
        $(this).children("td:eq(2)").children("input").attr("disabled",true);
-   });
+   });*/
 }
 function request_modellist(obj1){
    var content={
@@ -1258,28 +1269,6 @@ function request_modellist(obj1){
             alert("权限修改失败："+obj.status);
         }
     }});
-    //缺少请求某个任务的列表
-    if(obj1.attr("id")=="_editTask"){
-        var content_request={
-
-        }
-        $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-edit-task.json",data:JSON.stringify(content_request),dataType:"json",type: "post",success:function(obj){
-           if(obj.status=="ok"){
-            $("#taskmodel").val(obj.data[0].modelName).trigger("change");
-            for(var i=0;i<obj.data[0].objectList.length;i++){
-                $(".TE_deftable_tr").each(function(){
-                 if($(this).children("td:eq(1)").text()==obj.data[0].objectList[i].name){
-                    // alert($(this).children("td:eq(1)").text());
-                    $(this).children("td:eq(0)").children("input").prop("checked",true);
-                    $(this).children("td:eq(2)").text(obj.data[0].objectList[i].color);                    
-                 }
-                });
-            }
-           }else{
-               alert(obj.status);
-           }    
-        }});
-    }
 }
 function setFilepath(obj){
     $("#inputdir_task").val(obj.val());
