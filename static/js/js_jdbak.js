@@ -215,13 +215,13 @@ function click_JM_correctness(text)
 var snp;//Save_Nxt_Pre类，维护save_next_pre的对象
 function startJudgement(obj){
    let taskname=obj.parent().parent().children("td:eq(1)").text();
-   tree_id="validateTree";
-   snp=new Save_Nxt_Pre(taskname,[],tree_id);
+   tree_id_prefix="validateTree_";
+   snp=new Save_Nxt_Pre(taskname,[],tree_id_prefix);
    //alert(snp.taskname);
    let url="html/查看及校验.html";
    $.ajax({url:url,data:{},dataType:"text",success:function(response){
 		element('left').innerHTML = response;
-		loadValidatelist(taskname,tree_id,"testjons/test-validatelist.json","testjons/test-validate_state.json",true);
+		loadValidatelist(taskname,tree_id_prefix,"testjons/test-validatelist.json","testjons/test-validate_state.json",true);
 		let menu = element('leftMenu');
 		menu.rows[0].click();
 		
@@ -234,7 +234,7 @@ function generate_JM_FileList(obj){
    }})
 }
 /** url_flist是请求文件的url，url_state是请求状态的url*/
-function loadValidatelist(taskname,tree_id,url_flist,url_state,open_all){
+function loadValidatelist(taskname,tree_id_prefix,url_flist,url_state,open_all){
 	var content={
 		"action": "requestFileList",
 		"data": {"column":["fileName","type","filesContain","size","dateModified","children","authRead","authWrite","usedByTask"],
@@ -247,21 +247,20 @@ function loadValidatelist(taskname,tree_id,url_flist,url_state,open_all){
 		}
 	$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:url_flist,data:JSON.stringify(content),dataType:"json",type: "post",success:function(obj){
 		if(obj.status=="ok"){
-			let tree_lay1_id=[]
-			let tree_lay1_text=[];
-			let tree_lay1_data=[];
+			let tree_id=[]
+			let root_text=[];
+			let tree_data=[];
 			let moreparas={"taskname":taskname,"url_state":url_state};
 			for(var i=0;i<3;i++){
-				tree_lay1_id[i]=tree_id+"_layer1_"+i;
-				tree_lay1_text[i]=obj.data[i].fileName+"("+obj.data[i].filesContain+")";
-				tree_lay1_data[i]=obj.data[i].children;
+				tree_id[i]=tree_id_prefix+i;
+				root_text[i]=obj.data[i].fileName+"("+obj.data[i].filesContain+")";
+				tree_data[i]=obj.data[i].children;
+				initValidateTree(tree_id[i],root_text[i],tree_data[i],moreparas);
+				if(open_all) $("#validateTree_"+i).jstree("open_all");
 				//$("#validateTree_0root_8_anchor").trigger("click");
 				//$("#"+pre_node).attr("aria-selected",false);
 				//$("#validateTree_0root_8").attr("aria-selected","true");
 			}
-			initValidateTree(tree_id,tree_lay1_id,tree_lay1_text,tree_lay1_data,moreparas);
-			if(open_all) $("#validateTree").jstree("open_all");
-			//$("#validateTree_layer1_0_2_anchor").trigger("click");
 		}
 		else{
 			alert(obj.status);
@@ -269,17 +268,13 @@ function loadValidatelist(taskname,tree_id,url_flist,url_state,open_all){
 
 	}});
 }
-function initValidateTree(tree_id,tree_lay1_id,tree_lay1_text,tree_lay1_data,moreparas){
-	let layer1=[];
-	for(var i=0;i<3;i++){
-		layer1.push({"id":tree_lay1_id[i],"text" :tree_lay1_text[i],"children":[{"id":tree_lay1_id[i]+"_0","text" : "","children":[]}]});
-	}
+function initValidateTree(tree_id,root_text,tree_data,moreparas){
 	$("#"+tree_id).jstree({
         'core' : {      
-            'data' : [  { "id":tree_id+"_root",
-						  "text" : moreparas.taskname, 
+            'data' : [  { "id":tree_id+"root",
+						  "text" : root_text, 
 						  "state": {"opened" : true,"disabled":true},
-                          "children" : layer1,
+                          "children" : [ { "id":tree_id+"root_0","text" : "","children":[] }],
                         }
                      ],
             'check_callback': true
@@ -287,20 +282,19 @@ function initValidateTree(tree_id,tree_lay1_id,tree_lay1_text,tree_lay1_data,mor
 	});
 	$("#"+tree_id).on("open_node.jstree", function (e, data) {
 		var node_ch=data.node.children;
-		if(node_ch.length==1 && $("#"+node_ch[0]).text()==""){
-			var flag=data.node.id.split("_")[2];
-			//alert(data.node.id);
+		if(node_ch.length==1&&$("#"+node_ch[0]).text()==""){
 			deleteNode(tree_id,node_ch[0]);
 			var par_id=data.node.id;
-			for(var i=0;i<tree_lay1_data[flag].length;i++){
-				createNode(tree_id,par_id, par_id+"_"+i,tree_lay1_data[flag][i].fileName, "last"); 
+			for(var i=0;i<tree_data.length;i++){
+				createNode(tree_id,par_id, par_id+"_"+i,tree_data[i].fileName, "last"); 
 			}
 		}
 	});
 	$("#"+tree_id).on("select_node.jstree",function(e,data){
-		let parentpath=$("#"+tree_id).jstree().get_node("#"+data.node.parent).text.split("(")[0];
-		let JD_resultDir_p="识别结果/"+moreparas.taskname+"/"+parentpath+"/"+data.node.text;
-		if(data.node.parent!="#"&&data.node.parent!=tree_id+"_root"){
+		//alert(data.node.id);
+		if(data.node.parent!="#"){
+			let parentpath=$("#"+tree_id).jstree().get_node("#"+data.node.parent).text.split("(")[0];
+			let JD_resultDir_p="识别结果/"+moreparas.taskname+"/"+parentpath+"/"+data.node.text;
 			$("#JD_resultDir_p").text(JD_resultDir_p);
 			$("#JD_state_p").text(parentpath);
 			var content={
@@ -322,59 +316,40 @@ function initValidateTree(tree_id,tree_lay1_id,tree_lay1_text,tree_lay1_data,mor
 					}});*/
 				}
 			}});/**建议：图片和申请状态在一个post中，或description在请求文件列表的时候加字段。 */
-		}else{
-			$("#JD_resultDir_p").text("识别结果/"+moreparas.taskname+"/"+data.node.text.split("(")[0]);
 		}
 		
 	});
 }
 class Save_Nxt_Pre {
-	constructor(taskname,request,tree_id) {
+	constructor(taskname,request,tree_id_prefix) {
 		this.taskname = taskname;
 		this.request=request;
-		this.tree_id=tree_id;
+		this.tree_id_prefix=tree_id_prefix;
 	} 
 	echo(){
-		alert(this.taskname+this.request+this.tree_id);
+		alert(this.taskname+this.request+this.tree_id_prefix);
 	}
 	next(){
-		//var index=0;
-		$("[aria-selected='true']").each(function(){
-			var id=$(this).attr("id");
-			var ids=id.split("_");
-			var num_nxt=parseInt(ids[3])+1;
-			//alert(num_nxt);
-			var id_nxt=ids[0]+"_"+ids[1]+"_"+ids[2]+"_"+num_nxt+"_anchor";
-			//alert(id_nxt);
-			$("#"+id_nxt).trigger("click");
-			//validateTree_layer1_0_2 
-		});
-	}
-	pre(){
-		//var index=0;
-		$("[aria-selected='true']").each(function(){
-			var id=$(this).attr("id");
-			var ids=id.split("_");
-			var num_nxt=parseInt(ids[3])-1;
-			var id_nxt=ids[0]+"_"+ids[1]+"_"+ids[2]+"_"+num_nxt+"_anchor";
-			$("#"+id_nxt).trigger("click");
-		});
+		let fileName=$("")+get_selected()
 	}
     save(){
-		var content=this.request;
-		/*{
+		var content={
 			"action": "setValidateStatus",
-			"taskName":"fdf",
+			 "taskName":"fdf",
 			"data": [{"fileName":"1_2.jpg","status":"已校验-正确","descript":"张天线32号塔小号侧跳串U型挂环缺销子"},
-					 {"fileName":"1_3.jpg","status":"已校验-正确","descript":"张天线32号塔小号侧跳串U型挂环缺销子"}]
-		};*/
-		let tn=this.taskname;
-		let ti=this.tree_id;
+					 {"fileName":"1_2.jpg","status":"已校验-正确","descript":"张天线32号塔小号侧跳串U型挂环缺销子"},
+		]
+			
+	    }
 		$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-add.txt",data:JSON.stringify(content),dataType:"json",type: "post",success:function(response){
 			if(response.status=="ok"){
-				//alert(tn+""+ti);
-				$("#"+ti).jstree(true).destroy();
-				loadValidatelist(tn,ti,"testjons/test-validatelist_1.json","testjons/test-validate_state.json",true);				
+				alert(taskname);
+				for(var i=0;i<3;i++){
+					$("#validateTree_"+i).jstree(true).destroy();
+				}
+				loadValidatelist(taskname,"testjons/test-validatelist_1.json","testjons/test-validate_state.json",true);
+				$("#validateTree_0root_8_anchor").trigger("click");
+
 			}
 		}});
     }
