@@ -16,7 +16,7 @@ var JM_taskname = "";
 var JM_file;
 var JM_list = "";
 
-function startJudgement(obj)
+/*function startJudgement(obj)
 {
 	var tr = event.srcElement.parentNode.parentNode;
 	JM_root = tr.getElementsByClassName("TM_tasktablelist_path")[0].innerText;
@@ -43,7 +43,7 @@ function startJudgement(obj)
 		navigate(obj);
 	}
 
-}
+}*/
 
 function maintain_JM_FileList(returnJSON)
 {	
@@ -211,4 +211,21 @@ function click_JM_correctness(text)
 {
 	var correctness_text = document.getElementById("JD_correctness");
 	correctness_text.innerText = "自动识别结果： " + text;
+}
+function startJudgement(obj){
+   
+}
+
+function loadValidatelist(){
+	var content={
+		"action": "requestFileList",
+		"data": {"column":["fileName","type","filesContain","size","dateModified","children","authRead","authWrite","usedByTask"],
+		           "root": "/用户-zhangsan/2012巡检/",
+		            "filterOfAnd": [],
+		   			"orderBy":"fileName",
+		   			"loadDepth": "1",
+		   			"limits":[1,-1]
+				}
+		}
+	
 }
