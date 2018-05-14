@@ -213,10 +213,16 @@ function click_JM_correctness(text)
 	correctness_text.innerText = "自动识别结果： " + text;
 }
 function startJudgement(obj){
-   
+   let url="html/查看及校验-结果列表";
+   $.ajax({url:url,data:{},dataType:"text",success:function(response){
+		element('left').innerHTML = response;
+		loadValidatelist(obj);
+		let menu = element('leftMenu');
+		menu.rows[0].click();
+   }})
 }
 
-function loadValidatelist(){
+function loadValidatelist(obj){
 	var content={
 		"action": "requestFileList",
 		"data": {"column":["fileName","type","filesContain","size","dateModified","children","authRead","authWrite","usedByTask"],

@@ -333,7 +333,6 @@ class List {
 			rowObj.setAttribute("onmouseover","trOnMouse($(this))");
 			rowObj.setAttribute("onmouseout","trOnMouseOut($(this))");
 			this.table.appendChild(rowObj);
-			return rowObj;
 		}
 		else {
 			throw "You should add row template by using List.setRowTemplate() before adding rows."
@@ -348,15 +347,12 @@ class List {
 			}
 			let trClass = this.tableClass + "_tr";
 			let tdClass = this.tableClass + "_td";
-			let rowObjs = [];
 			for (let i = 0; i < rowsData.length; i++) {
 				let rowObj = this.data2Row(rowsData[i], trClass, tdClass, this.objType);
 				rowObj.setAttribute("onmouseover","trOnMouse($(this))");
 				rowObj.setAttribute("onmouseout","trOnMouseOut($(this))");
 				this.table.appendChild(rowObj);
-				rowObjs.push(rowObj);
 			}
-			return rowObjs;
 		}
 		else {
 			throw "You should add row template by using List.setRowTemplate() before adding rows."
@@ -704,10 +700,8 @@ function search_userlist(){
                     }
                 }
                // alert(JSON.stringify(obj));
-				var userlist=new List(parentClass,heading_par,objType,keys,prefix);
-				if(obj.data.length > 0) {
-					userlist.addRowsByJson(obj);
-				}
+                var userlist=new List(parentClass,heading_par,objType,keys,prefix);
+                userlist.addRowsByJson(obj);
               // $("."+prefix+"table tr:not(:first)").addRowsByJson(obj);
                $("."+prefix+"table_td button").each(function(){
                    $(this).attr("class","UM_ulistbtn");
@@ -1098,14 +1092,14 @@ function taskCreateEdit_do(obj){
     let authTaskManageUserList=[];
     let authTaskValidateUserList=[];
     $(".TE_div2_1 tr").each(function(){
-        if( $(this).children("td:eq(0)").children("input").is(":checked")){
-            let name=$(this).children("td:eq(1)").text();
+        if( $(this).children("td:eq(1)").children("input").is(":checked")){
+            let name=$(this).children("td:eq(0)").text();
             authTaskManageUserList.push(name);
         }
     });
     $(".TE_div2_2 tr").each(function(){
-        if( $(this).children("td:eq(0)").children("input").is(":checked")){
-            let name=$(this).children("td:eq(1)").text();
+        if( $(this).children("td:eq(1)").children("input").is(":checked")){
+            let name=$(this).children("td:eq(0)").text();
             authTaskValidateUserList.push(name);
         }
     });
@@ -1122,9 +1116,10 @@ function taskCreateEdit_do(obj){
         
         $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-add.txt",data:JSON.stringify(content),dataType:"json",type: "post",success:function(response){
             if(response.status=="ok"){
-                alert("权限修改成功！"+JSON.stringify(content));
+                if(obj.attr("id")=="_editTask")  alert("任务修改成功！"+JSON.stringify(content));
+                else alert("任务创建成功！"+JSON.stringify(content));
             }else{
-                alert("权限修改失败："+response.status);
+                alert("失败："+response.status);
             }
         }});
     }
@@ -1183,14 +1178,24 @@ function request_tasklist_foruser(obj){
                         r[0].authTaskValidate="true";
                        // console.log(JSON.stringify(r[0]));*/
                     }
-                    create_userlist_create_edit(response,tasklist_foruser_json);
+                    create_userlist_create_edit(tasklist_foruser_json);
+                    $("#taskmodel").val(response_t.data[0].modelName).trigger("change");
+                    for(var i=0;i<response_t.data[0].objectList.length;i++){
+                        $(".TE_deftable_tr").each(function(){
+                         if($(this).children("td:eq(1)").text()==response_t.data[0].objectList[i].name){
+                            // alert($(this).children("td:eq(1)").text());
+                            $(this).children("td:eq(0)").children("input").prop("checked",true);
+                            $(this).children("td:eq(2)").text(response_t.data[0].objectList[i].color);                    
+                         }
+                        });
+                    }
                 }else{
                     alert(response.status);
                 }  
             }})
          }
          else{
-            create_userlist_create_edit(response,tasklist_foruser_json);
+            create_userlist_create_edit(tasklist_foruser_json);
          }
          
         }
@@ -1199,23 +1204,23 @@ function request_tasklist_foruser(obj){
         }
      }});
 }
-function create_userlist_create_edit(response,tasklist_foruser_json){
+function create_userlist_create_edit(tasklist_foruser_json){
     console.log(JSON.stringify(tasklist_foruser_json));
     var parentClass_1="TE_div2_1";
     var parentClass_2="TE_div2_2";
-    var heading_1=["全选","用户名","是否拥有设置权限"];
-    var heading_2=["全选","用户名","是否拥有校验权限"];
-    var objType=["checkbox","text","checkbox"];
-    var keys_1=["","username","authTaskManage"];
-    var keys_2=["","username","authTaskValidate"];
+    var heading_1=["用户名","是否拥有设置权限"];
+    var heading_2=["用户名","是否拥有校验权限"];
+    var objType=["text","checkbox"];
+    var keys_1=["username","authTaskManage"];
+    var keys_2=["username","authTaskValidate"];
     var prefix="TE_userlist";
     var userlist_1=new List(parentClass_1,heading_1,objType,keys_1,prefix);
     userlist_1.addRowsByJson(tasklist_foruser_json);
     var userlist_2=new List(parentClass_2,heading_2,objType,keys_2,prefix);
     userlist_2.addRowsByJson(tasklist_foruser_json);
-    $("."+prefix+"table_tr").each(function(){
+    /*$("."+prefix+"table_tr").each(function(){
        $(this).children("td:eq(2)").children("input").attr("disabled",true);
-   });
+   });*/
 }
 function request_modellist(obj1){
    var content={
@@ -1258,28 +1263,6 @@ function request_modellist(obj1){
             alert("权限修改失败："+obj.status);
         }
     }});
-    //缺少请求某个任务的列表
-    if(obj1.attr("id")=="_editTask"){
-        var content_request={
-
-        }
-        $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-edit-task.json",data:JSON.stringify(content_request),dataType:"json",type: "post",success:function(obj){
-           if(obj.status=="ok"){
-            $("#taskmodel").val(obj.data[0].modelName).trigger("change");
-            for(var i=0;i<obj.data[0].objectList.length;i++){
-                $(".TE_deftable_tr").each(function(){
-                 if($(this).children("td:eq(1)").text()==obj.data[0].objectList[i].name){
-                    // alert($(this).children("td:eq(1)").text());
-                    $(this).children("td:eq(0)").children("input").prop("checked",true);
-                    $(this).children("td:eq(2)").text(obj.data[0].objectList[i].color);                    
-                 }
-                });
-            }
-           }else{
-               alert(obj.status);
-           }    
-        }});
-    }
 }
 function setFilepath(obj){
     $("#inputdir_task").val(obj.val());
@@ -1325,7 +1308,7 @@ function loadTree() {
                     for(var i=0;i<response.data.length;i++){
                         createNode(par_id, par_id+"_"+i, response.data[i].fileName, "last"); 
                         createNode(par_id+"_"+i, par_id+"_"+i+"_0", "", "last");  
-                    }
+                    }            
                 }
             }
         }});
@@ -1360,6 +1343,7 @@ function loadTree() {
                // alert(i);
                 createNode(id_new, id_new+"_"+i, response_1.data[i].filename, "last"); 
                 $("#"+id_new+"_"+i).attr("class","jstree-node jstree-closed"); 
+
             }
             /*for(var i=0;i<data.node.children.length;i++){
                 var id_new=data.node.children[i];
@@ -1394,57 +1378,19 @@ function createNode(parent_node, new_node_id, new_node_text, position) {
 function deleteNode(node_id) { 
     $('#newtast_filetree').jstree('delete_node', $("#"+node_id));   
 }
-class FileList extends List {
-	// constructor(parentClass, headings, objType, keys, prefix){
-	// 	super(parentClass, headings, objType, keys, prefix);
-	// }
-	addRow(rowData) {
-		let rowObj = super.addRow(rowData);
-		rowObj.setAttribute("ondblclick","trDoubleClick(this)");
-		rowObj.childNodes[5].style.display = "none";
-	}
-	addRows(rowsData) {
-		let rowObjs = super.addRows(rowsData);
-		for(let i = 0; i < rowObjs.length; i++) {
-			rowObjs[i].setAttribute("ondblclick","trDoubleClick(this)");
-			rowObjs[i].childNodes[5].style.display = "none";
-		}
-	}
-}
-function trDoubleClick(obj) {
-	let rowNum = obj.rowIndex;
-	let fileType = obj.childNodes[5].firstChild.innerHTML;
-	let fileName = obj.childNodes[1].firstChild.innerHTML;
-	if (fileType == "userFolder" || fileType == "folder") {
-		let destDir = getDestDir($(".dMcurdir").children().last()) + "/" + fileName;
-		let dMfileRequest = makeDMfileRqst("", destDir, [], "type", "1");
-		$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },
-				url:"testjons/test-dmFileList2.txt",
-				data:JSON.stringify(dMfileRequest),
-				dataType:"json",
-				type: "post",
-				success:function(response){
-					dMList.deleteContent();
-					dMList.addRowsByJson(response);
-					goFurther(fileName);
-				}
-		});
-	}
-}
 function dmFileList() {
-	dMList = new FileList("dMfileList",["全选","文件名或文件夹名","子文件数量（个）","文件大小（字节）","修改日期","类型"],["checkbox","text","text","text","text","text"],["","fileName","filesContain","size","dateModified","type"],"dM");
-	let dMfileRequest = makeDMfileRqst("", "/", [], "type", "1");
+	dMList = new List("dMfileList",["全选","文件名或文件夹名","子文件数量","文件大小","修改日期","写权限"],["checkbox","text","text","text","text","checkbox"],["","fileName","filesContain","size","dateModified","authWrite"],"dM");
+	let dMfileRequest = makeDMfileRqst("", "/", "type", "1");
 	$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },
 	url:"testjons/test-dmFileList1.txt",
 	data:JSON.stringify(dMfileRequest),
 	dataType:"json",
 	type: "post",
-	success:function(response){
+	success:function(request){
 		dMList.deleteContent();
-		dMList.addRowsByJson(response);
-		dMList.setColClass(5,"dMfileListCol5");
-		$(".dMfileListCol5").hide();
+		dMList.addRowsByJson(request);
 	}});
+	goFurther("hahaha");
 }
 function dmBtnClick(obj) {
 	let btName = obj.text();
@@ -1464,10 +1410,10 @@ function dmBtnClick(obj) {
 		fileDelete();
 	}
 	else if(btName == "复制到") {
-		fileMove("cp");
+		fileCopy();
 	}
 	else if(btName == "移动到") {
-		fileMove("mv");
+		fileMove();
 	}
 }
 
@@ -1544,45 +1490,6 @@ function myClientHeight(){
     let n=document.documentElement.clientHeight || document.body.clientHeight || 0;
     return n;
 }
-function search_filelist(){
-    let filter_content=$("#dMsrchPrintbox").val();
-	//alert(filter_content);
-	let destDir = getDestDir($(".dMcurdir").children().last());
-	let dMfileRequest = makeDMfileRqst("", destDir, [], "type", "1");
-    if(filter_content==""){
-		$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },
-		url:"./testjons/test-dmFileList1.txt",
-		data:JSON.stringify(dMfileRequest),
-		dataType:"json",
-		type: "post",
-		success:function(response){
-			dMList.deleteContent();
-			dMList.addRowsByJson(response);
-			dMList.setColClass(5,"dMfileListCol5");
-			$(".dMfileListCol5").hide();
-		}});
-    }
-    else{
-		searchFileRqst = dMfileRequest;
-         $.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },type:"post",url:"./testjons/test-dmFileList1.txt",dataType:"json",data:JSON.stringify(searchFileRqst),success:function(obj){
-            if (obj.status == "ok") {
-                for(var i=0;i<obj.data.length;i++){
-                    if(obj.data[i].fileName.indexOf(filter_content)==-1){
-                            obj.data.splice(i,1);
-                            i--;
-                    }
-                }
-				if(obj.data.length > 0) {
-					dMList.deleteContent();
-					dMList.addRowsByJson(obj);
-				}
-				else{
-					dMList.deleteContent();
-				}
-			}
-		}});
-	}
-}
 function newFolder() {
 	$("#dMreminder").text("请输入新建文件夹名称：");
 	$("#dMreminder").next().show();
@@ -1647,10 +1554,10 @@ function fileDelete() {
 	}
 }
 function confirmFileDelete(fileNameJson) {
-	let dMfileDelRqst = makeDMdelRqst(getDestDir($(".dMcurdir").children().last()), fileNameJson.data.names);
+	let dMfileRqst = makeDMdelRqst(getDestDir($(".dMcurdir").children().last()), fileNameJson.data.names);
 	$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },
 		url:"testjons/test-deleteFile.txt",
-		data:JSON.stringify(dMfileDelRqst),
+		data:JSON.stringify(dMfileRqst),
 		dataType:"json",
 		type: "post",
 		success:function(response){
@@ -1674,23 +1581,23 @@ function cancelFileDelete() {
 }
 function makeDMdelRqst(destDir, fileNames) {
 	let files2BeDel = fileNames.map(function(x){return destDir + "/" + x;});
-	let dMfileDelRqst = {
-		"action":"rm",
-		"data": {"filename":files2BeDel}
+	let dMfileRqst = {
+		action:"rm",
+		"data": {filename:files2BeDel}
 	}
-	return dMfileDelRqst;
+	return dMfileRqst;
 }
 function goFurther(next) {
 	let nextFolder = $("<label onclick=\"curDirClick($(this))\" onmouseover=\"this.style.cursor='hand';\" class=\"dMdirs\"> > " + next + "</label>");
 	$("#dMcurdir").append(nextFolder);
 }
-function makeDMfileRqst(asUser, root, filterOfAnd, orderBy, loadDepth) {
+function makeDMfileRqst(asUser, root, orderBy, loadDepth) {
 	let dMfileRequest = {
 	"action": "requestFileList",
 	"data": {"column":["fileName","type","filesContain","size","dateModified","children","authRead","authWrite","usedByTask"],
 			"asUser":asUser,
 			"root": root,
-			"filterOfAnd":filterOfAnd,
+			"filterOfAnd":[],
 			"orderBy":orderBy,
 			"loadDepth":loadDepth,
 			"limits":[1,-1]
@@ -1701,15 +1608,15 @@ function makeDMfileRqst(asUser, root, filterOfAnd, orderBy, loadDepth) {
 function curDirClick(obj) {
 	let destDir = getDestDir(obj);
 	obj.nextAll().remove();
-	let dMfileRequest = makeDMfileRqst("", destDir, [], "type", "1");
+	let dMfileRequest = makeDMfileRqst("", destDir, "type", "1");
 	$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },
-			url:"testjons/test-dmFileList1.txt",
+			url:"testjons/test-dmFileList2.txt",
 			data:JSON.stringify(dMfileRequest),
 			dataType:"json",
 			type: "post",
-			success:function(response){
+			success:function(request){
 				dMList.deleteContent();
-				dMList.addRowsByJson(response);
+				dMList.addRowsByJson(request);
 			}
 		});
 }
@@ -1726,135 +1633,7 @@ function getDestDir(obj) {
 	}
 	return destDir;
 }
-
-function loadDmTree() {
-	$("#dmFiletree").jstree({
-		'core' : {
-			'data' : [  { "id": "dmFiletree_root",
-						  "text" : "全部文件",
-						  "children" : [ { "id":"ch0_0","text" : "","children":[] }],
-						  "state":{
-						   // "disabled": true         //该根节点不可点击
-						  }
-						}
-					 ],//{ "id":"ch1_1","text" : "Child node 1_1","children":[] },{ "id":"ch1_2","text" : "Child node 1_1","children":[] }{ "id":"ch2_1","text" : "Child node 2_1","children":[] },{ "id":"ch2_2","text" : "Child node 2_2","children":[] }
-			'check_callback': true
-		}
-	}).bind("open_node.jstree", function (e, data) {
-		let dir_path = data.node.text;
-		if(data.node.id == "dmFiletree_root"){dir_path="/";}
-		let filterOfAnd = [{"filterName":"type","content":"folder"},{"filterName":"authRead","content":"true"}];
-		let content = makeDMfileRqst("", dir_path, filterOfAnd, "fileName", 1);
-		let url;
-		if(data.node.parent=="#") url="testjons/test-edit_0.txt";
-		else if(data.node.parent=="dmFiletree_root") url="testjons/test-edit_1.txt";
-		else url="testjons/test-edit_2.txt";
-		console.log(url);
-		$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:url,data:JSON.stringify(content),dataType:"json",type: "post",success:function(response){
-			if(response.status=="ok"){
-				var node_ch=data.node.children;
-				if(node_ch.length==1&&$("#"+node_ch[0]).text()==""){
-					deleteDmTreeNode(node_ch[0]);
-					var par_id=data.node.id;
-					for(var i=0;i<response.data.length;i++){
-						createDmTreeNode(par_id, par_id+"_"+i, response.data[i].fileName, "last");
-						createDmTreeNode(par_id+"_"+i, par_id+"_"+i+"_0", "", "last");
-					}
-				}
-			}
-		}});
-	});
-	$("#dmFiletree").on('select_node.jstree', function (e, data) {// 节点选择事件
-        var text="/";
-        if(data.node.parent!="#"){
-            var parents=data.node.parents;
-
-            for(var i=parents.length-3;i>=0;i--){
-                var  node = $('#dmFiletree').jstree().get_node("#"+parents[i]);
-                text+=node.text+"/";
-            }
-            text+=data.node.text;
-		}
-		let newText = $("#dMPathreminder").text().substring(0,5) + text;
-		$("#dMPathreminder").text(newText);
-	});
-}
-function createDmTreeNode(parent_node, new_node_id, new_node_text, position) {
-	$('#dmFiletree').jstree('create_node', $("#"+parent_node), { "text":new_node_text, "id":new_node_id}, position, false, false);
-}
-function deleteDmTreeNode(node_id) {
-	$('#dmFiletree').jstree('delete_node', $("#"+node_id));
-}
-function confirmFileCopy(fileNameJson) {
-	if(fileNameJson.data.action == "cp") {
-		let dMcopyRqst = makeDMMoveRqst("cp", getDestDir($(".dMcurdir").children().last()), fileNameJson.data.names);
-		$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },
-			url:"testjons/test-copyFile.txt",
-			data:JSON.stringify(dMcopyRqst),
-			dataType:"json",
-			type: "post",
-			success:function(response){
-				if(response.status == "ok"){
-					$("#dMPathConfirmBtn").unbind();
-					$("#dMPathCancelBtn").unbind();
-					closeAlert();
-					$("#dmFiletree").parent().remove();
-				}
-				else {
-					if($('#copyFailReminder')){
-						$('#copyFailReminder').parent().remove();
-					}
-					$redWords =$("<span id='copyFailReminder' style='color:red;margin-left:30px'>复制失败。可能原因：目标路径已不存在或没有写权限</span>");
-					$("#dMPathreminder").before($redWords);
-					$redWords.fadeOut(3000,function(){$(this).remove()});
-				}
-			}
-		});
-	}
-	else{
-		let dMcutRqst = makeDMMoveRqst("mv", getDestDir($(".dMcurdir").children().last()), fileNameJson.data.names);
-		$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },
-			url:"testjons/test-copyFile.txt",
-			data:JSON.stringify(dMcutRqst),
-			dataType:"json",
-			type: "post",
-			success:function(response){
-				if(response.status == "ok"){
-					dMList.deleteRows(fileNameJson.data.selRowNums);
-					$("#dMPathConfirmBtn").unbind();
-					$("#dMPathCancelBtn").unbind();
-					closeAlert();
-					$("#dmFiletree").parent().remove();
-				}
-				else {
-					if($('#copyFailReminder')){
-						$('#copyFailReminder').remove();
-					}
-					$redWords =$("<span id='copyFailReminder' style='color:red;margin-left:30px'>移动失败。可能原因：目标路径已不存在或没有写权限</span>");
-					$("#dMPathreminder").before($redWords);
-					$redWords.fadeOut(3000,function(){$(this).remove()});
-				}
-			}
-		});
-	}
-
-}
-
-function makeDMMoveRqst(action, destDir, fileNames) {
-	let files2Copy = fileNames.map(function(x){return destDir + "/" + x;});
-	let dMMoveRqst = {
-		"action":action,
-		"data": {"filename":files2Copy,"targetdir": $("#dMPathreminder").text().substring(5)}
-	}
-	return dMMoveRqst;
-}
-function cancelFileCopy() {
-	$("#dMPathConfirmBtn").unbind();
-	$("#dMPathCancelBtn").unbind();
-	closeAlert();
-	$("#dmFiletree").parent().remove();
-}
-function fileMove(action){
+function fileCopy(){
 	let selRowNums = dMList.getSelRowNums();
 	if(selRowNums[0] == 0) {selRowNums.shift();}
 	if(selRowNums.length > 0) {
@@ -1865,78 +1644,36 @@ function fileMove(action){
 				names.push(colObjs[value][0].innerHTML);
 			}
 		})
-		let fileNameJson = {names:names,action:action,selRowNums,selRowNums};
-		$("#dMPathreminder").text("目标路径：");
-		$("#dMPathreminder").after($("<div style=\"height:200px; overflow: scroll; overflow-x: hidden;\"><div id=\"dmFiletree\" ></div></div>"));
-		loadDmTree();
-		if($('#copyFailReminder')){
-			$('#copyFailReminder').remove();
-		}
-		$("#dMPathConfirmBtn").click(fileNameJson, confirmFileCopy);
-		$("#dMPathCancelBtn").click(cancelFileCopy);
-		showAlert('dMPathBox');
-	}
-}
-function fileRename() {
-	let selRowNums = dMList.getSelRowNums();
-	if(selRowNums[0] == 0) {selRowNums.shift();}
-	if(selRowNums.length == 1) {
-		let name = dMList.getOneBox(selRowNums[0], 1)[0].innerHTML;
-		console.log(name);
-		$("#dMreminder").text("请输入文件（夹）新名称：");
-		$("#dMreminder").next().show();
-		$("#dMreminder").next().val(name);
-		$("#dMConfirmBtn").click({name:name, selRowNums:selRowNums},confirmRename);
-		$("#dMCancelBtn").click(cancelRename);
+		let fileNameJson = {names:names};
+		$("#dMreminder").text("请选择目标路径：");
+		$("#dMreminder").next().hide();
+		$("#dMConfirmBtn").click(fileNameJson, confirmFileCopy);
+		$("#dMCancelBtn").click(cancelFileCopy);
 		showAlert('dMbox');
 	}
+	else{
+
+	}
 }
-function makeRenameRqst(curdir, oldName, newName) {
-	let renameRqst = {"action": "rename",
-	"data": {"curdir":curdir, "source":oldName, "target":newName}
-	};
-	return renameRqst;
-}
-function confirmRename(fileInfoJson) {
-	let newName = $("#dMreminder").next().val();
-	let renameRqst = makeRenameRqst(getDestDir($(".dMcurdir").children().last()), fileInfoJson.data.name, newName);
+function confirmFileCopy(fileNameJson) {
+	let dMfileRqst = makeDMdelRqst(getDestDir($(".dMcurdir").children().last()), fileNameJson.data.names);
 	$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },
 		url:"testjons/test-copyFile.txt",
-		data:JSON.stringify(renameRqst),
+		data:JSON.stringify(dMfileRqst),
 		dataType:"json",
 		type: "post",
 		success:function(response){
-			if($('#copyFailReminder')){
-				$('#copyFailReminder').remove();
-			}
 			if(response.status == "ok"){
-				dMList.getOneBox(fileInfoJson.data.selRowNums[0], 1)[0].innerHTML = $("#dMreminder").next().val(newName);
+				$("#dMConfirmBtn").unbind();
+				$("#dMCancelBtn").unbind();
 				closeAlert();
 			}
-			else if(response.status == "curdirNotExist"){
-				$redWords =$("<span id='copyFailReminder' style='color:red;margin-left:30px'>移动失败。可能原因：目标路径已不存在或没有写权限</span>");
-			$("#dMreminder").text("请输入新建文件夹名称： 当前所在目录不存在，请刷新！");
+			else {
+				alert("copy fail");
 			}
-			else if(response.status == "noAuthWrite") {
-				$("#dMreminder").text("请输入新建文件夹名称： 当前目录不可写！");
-			}
-			else if(response.status == "otherReason") {
-				$("#dMreminder").text("请输入新建文件夹名称： 未知原因导致创建失败！");
-			}
-			else if(response.status == "expired") {
-				//log out
-			}
-			$redWords =$("<span id='copyFailReminder' style='color:red;margin-left:30px'>移动失败。可能原因：目标路径已不存在或没有写权限</span>");
-			$("#dMPathreminder").before($redWords);
-			$redWords.fadeOut(3000,function(){$(this).remove()});
-			$("#dMConfirmBtn").unbind();
-			$("#dMCancelBtn").unbind();
 		}
 	});
-
 }
-function cancelRename() {
-	$("#dMConfirmBtn").unbind();
-	$("#dMCancelBtn").unbind();
-	closeAlert();
+function cancelFileCopy() {
+	cancelFileDelete();
 }
