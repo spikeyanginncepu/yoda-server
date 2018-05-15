@@ -209,8 +209,8 @@ var JM_list = "";
 */
 function click_JM_correctness(text)
 {
-	var correctness_text = document.getElementById("JD_correctness");
-	correctness_text.innerText = "自动识别结果： " + text;
+	var correctness_text = document.getElementById("JD_correctness_label");
+	correctness_text.innerText = text;
 }
 var snp;//Save_Nxt_Pre类，维护save_next_pre的对象
 function startJudgement(obj){
@@ -221,7 +221,7 @@ function startJudgement(obj){
    let url="html/查看及校验.html";
    $.ajax({url:url,data:{},dataType:"text",success:function(response){
 		element('left').innerHTML = response;
-		loadValidatelist(taskname,tree_id,"testjons/test-validatelist.json","testjons/test-validate_state.json",true);
+		loadValidatelist(taskname,tree_id,"testjons/test-validatelist.json","testjons/test-validate_state.json",true,"");
 		let menu = element('leftMenu');
 		menu.rows[0].click();
 		
@@ -233,8 +233,8 @@ function generate_JM_FileList(obj){
 		element('content').innerHTML = response;
    }})
 }
-/** url_flist是请求文件的url，url_state是请求状态的url*/
-function loadValidatelist(taskname,tree_id,url_flist,url_state,open_all){
+/** url_flist是请求文件的url，url_state是请求状态的url,default_selecte是默认选中的nodeid，openall判断是否展开所有节点*/
+function loadValidatelist(taskname,tree_id,url_flist,url_state,open_all,default_selected){
 	var content={
 		"action": "requestFileList",
 		"data": {"column":["fileName","type","filesContain","size","dateModified","children","authRead","authWrite","usedByTask"],
@@ -261,6 +261,7 @@ function loadValidatelist(taskname,tree_id,url_flist,url_state,open_all){
 			}
 			initValidateTree(tree_id,tree_lay1_id,tree_lay1_text,tree_lay1_data,moreparas);
 			if(open_all) $("#validateTree").jstree("open_all");
+			if(default_selected!="") $("#"+default_selected+"_anchor").trigger("click");
 			//$("#validateTree_layer1_0_2_anchor").trigger("click");
 		}
 		else{
@@ -275,7 +276,8 @@ function initValidateTree(tree_id,tree_lay1_id,tree_lay1_text,tree_lay1_data,mor
 		layer1.push({"id":tree_lay1_id[i],"text" :tree_lay1_text[i],"children":[{"id":tree_lay1_id[i]+"_0","text" : "","children":[]}]});
 	}
 	$("#"+tree_id).jstree({
-        'core' : {      
+        'core' : {  
+			"multiple": false,    
             'data' : [  { "id":tree_id+"_root",
 						  "text" : moreparas.taskname, 
 						  "state": {"opened" : true,"disabled":true},
@@ -317,9 +319,10 @@ function initValidateTree(tree_id,tree_lay1_id,tree_lay1_text,tree_lay1_data,mor
 				if(obj.status=="ok"){
 					$("#JD_descript").text(obj.data[0].descript);
 					//$("#JD_state_p").text(obj.data[0].status);
-					/*$.ajax({url:"images/add.png",dataType:"text",data:{},success:function(obj_1){//+JD_resultDir_p
-						$("#JD_mainImage").attr("src","data:image/png;base64,"+obj_1);
-					}});*/
+					//$.ajax({url:"https://localhost:8888/data/1.png",data:{},success:function(obj_1){
+					alert("https://localhost:8888/data/"+JD_resultDir_p);
+					$("#JD_mainImage").attr("src","https://localhost:8888/data/"+JD_resultDir_p);//images/add.png //"data:image/png;base64,"+obj_1;
+					//}});
 				}
 			}});/**建议：图片和申请状态在一个post中，或description在请求文件列表的时候加字段。 */
 		}else{
@@ -327,12 +330,17 @@ function initValidateTree(tree_id,tree_lay1_id,tree_lay1_text,tree_lay1_data,mor
 		}
 		
 	});
+	$("#"+tree_id).on('changed.jstree',function(e,data){
+		//alert(data.node.text);可以获取选中的节点
+	});
 }
+//request保留字段，定义后面是否需要保存前面未保存的标注
 class Save_Nxt_Pre {
 	constructor(taskname,request,tree_id) {
 		this.taskname = taskname;
 		this.request=request;
 		this.tree_id=tree_id;
+		this.selected="";
 	} 
 	echo(){
 		alert(this.taskname+this.request+this.tree_id);
@@ -361,21 +369,55 @@ class Save_Nxt_Pre {
 		});
 	}
     save(){
-		var content=this.request;
-		/*{
-			"action": "setValidateStatus",
-			"taskName":"fdf",
-			"data": [{"fileName":"1_2.jpg","status":"已校验-正确","descript":"张天线32号塔小号侧跳串U型挂环缺销子"},
-					 {"fileName":"1_3.jpg","status":"已校验-正确","descript":"张天线32号塔小号侧跳串U型挂环缺销子"}]
-		};*/
 		let tn=this.taskname;
 		let ti=this.tree_id;
-		$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-add.txt",data:JSON.stringify(content),dataType:"json",type: "post",success:function(response){
-			if(response.status=="ok"){
-				//alert(tn+""+ti);
-				$("#"+ti).jstree(true).destroy();
-				loadValidatelist(tn,ti,"testjons/test-validatelist_1.json","testjons/test-validate_state.json",true);				
+		let req=[];
+		var flag_1=false;
+		var flag_2=true;
+		var default_selected;
+		//实际只有一个对象，因为创建树的时候设置的 "multiple": false,
+		$("[aria-selected='true']").each(function(){
+			flag_1=true;
+			var id=$(this).attr("id");
+			default_selected=id;
+			var node=$("#"+ti).jstree().get_node("#"+id);
+			if(node.parent==ti+"_root") flag_1=false;
+			var status;
+			switch($("#JD_correctness_label").text()) {
+				case "正确":
+					status="已校验-正确";
+					break;
+				case "错误":
+					status="已校验-错误";
+					break;
+				case "待定":
+					status="未校验";
+					break;
+				case "":
+					flag_2=false;
 			}
-		}});
+			req.push({"fileName":node.text,"status":status,"descript":$("#JD_descript").text()});
+		});
+		if(!flag_1) alert("请先选择图片并进行标注后才可提交！");
+		else if(!flag_2) alert("请选择标注状态！");
+		else{
+			this.request=req;
+			var content={
+				"action": "setValidateStatus",
+				"taskName":this.taskname,
+				"data": this.request
+				};
+			
+			alert(JSON.stringify(content));
+			$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-add.txt",data:JSON.stringify(content),dataType:"json",type: "post",success:function(response){
+				if(response.status=="ok"){
+					//alert(tn+""+ti);
+					alert(default_selected);
+					$("#"+ti).jstree(true).destroy();
+					loadValidatelist(tn,ti,"testjons/test-validatelist_1.json","testjons/test-validate_state.json",true,default_selected);				
+				}
+			}});
+		}
+		
     }
 }
