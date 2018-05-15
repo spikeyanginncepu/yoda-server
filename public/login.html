@@ -1,23 +1,54 @@
 <html>
         <head>
 		<meta charset="utf-8" /> 
-        <link rel="stylesheet" href="css/login.css" type="text/css" />
+		<link rel="stylesheet" href="css/login.css" type="text/css" />
+		<script type="text/javascript" src="./js/jquery-3.1.0.min.js"></script>
+		<script type="text/javascript" src="./js/login.js"></script>
         <title>登陆</title>
         </head>
-        <body>
-<div class="container">
-<h1>输电线路巡视图像（视频）智能分析系统</h1>
-    <div class="signin">
-     	<form method="post">
-	      	<input type="text" class="user" placeholder="用户名" name="username" />
-	      	<input type="password" class="pass" placeholder="密码" name="pwd" />
-            {% module xsrf_form_html() %}
-          	<input type="submit" value="登陆" onmouseover="this.style.cursor='hand';"/>
-	 	</form>
-	</div>
-</div>
-<div class="footer">
-     <p>Copyright &copy; 2018 Global Energy Interconnection Research Institute. All Rights Reserved | Design by AI Group</p>
+
+<!-- <body onload=set_screen()> -->
+<body>
+<div id=mainBox>
+
+	<div id=div_bg_img></div>
+
+	<table id=container>
+		<tr class="ct_tr1">
+			<td class=ct_tr1_td1>
+				<div><h1>输电线路巡视图像（视频）智能分析系统</h1>
+					<h3>10倍性能提升，多目标识别，最优性价比</h3>
+					<h3>2666MT/s AVX 512 450万pps</h3>
+					<h3>同配置价格最高下降48%，5年3折</h3>
+				</div>
+			</td>
+			<td class=ct_tr1_td2>
+				<div class="signin">
+					<form method="post">
+						<!-- <h4>密码登陆</h4> -->
+						<input type="text" class="user" placeholder="用户名" name="username" />
+						<input type="password" class="pass" placeholder="密码" name="pwd" />
+						{% module xsrf_form_html() %}
+						<input type="submit" value="登陆" onmouseover="this.style.cursor='hand';"/>
+					</form>
+				</div>
+			</td>
+		</tr>
+		<tr class=ct_tr2>
+			<td class=ct_tr2_td colspan="2">
+				<table id='switch_box'>
+					<tr>
+					<td id=sw_box_td><div id=sw_btn_1></div></td>
+					<td id=sw_box_td><div id=sw_btn_2></div></td>
+					<td id=sw_box_td><div id=sw_btn_3>&ensp;</div></td>
+					</tr>
+				</table>
+				<div class="footer">
+					<p>Copyright &copy; 2018 Global Energy Interconnection Research Institute. All Rights Reserved | Design by AI Group</p>
+				</div>
+			</td>
+		</tr>
+	</table>
 </div>
 </body>
 </html>
