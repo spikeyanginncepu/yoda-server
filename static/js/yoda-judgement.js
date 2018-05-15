@@ -556,18 +556,32 @@ function generate_Reports(obj){
 					"filterOfAnd":[]
 				}
 	   }
-	$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-add.txt",data:JSON.stringify(content),dataType:"json",type: "post",success:function(response){
+	$.ajax({headers: {"X-XSRFToken":getCookie("_xsrf"), },url:"testjons/test-reports.txt",data:JSON.stringify(content),dataType:"json",type: "post",success:function(response){
 	  if(response.status=="ok"){
-		  //alert()
+		  downloadFile(response.url);
 	  }
 	}});   
+}
+function downloadFile(url) {   
+	try{ 
+		var elemIF = document.createElement("iframe");   
+		elemIF.src = url;   
+		elemIF.style.display = "none";   
+		document.body.appendChild(elemIF);   
+	}catch(e){ 
+
+	} 
 }
 function F5(){
 	request_tasklist(leftNav_select);
 }
+//从服务端获取的搜索
 function search(){
 	request_tasklist(leftNav_select);
-	
+}
+//不读取服务器的搜索
+function search_direct(){
+	var leftNav=leftNav_select.children("tr:eq(1)").text();
 }
 function deleteTask(){
 	var taskName=[];
