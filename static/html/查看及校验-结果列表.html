@@ -4,19 +4,20 @@
 <link rel="Stylesheet" type="text/css" href="css/css-all.css" />
 </head>
 <body>
-        <div class="JD_resultDir"><span><p id="JD_resultDir_p"></p></span></div>
-        <div class="JD_state"><span><p id="JD_state_p"></p></span></div>
+        <div class="JD_resultDir"><span><label>当前图片：</label><label id="JD_resultDir_p"></label></span></div>
+        <div class="JD_state"><span>当前状态：<label id="JD_state_p"></label></span></div>
         <div class="JD_imgAndInfo">
             <div class="JD_imgContainer"><img id="JD_mainImage" src=""/></div>
             <div class="JD_infoContainer">
-                <p id="JD_correctness">自动识别结果： </p>
+                <p id="JD_correctness">标注结果：<label id="JD_correctness_label"></label> </p>
                 <div class="JD_rightorwrong" id="JD_rightorwrong">
-                    <input class="correctness_radio" type="radio" checked name="correctness" value='right' onclick='click_JM_correctness("正确")'/><label>正确</label>  
-                    <input class="correctness_radio" name="correctness" type="radio" value="wrong" onclick='click_JM_correctness("错误")'/><label>错误</label>  
+                    <input class="correctness_radio" type="radio"  name="correctness" value='right' onclick='click_JM_correctness("正确")'/><label>正确</label>  
+                    <input class="correctness_radio" name="correctness" type="radio" value="wrong" onclick='click_JM_correctness("错误")'/><label>错误</label> 
+                    <input class="correctness_radio" name="correctness" type="radio" value="wrong" onclick='click_JM_correctness("待定")'/><label>待定</label>
                 </div>
                 <textarea id="JD_descript"></textarea>
                 <table class="JD_imageChange">
-                    <tr><td class="JD_changebtn"><button>上一张</button></td><td class="JD_changebtn"><button>保存</button></td><td class="JD_changebtn"><button>下一张</button></td></tr>
+                    <tr><td class="JD_changebtn"><button onclick="snp.pre()">上一张</button></td><td class="JD_changebtn"><button onclick="snp.save()">保存</button></td><td class="JD_changebtn"><button onclick="snp.next()">下一张</button></td></tr>
                 </table>
             </div>
         </div>

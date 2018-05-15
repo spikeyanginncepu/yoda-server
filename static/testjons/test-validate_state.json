@@ -1,0 +1,9 @@
+{
+    "status": "ok",
+    "dataLength": 3,
+    "data":[
+           {"fileName":"1_1.jpg","status":"未校验",     "descript":"张天线32号塔小号侧跳串U型挂环缺销子0"},
+           {"fileName":"2_1.jpg","status":"已校验-正确","descript":"张天线32号塔小号侧跳串U型挂环缺销子1"},
+           {"fileName":"3_1.jpg","status":"已校验-正确","descript":"张天线32号塔小号侧跳串U型挂环缺销子2"}
+        ]
+}
