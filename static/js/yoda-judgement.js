@@ -580,9 +580,9 @@ function search(){
 	request_tasklist(leftNav_select);
 }
 //不读取服务器的搜索
-function search_direct(){
+/*function search_direct(){
 	var leftNav=leftNav_select.children("tr:eq(1)").text();
-}
+}*/
 function deleteTask(){
 	var taskName=[];
 	$(".TM_tasklisttable").children("tr").each(function(){
