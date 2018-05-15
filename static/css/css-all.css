@@ -449,7 +449,6 @@ a{
     font-size: 100%;
 }
 .TM_fileList{
-    border: solid 1px hsl(174, 29%, 64%);
     width: 93%;
     height: 80%;
     margin-top: 1%;
@@ -458,8 +457,7 @@ a{
     overflow-x: hidden;
 }
 .TM_tasklisttable{
-    height:100%;
-    width:90%;
+    width:100%;
     padding:0;
     margin:0;
     font-family: Microsoft Yahei;
@@ -467,16 +465,33 @@ a{
     border-collapse: collapse; 
     text-align: center;
 }
-.TM_tasklisttable_tr,.TM_tasklisttable_td{
-    padding:0;
-    margin:0;
-    font-family: Microsoft Yahei;
-    font-size: 105%;
-    border-collapse: collapse; 
-    text-align: center;
+.TM_tasklisttable_tr,.TM_tasklisttable_trh{ /*.TM_tasklisttable_td*/
+    height:60px;
 }
 .TM_tasklisttable_tr:hover{
+    background: hsl(172, 36%, 84%);
+}
+.TM_tlistbtn{
     background:hsl(174, 29%, 64%);
+    font-family:Microsoft Yahei;
+    border:0;
+    border-radius:5px;
+    width:70px;
+    height:30px;
+}
+.TM_tlistbtn_chx{
+    background:hsl(174, 29%, 64%);
+    font-family:Microsoft Yahei;
+    border:0;
+    border-radius:5px;
+    width:80px;
+    height:30px;
+}
+.TM_tlistbtn_chx:hover{
+    background: hsl(174, 16%, 45%);
+}
+.TM_tlistbtn:hover{
+    background: hsl(174, 16%, 45%);
 }
 /*****************taskManagement-end**************/
 /*****************taskEdit-start**************/

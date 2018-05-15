@@ -1275,7 +1275,8 @@ function setFilepath(obj){
 }
 function loadTree() {
     $("#newtast_filetree").jstree({
-        'core' : {      
+        'core' : {  
+			"multiple": false,    
             'data' : [  { "id":"newtast_filetree_root",
                           "text" : "请选择输入文件夹", 
                           "children" : [ { "id":"ch0_0","text" : "","children":[] }],

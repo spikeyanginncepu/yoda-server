@@ -1,0 +1,12 @@
+{
+    "status": "ok",
+    "dataLength": 1,
+    "numRunningTask": 7,
+    "data": [{"taskName":"春季巡检-上嘉一线","taskStatus":"running","input":"/张三/春季巡检/上嘉一线","numLeft":"255","numTotal":"555","modelName":"细粒度缺陷识别1","modelType":"image","isOwner":"true","canModify":"true","canValidate":"true"},
+             {"taskName":"夏季巡检-上嘉一线","taskStatus":"finished","input":"/张三/春季巡检/上嘉一线","numLeft":"124","numTotal":"555","modelName":"细粒度缺陷识别1","modelType":"image","isOwner":"true","canModify":"true","canValidate":"true"},
+             {"taskName":"秋季巡检-上嘉一线","taskStatus":"ready","input":"/张三/春季巡检/上嘉一线","numLeft":"123","numTotal":"555","modelName":"细粒度缺陷识别1","modelType":"image","isOwner":"true","canModify":"true","canValidate":"true"},
+             {"taskName":"冬季巡检-上嘉一线","taskStatus":"stop","input":"/张三/春季巡检/上嘉一线","numLeft":"122","numTotal":"555","modelName":"细粒度缺陷识别1","modelType":"image","isOwner":"true","canModify":"true","canValidate":"true"},
+             {"taskName":"全年巡检-上嘉一线","taskStatus":"running","input":"/张三/春季巡检/上嘉一线","numLeft":"111","numTotal":"555","modelName":"细粒度缺陷识别1","modelType":"image","isOwner":"true","canModify":"true","canValidate":"true"}
+            ]
+
+}
