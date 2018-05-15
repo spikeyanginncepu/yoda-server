@@ -1,6 +1,6 @@
 var img_array_bing = ["url(./images/bing/HollowRock.jpg)","url(./images/bing/Knuthojdsmossen.jpg)",
 "url(./images/bing/LulworthCoveDorset.jpg)","url(./images/bing/ManateeMom.jpg)",
-"url(./images/bing/NOTricentennial.jpg)"];
+"url(./images/bing/NOTricentennial.jpg)","url(./images/bing/Kolonihavehus.jpg)"];
 var img_array_power = ["url(./images/power/Solar_energy.jpg)","url(./images/power/Wind_turbine_1.jpg)","url(./images/power/Wind_turbine_2.jpg)"]
 
 // 点击切换背景图
@@ -41,7 +41,7 @@ $(document).ready(function(){
         $("td div").filter('#sw_btn_2').css("background-color","rgba(146, 146, 146, 0.788)");
         $(this).css("background-color","rgba(231, 231, 231, 0.788)");
         $("#div_bg_img").fadeOut(300,function(){
-            $("#div_bg_img").css({"background-image":img_array_bing[0],"background-size":"cover","display":"none"});
+            $("#div_bg_img").css({"background-image":img_array_bing[5],"background-size":"cover","display":"none"});
             // $("#div_bg_img").css({"background-image":img_array_power[2],"background-size":"cover","display":"none"});
         });
 		$("#div_bg_img").fadeIn(300);
