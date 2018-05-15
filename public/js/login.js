@@ -8,11 +8,7 @@ var img_array_power = ["url(./images/power/UAV.jpg)","url(./images/power/Geiri.j
 // 点击切换背景图-1
 $(document).ready(function(){
     $("#sw_btn_1").click(function(){
-        $("td div").filter('#sw_btn_2').css("background-color","rgba(146, 146, 146, 0.788)");
-        $("td div").filter('#sw_btn_3').css("background-color","rgba(146, 146, 146, 0.788)");
-        $("td div").filter('#sw_btn_4').css("background-color","rgba(146, 146, 146, 0.788)");
-        $("td div").filter('#sw_btn_5').css("background-color","rgba(146, 146, 146, 0.788)");
-        // $("#sw_box_tr").children().children().css("background-color","rgba(146, 146, 146, 0.788)");
+        $("#sw_box_tr").children().children().css("background-color","rgba(146, 146, 146, 0.788)");
         $(this).css("background-color","rgba(231, 231, 231, 0.788)");
         $("#div_bg_img").fadeOut(300,function(){
             // $("#div_bg_img").css({"background-image":img_array_bing[1],"background-size":"cover","display":"none"});
@@ -30,10 +26,7 @@ $(document).ready(function(){
 // 点击切换背景图-2
 $(document).ready(function(){
     $("#sw_btn_2").click(function(){
-        $("td div").filter('#sw_btn_1').css("background-color","rgba(146, 146, 146, 0.788)");
-        $("td div").filter('#sw_btn_3').css("background-color","rgba(146, 146, 146, 0.788)");
-        $("td div").filter('#sw_btn_4').css("background-color","rgba(146, 146, 146, 0.788)");
-        $("td div").filter('#sw_btn_5').css("background-color","rgba(146, 146, 146, 0.788)");
+        $("#sw_box_tr").children().children().css("background-color","rgba(146, 146, 146, 0.788)");
         $(this).css("background-color","rgba(231, 231, 231, 0.788)");
         $("#div_bg_img").fadeOut(300,function(){
             // $("#div_bg_img").css({"background-image":img_array_bing[3],"background-size":"cover","display":"none"});
@@ -45,10 +38,7 @@ $(document).ready(function(){
 // 点击切换背景图-3
 $(document).ready(function(){
     $("#sw_btn_3").click(function(){
-        $("td div").filter('#sw_btn_1').css("background-color","rgba(146, 146, 146, 0.788)");
-        $("td div").filter('#sw_btn_2').css("background-color","rgba(146, 146, 146, 0.788)");
-        $("td div").filter('#sw_btn_4').css("background-color","rgba(146, 146, 146, 0.788)");
-        $("td div").filter('#sw_btn_5').css("background-color","rgba(146, 146, 146, 0.788)");
+        $("#sw_box_tr").children().children().css("background-color","rgba(146, 146, 146, 0.788)");
         $(this).css("background-color","rgba(231, 231, 231, 0.788)");
         $("#div_bg_img").fadeOut(300,function(){
             // $("#div_bg_img").css({"background-image":img_array_bing[5],"background-size":"cover","display":"none"});
@@ -60,10 +50,7 @@ $(document).ready(function(){
 // 点击切换背景图-4
 $(document).ready(function(){
     $("#sw_btn_4").click(function(){
-        $("td div").filter('#sw_btn_1').css("background-color","rgba(146, 146, 146, 0.788)");
-        $("td div").filter('#sw_btn_2').css("background-color","rgba(146, 146, 146, 0.788)");
-        $("td div").filter('#sw_btn_3').css("background-color","rgba(146, 146, 146, 0.788)");
-        $("td div").filter('#sw_btn_5').css("background-color","rgba(146, 146, 146, 0.788)");
+        $("#sw_box_tr").children().children().css("background-color","rgba(146, 146, 146, 0.788)");
         $(this).css("background-color","rgba(231, 231, 231, 0.788)");
         $("#div_bg_img").fadeOut(300,function(){
             // $("#div_bg_img").css({"background-image":img_array_bing[5],"background-size":"cover","display":"none"});
@@ -75,10 +62,7 @@ $(document).ready(function(){
 // 点击切换背景图-5
 $(document).ready(function(){
     $("#sw_btn_5").click(function(){
-        $("td div").filter('#sw_btn_1').css("background-color","rgba(146, 146, 146, 0.788)");
-        $("td div").filter('#sw_btn_2').css("background-color","rgba(146, 146, 146, 0.788)");
-        $("td div").filter('#sw_btn_3').css("background-color","rgba(146, 146, 146, 0.788)");
-        $("td div").filter('#sw_btn_4').css("background-color","rgba(146, 146, 146, 0.788)");
+        $("#sw_box_tr").children().children().css("background-color","rgba(146, 146, 146, 0.788)");
         $(this).css("background-color","rgba(231, 231, 231, 0.788)");
         $("#div_bg_img").fadeOut(300,function(){
             // $("#div_bg_img").css({"background-image":img_array_bing[5],"background-size":"cover","display":"none"});
