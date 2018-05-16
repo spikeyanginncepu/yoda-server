@@ -61,6 +61,7 @@ body{
     top: 13%;
     left: 0;
     background: rgba(233, 230, 230, 0.397);
+    /* background: rgba(146, 144, 144, 0.397); */
 }
 
 .ct_tr1{
@@ -92,16 +93,13 @@ body{
 }
 
 
-
-
 h1 {
     /* width: 400px; */
     /* text-align: center; */
     font-size: 34px;
     font-family: Microsoft YaHei;
-    background-color: rgba(19, 7, 7, 0); 
-    /* color: rgba(255, 255, 255, 0.952); */
-    color: rgba(12, 12, 12, 0.952);
+    /* background-color: rgba(19, 7, 7, 0);  */
+    color: rgb(0, 0, 0);
     font-weight: 550;
 }
 h3 {
@@ -239,7 +237,3 @@ input[type="submit"]:hover {
     background-color: rgba(146, 146, 146, 0.788);
     cursor:pointer;
 }
-
-
-
-
