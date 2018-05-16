@@ -449,7 +449,6 @@ a{
     font-size: 100%;
 }
 .TM_fileList{
-    border: solid 1px hsl(174, 29%, 64%);
     width: 93%;
     height: 80%;
     margin-top: 1%;
@@ -458,8 +457,7 @@ a{
     overflow-x: hidden;
 }
 .TM_tasklisttable{
-    height:100%;
-    width:90%;
+    width:100%;
     padding:0;
     margin:0;
     font-family: Microsoft Yahei;
@@ -467,16 +465,33 @@ a{
     border-collapse: collapse; 
     text-align: center;
 }
-.TM_tasklisttable_tr,.TM_tasklisttable_td{
-    padding:0;
-    margin:0;
-    font-family: Microsoft Yahei;
-    font-size: 105%;
-    border-collapse: collapse; 
-    text-align: center;
+.TM_tasklisttable_tr,.TM_tasklisttable_trh{ /*.TM_tasklisttable_td*/
+    height:60px;
 }
 .TM_tasklisttable_tr:hover{
+    background: hsl(172, 36%, 84%);
+}
+.TM_tlistbtn{
     background:hsl(174, 29%, 64%);
+    font-family:Microsoft Yahei;
+    border:0;
+    border-radius:5px;
+    width:70px;
+    height:30px;
+}
+.TM_tlistbtn_chx{
+    background:hsl(174, 29%, 64%);
+    font-family:Microsoft Yahei;
+    border:0;
+    border-radius:5px;
+    width:80px;
+    height:30px;
+}
+.TM_tlistbtn_chx:hover{
+    background: hsl(174, 16%, 45%);
+}
+.TM_tlistbtn:hover{
+    background: hsl(174, 16%, 45%);
 }
 /*****************taskManagement-end**************/
 /*****************taskEdit-start**************/
@@ -677,31 +692,31 @@ a{
     width:95%;
     height:87%;
     border: solid 1px hsl(174, 29%, 64%);
-    overflow:auto;
-    overflow-x: auto;
+    overflow: scroll;
+    border-collapse: collapse; 
 }
 .JD_resultDir{
     /* display: inline-block; */
-    margin-top:0.5%;
+    margin-top:2%;
     margin-left:3%;
     float:left;
     /* background: rgb(168, 168, 214); */
-    height:7%;
+    height:5%;
     width:70%;
 }
-.JD_resultDir >span> p{
+.JD_resultDir >span> label{
     margin-top: 1%;
     height:80%;
     width:100%;
-    font-size: 120%;
+    font-size: 110%;
     font-family: Microsoft Yahei;
     /* background: crimson; */
 }
 .JD_state{
-    margin-top: 0%;
+    margin-top: 2%;
     display: inline-block;
     margin-left:8.4%;
-    font-size: 120%;
+    font-size: 110%;
     font-family: Microsoft Yahei;
     /*float: left;
     /* background: crimson; */
@@ -733,7 +748,7 @@ a{
     width:19%;
     height:100%;
     /* background: cornflowerblue; */
-    font-size: 120%;
+    font-size: 105%;
     font-family: Microsoft Yahei;
 }
 .JD_infoContainer > textarea{
@@ -745,13 +760,14 @@ a{
     font-family: Microsoft Yahei;
 }
 .JD_infoContainer>p{
-    margin-top: 7%;
+    margin-top: 1%;
 }
 .JD_rightorwrong{
+    margin-left: 10px;
     margin-top: 12%;
 }
 .JD_rightorwrong > label{
-    margin-right:31%;
+    margin-right:10%;
 }
 .JD_imageChange{
     margin-top: 7%;
@@ -1101,7 +1117,13 @@ a{
     margin-top:1%;
     font-size: 10px;
     /*width: 150px;
-    height: 300px;*/
-    
+    height: 300px;*/  
+}
+.validateTree{
+    margin-left:0%;
+    margin-top:1%;
+    font-size: 12px;
+    /*width: 150px;
+    height: 300px;*/  
 }
 

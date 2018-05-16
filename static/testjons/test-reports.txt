@@ -1,0 +1,4 @@
+{  
+    "status":"ok",
+    "url":"https://localhost:8888/data/test.rar"
+}

@@ -1275,7 +1275,8 @@ function setFilepath(obj){
 }
 function loadTree() {
     $("#newtast_filetree").jstree({
-        'core' : {      
+        'core' : {  
+			"multiple": false,    
             'data' : [  { "id":"newtast_filetree_root",
                           "text" : "请选择输入文件夹", 
                           "children" : [ { "id":"ch0_0","text" : "","children":[] }],
@@ -1309,11 +1310,11 @@ function loadTree() {
             if(response.status=="ok"){
                 var node_ch=data.node.children;
                 if(node_ch.length==1&&$("#"+node_ch[0]).text()==""){
-                    deleteNode(node_ch[0]);
+                    deleteNode("newtast_filetree",node_ch[0]);
                     var par_id=data.node.id;
                     for(var i=0;i<response.data.length;i++){
-                        createNode(par_id, par_id+"_"+i, response.data[i].fileName, "last"); 
-                        createNode(par_id+"_"+i, par_id+"_"+i+"_0", "", "last");  
+                        createNode("newtast_filetree",par_id, par_id+"_"+i, response.data[i].fileName, "last"); 
+                        createNode("newtast_filetree",par_id+"_"+i, par_id+"_"+i+"_0", "", "last");  
                     }
                 }
             }
@@ -1377,11 +1378,11 @@ function loadTree() {
        $('#inputdir_task').val(text);//赋值给araename选择框    
      });
 }
-function createNode(parent_node, new_node_id, new_node_text, position) { 
-        $('#newtast_filetree').jstree('create_node', $("#"+parent_node), { "text":new_node_text, "id":new_node_id}, position, false, false);   
+function createNode(tree_id,parent_node, new_node_id, new_node_text, position) { 
+        $('#'+tree_id).jstree('create_node', $("#"+parent_node), { "text":new_node_text, "id":new_node_id}, position, false, false);   
 }
-function deleteNode(node_id) { 
-    $('#newtast_filetree').jstree('delete_node', $("#"+node_id));   
+function deleteNode(tree_id,node_id) { 
+    $('#'+tree_id).jstree('delete_node', $("#"+node_id));   
 }
 class FileList extends List {
 	// constructor(parentClass, headings, objType, keys, prefix){
