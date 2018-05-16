@@ -1,15 +1,18 @@
 var img_array_bing = ["url(./images/bing/HollowRock.jpg)","url(./images/bing/Knuthojdsmossen.jpg)",
 "url(./images/bing/LulworthCoveDorset.jpg)","url(./images/bing/ManateeMom.jpg)",
 "url(./images/bing/NOTricentennial.jpg)","url(./images/bing/Kolonihavehus.jpg)"];
-var img_array_power = ["url(./images/power/UAV.jpg)","url(./images/power/Geiri.jpg)","url(./images/power/HK_night.jpg)"
-,"url(./images/power/Solar_energy.jpg)",
-"url(./images/power/Wind_turbine.jpg)"]
+var img_array_power = ["url(./images/power/UAV.jpg)","url(./images/power/Geiri.jpg)","url(./images/power/Net.jpg)"
+,"url(./images/power/Solar_energy.jpg)","url(./images/power/Wind_turbine.jpg)"]
 
 // 点击切换背景图-1
 $(document).ready(function(){
     $("#sw_btn_1").click(function(){
         $("#sw_box_tr").children().children().css("background-color","rgba(146, 146, 146, 0.788)");
         $(this).css("background-color","rgba(231, 231, 231, 0.788)");
+
+        $(".ct_tr1_td1").children().children().css("color","rgb(0, 0, 0)");
+        $("#ct_tr1_bg").css("background-color","rgba(233, 230, 230, 0.397)");
+        
         $("#div_bg_img").fadeOut(300,function(){
             // $("#div_bg_img").css({"background-image":img_array_bing[1],"background-size":"cover","display":"none"});
             $("#div_bg_img").css({"background-image":img_array_power[0],"background-size":"cover","display":"none"});
@@ -28,6 +31,10 @@ $(document).ready(function(){
     $("#sw_btn_2").click(function(){
         $("#sw_box_tr").children().children().css("background-color","rgba(146, 146, 146, 0.788)");
         $(this).css("background-color","rgba(231, 231, 231, 0.788)");
+
+        $(".ct_tr1_td1").children().children().css("color","rgb(0, 0, 0)");
+        $("#ct_tr1_bg").css("background-color","rgba(233, 230, 230, 0.397)");
+
         $("#div_bg_img").fadeOut(300,function(){
             // $("#div_bg_img").css({"background-image":img_array_bing[3],"background-size":"cover","display":"none"});
             $("#div_bg_img").css({"background-image":img_array_power[1],"background-size":"cover","display":"none"});
@@ -40,6 +47,10 @@ $(document).ready(function(){
     $("#sw_btn_3").click(function(){
         $("#sw_box_tr").children().children().css("background-color","rgba(146, 146, 146, 0.788)");
         $(this).css("background-color","rgba(231, 231, 231, 0.788)");
+
+        $(".ct_tr1_td1").children().children().css("color","rgba(255, 255, 255, 0.952)");
+        $("#ct_tr1_bg").css("background-color","rgba(146, 144, 144, 0.397)");
+
         $("#div_bg_img").fadeOut(300,function(){
             // $("#div_bg_img").css({"background-image":img_array_bing[5],"background-size":"cover","display":"none"});
             $("#div_bg_img").css({"background-image":img_array_power[2],"background-size":"cover","display":"none"});
@@ -52,6 +63,13 @@ $(document).ready(function(){
     $("#sw_btn_4").click(function(){
         $("#sw_box_tr").children().children().css("background-color","rgba(146, 146, 146, 0.788)");
         $(this).css("background-color","rgba(231, 231, 231, 0.788)");
+
+        // $(".ct_tr1_td1").children().children().css("color","rgb(0, 0, 0)");
+        // $("#ct_tr1_bg").css("background-color","rgba(233, 230, 230, 0.397)");
+
+        $(".ct_tr1_td1").children().children().css("color","rgba(255, 255, 255, 0.952)");
+        $("#ct_tr1_bg").css("background-color","rgba(146, 144, 144, 0.397)");
+
         $("#div_bg_img").fadeOut(300,function(){
             // $("#div_bg_img").css({"background-image":img_array_bing[5],"background-size":"cover","display":"none"});
             $("#div_bg_img").css({"background-image":img_array_power[3],"background-size":"cover","display":"none"});
@@ -64,6 +82,10 @@ $(document).ready(function(){
     $("#sw_btn_5").click(function(){
         $("#sw_box_tr").children().children().css("background-color","rgba(146, 146, 146, 0.788)");
         $(this).css("background-color","rgba(231, 231, 231, 0.788)");
+
+        $(".ct_tr1_td1").children().children().css("color","rgb(0, 0, 0)");
+        $("#ct_tr1_bg").css("background-color","rgba(233, 230, 230, 0.397)");
+
         $("#div_bg_img").fadeOut(300,function(){
             // $("#div_bg_img").css({"background-image":img_array_bing[5],"background-size":"cover","display":"none"});
             $("#div_bg_img").css({"background-image":img_array_power[4],"background-size":"cover","display":"none"});
