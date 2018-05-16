@@ -93,8 +93,6 @@ body{
 }
 
 
-
-
 h1 {
     /* width: 400px; */
     /* text-align: center; */
@@ -239,7 +237,3 @@ input[type="submit"]:hover {
     background-color: rgba(146, 146, 146, 0.788);
     cursor:pointer;
 }
-
-
-
-
