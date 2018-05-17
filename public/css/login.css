@@ -6,7 +6,6 @@ body{
     background: rgba(255, 255, 255, 0.822);
 }
 
-
 #mainBox{
     background-color: rgb(95, 95, 97);
     margin:0 !important;
@@ -16,25 +15,12 @@ body{
     height:100%; */
 }
 
-.footer {
-    background-color: rgb(95, 95, 97); 
-    text-align: center;
-    margin-top: 50px;
-    height: 26px;
-}
-.footer p {
-    font-family: Microsoft Yahei;
-    /* color: rgb(44, 128, 114); */
-    color: rgb(141, 141, 141);
-}
-
 #div_bg_img{
     /* background-image: url(../images/bing/Knuthojdsmossen.jpg); */
     background-size:cover; 
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center;
-    /* position: absolute; */
     /* width: 100%;
     height: 100%; */
     width: 1905px;
@@ -58,7 +44,7 @@ body{
     width: 100%;
     height: 57%;
     position: absolute;
-    top: 13%;
+    top: 16%;
     left: 0;
     background: rgba(233, 230, 230, 0.397);
     /* background: rgba(146, 144, 144, 0.397); */
@@ -72,13 +58,13 @@ body{
 .ct_tr1_td1{
     width: 50%;
     height: 100%;
-    /* padding-left: 320px; */
+    padding-top: 1%;
     padding-left: 17%;
 }
 .ct_tr1_td2{
     width: 50%;
     height: 100%;
-    /* padding-right: 320px; */
+    padding-top: 1%;
     padding-right: 17%;
 }
 
@@ -91,7 +77,6 @@ body{
     height: 100%;
     padding: 0;
 }
-
 
 h1 {
     /* width: 400px; */
@@ -138,7 +123,8 @@ input.user {
     letter-spacing: 1px;
 }
 input.user:hover {
-	border: 1px solid rgb(47, 183, 247)  !important;
+    border: 1px solid rgb(47, 183, 247)  !important;
+    /* border: 1px solid rgba(38, 172, 131, 0.808)  !important; */
 }
 
 input.pass {
@@ -157,6 +143,7 @@ input.pass {
 }
 input.pass:hover {
     border: 1px solid rgb(47, 183, 247)  !important;
+    /* border: 1px solid rgba(38, 172, 131, 0.808)  !important; */
 }
 
 label {
@@ -174,13 +161,14 @@ input[type="submit"] {
     font-size: 18px;
     font-weight: 650;
     color: rgb(255, 255, 255);
-    background-color: rgb(47, 183, 247);    
-    /* background-color: rgb(47, 183, 247);  */
+    /* background-color: rgba(37, 180, 137, 0.808);     */
+    background-color: rgb(47, 183, 247); 
     cursor: pointer;
     letter-spacing: 10px;
 }
 input[type="submit"]:hover {
-	background-color: rgb(40, 161, 218);
+    /* background-color: rgba(75, 199, 162, 0.822);    */
+    background-color: rgb(40, 161, 218);
 	-webkit-transition: all 0.2s ease-in-out;
     -moz-transition: all 0.2s ease-in-out;
     -o-transition: all 0.2s ease-in-out;
@@ -236,4 +224,16 @@ input[type="submit"]:hover {
     height: 28%;
     background-color: rgba(146, 146, 146, 0.788);
     cursor:pointer;
+}
+
+.footer {
+    background-color: rgb(95, 95, 97); 
+    text-align: center;
+    margin-top: 50px;
+    height: 26px;
+}
+.footer p {
+    font-family: Microsoft Yahei;
+    /* color: rgb(44, 128, 114); */
+    color: rgb(141, 141, 141);
 }
