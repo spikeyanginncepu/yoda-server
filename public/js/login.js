@@ -1,8 +1,7 @@
-var img_array_bing = ["url(./images/bing/HollowRock.jpg)","url(./images/bing/Knuthojdsmossen.jpg)",
-"url(./images/bing/LulworthCoveDorset.jpg)","url(./images/bing/ManateeMom.jpg)",
-"url(./images/bing/NOTricentennial.jpg)","url(./images/bing/Kolonihavehus.jpg)"];
-var img_array_power = ["url(./images/power/UAV.jpg)","url(./images/power/Geiri.jpg)","url(./images/power/Net.jpg)"
-,"url(./images/power/Solar_energy.jpg)","url(./images/power/Wind_turbine.jpg)"]
+var img_array_bing = ["url(./images/bing/HollowRock.jpg)","url(./images/bing/Knuthojdsmossen.jpg)","url(./images/bing/Kolonihavehus.jpg)"
+,"url(./images/bing/LulworthCoveDorset.jpg)","url(./images/bing/ManateeMom.jpg)","url(./images/bing/NOTricentennial.jpg)"];
+var img_array_power = ["url(./images/power/UAV.jpg)","url(./images/power/Geiri.jpg)","url(./images/power/max.jpg)"
+,"url(./images/power/Solar_energy.jpg)","url(./images/power/Wind_turbine.jpg)"];
 
 // 点击切换背景图-1
 $(document).ready(function(){
@@ -84,6 +83,7 @@ $(document).ready(function(){
 $(document).ready(function(){
     $("input").focus(function(){
       $(this).css({"border":"1px solid rgb(47, 183, 247)","box-shadow":"rgb(47, 183, 247) 0px 0px 1px"});
+    // $(this).css({"border":"1px solid rgba(38, 172, 131, 0.808)","box-shadow":"rgba(38, 172, 131, 0.808) 0px 0px 1px"});
     });
     $("input").blur(function(){
       $(this).css({"border":"1px solid rgba(68, 163, 135, 0.13)","box-shadow":"none"});
