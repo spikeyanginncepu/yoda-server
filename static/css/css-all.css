@@ -3,18 +3,25 @@ body{
     padding:0;
     width: 1920px;
     height: 1080px;
+    position:relative;
+    z-index:0;
 }
 .header{
     margin: 0;
     padding:0;
     top: 0;
-    left: 0;
-    width: 100%;
+    left: 13%;
+    width: 87%;
     height:10%;
     background: hsl(172, 36%, 84%);
+    /* border: 2px solid red; */
+    /* box-shadow: rgb(138, 138, 138) 3px 0px 12px; */
+    position:absolute;
+    z-index: 20;
 }
 #geirilogo{
-    height:80%;
+    height:7%;
+    /* width:100%; */
 }
 .logo{
     margin: 0;
@@ -121,22 +128,41 @@ a{
     /* background: violet; */
 }
 .main{
-    background: hsl(172, 36%, 84%);
+    /* background: hsl(172, 36%, 84%); */
+    /* background: hsl(172, 36%, 84%); */
     height:90%;
+    width:100%; 
+    top: 10%;
+    left: 0;
+    z-index:19;
+    position:absolute;
+    background: hsl(172, 36%, 84%);
 }
 .console{
     width: 86.5%;
     height: 100%;
-    float : left;
-    /* border:1px solid red; */
-    border-radius: 15px;
-    background: whitesmoke;
+    /* float : left; */
+    /* border: 2px solid red; */
+    border-radius: 12px;
+    top: 0%;
+    left: 13.25%;
+    /* background: rgb(245, 245, 245); */
+    background: rgb(255, 255, 255);
+    z-index:20;
+    position:absolute;
 }
 .nav2{
-    /* border:1px solid black; */
-    float : left;
+    /* border-right: 2px solid rgba(212, 212, 212, 0.856); */
+    /* float : left; */
+    top: 0;
+    left: 0;
     width:13%;
     height:100%;
+    background: hsl(172, 36%, 84%);
+    /* background: whitesmoke; */
+    z-index:20;
+    position:absolute;
+    box-shadow: rgb(138, 138, 138) 0px 2px 12px;
 }
 .nav2>h{
     display:block;
